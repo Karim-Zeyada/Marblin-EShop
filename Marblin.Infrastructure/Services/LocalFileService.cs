@@ -1,3 +1,4 @@
+using Marblin.Core.Constants;
 using Marblin.Core.Enums;
 using Marblin.Core.Interfaces;
 using Microsoft.AspNetCore.Hosting;
@@ -7,15 +8,6 @@ namespace Marblin.Infrastructure.Services
     public class LocalFileService : IFileService
     {
         private readonly IWebHostEnvironment _environment;
-
-        // Magic Numbers for file signature validation
-        private static readonly Dictionary<string, List<byte[]>> _fileSignatures = new Dictionary<string, List<byte[]>>
-        {
-            { ".jpeg", new List<byte[]> { new byte[] { 0xFF, 0xD8, 0xFF } } },
-            { ".jpg", new List<byte[]> { new byte[] { 0xFF, 0xD8, 0xFF } } },
-            { ".png", new List<byte[]> { new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A } } },
-            { ".pdf", new List<byte[]> { new byte[] { 0x25, 0x50, 0x44, 0x46 } } }
-        };
 
         public LocalFileService(IWebHostEnvironment environment)
         {
@@ -121,7 +113,7 @@ namespace Marblin.Infrastructure.Services
 
         private void ValidateFileSignature(Stream fileStream, string extension)
         {
-            if (!_fileSignatures.ContainsKey(extension))
+            if (!FileConstants.FileSignatures.ContainsKey(extension))
             {
                 throw new InvalidOperationException($"File type {extension} is not allowed.");
             }
@@ -129,7 +121,7 @@ namespace Marblin.Infrastructure.Services
             fileStream.Position = 0;
             using (var reader = new BinaryReader(fileStream, System.Text.Encoding.Default, true))
             {
-                var signatures = _fileSignatures[extension];
+                var signatures = FileConstants.FileSignatures[extension];
                 var headerBytes = reader.ReadBytes(signatures.Max(m => m.Length));
                 
                 bool match = signatures.Any(signature => 

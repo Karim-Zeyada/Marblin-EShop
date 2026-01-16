@@ -3,58 +3,26 @@ using Marblin.Core.Interfaces;
 using Marblin.Application.Interfaces;
 using Marblin.Core.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Marblin.Web.Controllers
 {
     public class CartController : Controller
     {
         private readonly ICartService _cartService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IProductRepository _productRepository;
 
-        public CartController(ICartService cartService, IUnitOfWork unitOfWork)
+        public CartController(ICartService cartService, IProductRepository productRepository)
         {
             _cartService = cartService;
-            _unitOfWork = unitOfWork;
+            _productRepository = productRepository;
         }
 
         public async Task<IActionResult> Index()
         {
             var cart = _cartService.GetCart();
-            
             var productIdsInCart = cart.Items.Select(i => i.ProductId).ToList();
 
-            var recommendations = new List<Product>();
-
-            if (productIdsInCart.Any())
-            {
-                 // Fetch categories of current cart items
-                 var cartCategories = await _unitOfWork.Repository<Product>().Query()
-                     .Where(p => productIdsInCart.Contains(p.Id))
-                     .Select(p => p.CategoryId)
-                     .Distinct()
-                     .ToListAsync();
-                 
-                 if (cartCategories.Any())
-                 {
-                     recommendations = await _unitOfWork.Repository<Product>().Query()
-                         .Include(p => p.Images)
-                         .Where(p => cartCategories.Contains(p.CategoryId) && !productIdsInCart.Contains(p.Id) && p.IsActive)
-                         .OrderBy(r => Guid.NewGuid()) // Randomize
-                         .Take(4)
-                         .ToListAsync();
-                 }
-            }
-
-            // If no recommendations (empty cart or no related items), show Signature pieces or popular items
-            if (!recommendations.Any())
-            {
-                recommendations = await _unitOfWork.Repository<Product>().Query()
-                    .Include(p => p.Images)
-                    .Where(p => !productIdsInCart.Contains(p.Id) && p.IsActive && p.IsSignaturePiece)
-                    .Take(4)
-                    .ToListAsync();
-            }
+            var recommendations = await _productRepository.GetRecommendationsForCartAsync(productIdsInCart);
 
             ViewBag.Recommendations = recommendations;
             return View(cart);
@@ -63,10 +31,7 @@ namespace Marblin.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToCart(int productId, int? variantId)
         {
-            var product = await _unitOfWork.Repository<Product>().Query()
-                .Include(p => p.Images)
-                .Include(p => p.Variants)
-                .FirstOrDefaultAsync(p => p.Id == productId);
+            var product = await _productRepository.GetProductWithDetailsAsync(productId);
 
             if (product == null) return NotFound();
 

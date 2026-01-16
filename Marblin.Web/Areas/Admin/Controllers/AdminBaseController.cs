@@ -8,7 +8,7 @@ namespace Marblin.Web.Areas.Admin.Controllers
     /// Requires authenticated admin users.
     /// </summary>
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public abstract class AdminBaseController : Controller
     {
     }

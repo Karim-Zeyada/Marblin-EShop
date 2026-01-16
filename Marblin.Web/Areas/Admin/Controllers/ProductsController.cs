@@ -237,7 +237,7 @@ namespace Marblin.Web.Areas.Admin.Controllers
                     img.IsPrimary = false;
             }
 
-            var count = await _unitOfWork.Repository<ProductImage>().Query().Where(i => i.ProductId == productId).CountAsync();
+            var count = await _unitOfWork.Repository<ProductImage>().CountAsync(i => i.ProductId == productId);
 
             var productImage = new ProductImage
             {

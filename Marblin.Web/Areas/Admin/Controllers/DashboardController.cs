@@ -13,94 +13,54 @@ namespace Marblin.Web.Areas.Admin.Controllers
     public class DashboardController : AdminBaseController
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IOrderRepository _orderRepo;
 
-        public DashboardController(IUnitOfWork unitOfWork)
+        public DashboardController(IUnitOfWork unitOfWork, IOrderRepository orderRepo)
         {
             _unitOfWork = unitOfWork;
+            _orderRepo = orderRepo;
         }
 
         public async Task<IActionResult> Index()
         {
             var today = DateTime.UtcNow.Date;
-            var thirtyDaysAgo = today.AddDays(-30);
+            
+            var productRepo = _unitOfWork.Repository<Product>();
+            var variantRepo = _unitOfWork.Repository<ProductVariant>();
+            var customRequestRepo = _unitOfWork.Repository<CustomRequest>();
 
-            var ordersQuery = _unitOfWork.Repository<Order>().Query();
-            var customRequestsQuery = _unitOfWork.Repository<CustomRequest>().Query();
-            var productsQuery = _unitOfWork.Repository<Product>().Query();
-            var variantsQuery = _unitOfWork.Repository<ProductVariant>().Query();
-            var orderItemsQuery = _unitOfWork.Repository<OrderItem>().Query();
+            var financials = await _orderRepo.GetDailyFinancialsAsync(today);
+            var trend = await _orderRepo.GetRecentRevenueTrendAsync(7);
+            var topProducts = await _orderRepo.GetTopSellingItemsAsync(5);
 
             var viewModel = new DashboardViewModel
             {
-                // Today's stats
-                TodayOrdersCount = await ordersQuery
-                    .CountAsync(o => o.CreatedAt.Date == today),
-                TodayRevenue = await ordersQuery
-                    .Where(o => o.CreatedAt.Date == today)
-                    .SumAsync(o => o.TotalAmount),
-                TodayDeposits = await ordersQuery
-                    .Where(o => o.CreatedAt.Date == today && o.IsDepositVerified)
-                    .SumAsync(o => o.DepositAmount),
+                TodayOrdersCount = await _orderRepo.CountAsync(o => o.CreatedAt.Date == today),
+                TodayRevenue = financials.Revenue,
+                TodayDeposits = financials.Deposits,
 
-                // Orders by status
-                PendingDepositCount = await ordersQuery
-                    .CountAsync(o => o.Status == OrderStatus.PendingDeposit),
-                InProductionCount = await ordersQuery
-                    .CountAsync(o => o.Status == OrderStatus.InProduction),
-                AwaitingBalanceCount = await ordersQuery
-                    .CountAsync(o => o.Status == OrderStatus.AwaitingBalance),
-                ShippedCount = await ordersQuery
-                    .CountAsync(o => o.Status == OrderStatus.Shipped),
+                PendingDepositCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.PendingDeposit),
+                InProductionCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.InProduction),
+                AwaitingBalanceCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.AwaitingBalance),
+                ShippedCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.Shipped),
 
-                // Recent orders
-                RecentOrders = await ordersQuery
-                    .OrderByDescending(o => o.CreatedAt)
-                    .Take(5)
-                    .ToListAsync(),
+                RecentOrders = (await _orderRepo.GetOrdersAsync(null, null, true)).Take(5).ToList(),
 
-                // Unreviewed custom requests
-                UnreviewedRequestsCount = await customRequestsQuery
-                    .CountAsync(cr => !cr.IsReviewed),
+                UnreviewedRequestsCount = await customRequestRepo.CountAsync(cr => !cr.IsReviewed),
 
-                // Product stats
-                TotalProducts = await productsQuery.CountAsync(),
-                LowStockCount = await variantsQuery
-                    .CountAsync(v => v.Stock > 0 && v.Stock <= 3)
+                TotalProducts = await productRepo.CountAsync(p => true), 
+                LowStockCount = await variantRepo.CountAsync(v => v.Stock > 0 && v.Stock <= 3),
+
+                ChartLabels = Enumerable.Range(0, 7).Select(i => DateTime.Today.AddDays(-6 + i).ToString("MMM dd")).ToList(),
+                ChartData = trend
             };
 
-            // Chart Data (Last 7 Days Revenue)
-            var last7Days = Enumerable.Range(0, 7).Select(i => DateTime.Today.AddDays(-6 + i)).ToList();
-            viewModel.ChartLabels = last7Days.Select(d => d.ToString("MMM dd")).ToList();
-            viewModel.ChartData = new List<decimal>();
-
-            var revenueData = await ordersQuery
-                .Where(o => o.CreatedAt >= DateTime.Today.AddDays(-7) && o.Status != OrderStatus.Cancelled)
-                .GroupBy(o => o.CreatedAt.Date)
-                .Select(g => new { Date = g.Key, Total = g.Sum(o => o.TotalAmount) })
-                .ToListAsync();
-
-            foreach (var date in last7Days)
+            viewModel.TopSellingProducts = topProducts.Select(tp => new ProductSalesInfo 
             {
-                var dayRevenue = revenueData.FirstOrDefault(r => r.Date == date)?.Total ?? 0;
-                viewModel.ChartData.Add(dayRevenue);
-            }
-
-            // Top Selling Products
-            var topProductsRaw = await orderItemsQuery
-                .Where(oi => oi.Order.Status != OrderStatus.Cancelled)
-                .ToListAsync(); // Client eval for GroupBy complexity if needed
-
-            viewModel.TopSellingProducts = topProductsRaw
-                .GroupBy(oi => oi.ProductName)
-                .Select(g => new ProductSalesInfo
-                {
-                    ProductName = g.Key,
-                    UnitsSold = g.Sum(oi => oi.Quantity),
-                    Revenue = g.Sum(oi => oi.Quantity * oi.UnitPrice)
-                })
-                .OrderByDescending(x => x.UnitsSold)
-                .Take(5)
-                .ToList();
+                ProductName = tp.ProductName,
+                UnitsSold = tp.UnitsSold,
+                Revenue = tp.Revenue
+            }).ToList();
 
             return View(viewModel);
         }

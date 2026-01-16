@@ -21,7 +21,7 @@ namespace Marblin.Infrastructure.Data.Repositories
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(p => p.Name.Contains(search) || p.Description.Contains(search));
+                query = query.Where(p => p.Name.Contains(search) || (p.Description != null && p.Description.Contains(search)));
             }
 
             if (categoryId.HasValue)
@@ -66,6 +66,42 @@ namespace Marblin.Infrastructure.Data.Repositories
                 .Where(p => p.CategoryId == categoryId && p.Id != excludeProductId && p.IsActive)
                 .Take(count)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetRecommendationsForCartAsync(List<int> productIdsInCart, int count = 4)
+        {
+            var recommendations = new List<Product>();
+
+            if (productIdsInCart.Any())
+            {
+                var cartCategories = await _context.Products
+                    .Where(p => productIdsInCart.Contains(p.Id))
+                    .Select(p => p.CategoryId)
+                    .Distinct()
+                    .ToListAsync();
+
+                if (cartCategories.Any())
+                {
+                    // Fetch recommendations from these categories, randomizing order
+                    recommendations = await _context.Products
+                        .Include(p => p.Images.Where(i => i.IsPrimary))
+                        .Where(p => cartCategories.Contains(p.CategoryId) && !productIdsInCart.Contains(p.Id) && p.IsActive)
+                        .OrderBy(p => Guid.NewGuid()) 
+                        .Take(count)
+                        .ToListAsync();
+                }
+            }
+
+            if (!recommendations.Any())
+            {
+                recommendations = await _context.Products
+                    .Include(p => p.Images.Where(i => i.IsPrimary))
+                    .Where(p => !productIdsInCart.Contains(p.Id) && p.IsActive && p.IsSignaturePiece)
+                    .Take(count)
+                    .ToListAsync();
+            }
+
+            return recommendations;
         }
     }
 }

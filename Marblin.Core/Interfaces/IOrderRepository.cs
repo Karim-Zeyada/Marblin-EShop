@@ -8,5 +8,10 @@ namespace Marblin.Core.Interfaces
         Task<Order?> GetOrderByNumberAsync(string orderNumber);
         Task<Order?> GetOrderWithItemsAsync(int id);
         Task<IEnumerable<Order>> GetOrdersAsync(OrderStatus? status, string? search, bool descending = true);
+        
+        // Dashboard Stats
+        Task<Models.OrderFinancials> GetDailyFinancialsAsync(DateTime date);
+        Task<List<Models.TopProductStat>> GetTopSellingItemsAsync(int count);
+        Task<List<decimal>> GetRecentRevenueTrendAsync(int days);
     }
 }

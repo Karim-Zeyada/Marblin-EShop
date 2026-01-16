@@ -67,16 +67,28 @@ namespace Marblin.Infrastructure.Data.Repositories
             return await ApplySpecification(spec).CountAsync();
         }
 
+        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.CountAsync(predicate);
+        }
+
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
             return SpecificationEvaluator<T>.GetQuery(_dbSet.AsQueryable(), spec);
         }
 
-        // Maintaining existing methods for compatibility during transition
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate) { return await _dbSet.Where(predicate).ToListAsync(); }
-        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate) { return await _dbSet.FirstOrDefaultAsync(predicate); }
+        // Helper methods
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate) 
+        { 
+            return await _dbSet.Where(predicate).ToListAsync(); 
+        }
+
+        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate) 
+        { 
+            return await _dbSet.FirstOrDefaultAsync(predicate); 
+        }
         public void Add(T entity) { _dbSet.Add(entity); }
         public void Remove(T entity) { _dbSet.Remove(entity); }
-        public IQueryable<T> Query() { return _dbSet.AsQueryable(); }
+
     }
 }

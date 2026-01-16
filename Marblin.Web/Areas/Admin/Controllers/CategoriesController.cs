@@ -1,3 +1,4 @@
+using Marblin.Core.Specifications;
 using Marblin.Core.Interfaces;
 using Marblin.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +21,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
         // GET: Admin/Categories
         public async Task<IActionResult> Index()
         {
-            var categories = await _unitOfWork.Repository<Category>().Query()
-                .Include(c => c.Products)
-                .OrderBy(c => c.SortOrder)
-                .ToListAsync();
+            var spec = new CategoryWithProductsSpecification();
+            var categories = await _unitOfWork.Repository<Category>().ListAsync(spec);
             return View(categories);
         }
 
@@ -41,7 +40,7 @@ namespace Marblin.Web.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            model.SortOrder = await _unitOfWork.Repository<Category>().Query().CountAsync();
+            model.SortOrder = await _unitOfWork.Repository<Category>().CountAsync(c => true);
             _unitOfWork.Repository<Category>().Add(model);
             await _unitOfWork.SaveChangesAsync();
 
@@ -84,9 +83,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var category = await _unitOfWork.Repository<Category>().Query()
-                .Include(c => c.Products)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var spec = new CategoryWithProductsSpecification(id);
+            var category = await _unitOfWork.Repository<Category>().GetEntityWithSpec(spec);
             
             if (category == null) return NotFound();
 

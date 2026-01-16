@@ -193,7 +193,7 @@ namespace Marblin.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveCoupon()
+        public IActionResult RemoveCoupon()
         {
             _cartService.RemoveCoupon();
             TempData["Success"] = "Coupon removed.";

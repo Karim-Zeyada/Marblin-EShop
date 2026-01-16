@@ -1,3 +1,4 @@
+using Marblin.Core.Specifications;
 using Marblin.Core.Interfaces;
 using Marblin.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -20,14 +21,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
         // GET: Admin/CustomRequests
         public async Task<IActionResult> Index(bool? reviewed)
         {
-            var query = _unitOfWork.Repository<CustomRequest>().Query();
-
-            if (reviewed.HasValue)
-                query = query.Where(cr => cr.IsReviewed == reviewed.Value);
-
-            var requests = await query
-                .OrderByDescending(cr => cr.CreatedAt)
-                .ToListAsync();
+            var spec = new CustomRequestWithImagesSpecification(reviewed);
+            var requests = await _unitOfWork.Repository<CustomRequest>().ListAsync(spec);
 
             ViewBag.Reviewed = reviewed;
             return View(requests);
@@ -36,9 +31,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
         // GET: Admin/CustomRequests/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var request = await _unitOfWork.Repository<CustomRequest>().Query()
-                .Include(cr => cr.Images)
-                .FirstOrDefaultAsync(cr => cr.Id == id);
+            var spec = new CustomRequestWithImagesSpecification(id);
+            var request = await _unitOfWork.Repository<CustomRequest>().GetEntityWithSpec(spec);
 
             if (request == null) return NotFound();
             return View(request);

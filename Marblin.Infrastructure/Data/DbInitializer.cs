@@ -52,6 +52,26 @@ namespace Marblin.Infrastructure.Data
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new Exception($"Failed to create default admin user: {errors}");
             }
+            
+            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            await SeedSiteSettingsAsync(context);
+        }
+
+        private static async Task SeedSiteSettingsAsync(ApplicationDbContext context)
+        {
+            if (!await context.SiteSettings.AnyAsync())
+            {
+                var settings = new Marblin.Core.Entities.SiteSettings
+                {
+                    DepositPercentage = 25,
+                    HeroHeadline = "Timeless Elegance",
+                    HeroSubheadline = "Handcrafted marble and stone artifacts.",
+                    InstapayAccount = "N/A"
+                };
+
+                context.SiteSettings.Add(settings);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

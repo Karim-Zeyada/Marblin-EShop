@@ -11,13 +11,13 @@ namespace Marblin.Core.Interfaces
         Task<T?> GetEntityWithSpec(ISpecification<T> spec);
         Task<IEnumerable<T>> ListAsync(ISpecification<T> spec);
         Task<int> CountAsync(ISpecification<T> spec);
+        Task<int> CountAsync(Expression<Func<T, bool>> predicate);
 
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
         void Add(T entity);
         void Remove(T entity);
         
-        // Keeping Query() for now for EF flexibility, though purely it leaks IQueryable
-        IQueryable<T> Query();
+
     }
 }

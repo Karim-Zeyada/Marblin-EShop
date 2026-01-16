@@ -100,6 +100,7 @@ namespace Marblin.Infrastructure.Data
                 entity.Property(e => e.TotalAmount).HasPrecision(18, 2);
                 entity.Property(e => e.DepositPercentage).HasPrecision(5, 2);
                 entity.Property(e => e.DepositAmount).HasPrecision(18, 2);
+                entity.Property(e => e.DiscountAmount).HasPrecision(18, 2);
                 entity.Property(e => e.TransactionId).HasMaxLength(100);
                 entity.Property(e => e.ReceiptImageUrl).HasMaxLength(500);
 

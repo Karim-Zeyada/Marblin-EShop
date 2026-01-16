@@ -1,4 +1,5 @@
 using Marblin.Core.Enums;
+using Marblin.Core.Specifications;
 using Marblin.Core.Interfaces;
 using Marblin.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,9 @@ namespace Marblin.Web.Areas.Admin.Controllers
         // GET: Admin/Settings
         public async Task<IActionResult> Index()
         {
-            var settings = await _unitOfWork.Repository<SiteSettings>().Query().FirstOrDefaultAsync();
+            var spec = new SiteSettingsSpecification();
+            var settings = await _unitOfWork.Repository<SiteSettings>().GetEntityWithSpec(spec);
+            
             if (settings == null)
             {
                 settings = new SiteSettings
@@ -50,7 +53,9 @@ namespace Marblin.Web.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var settings = await _unitOfWork.Repository<SiteSettings>().Query().FirstOrDefaultAsync();
+            var spec = new SiteSettingsSpecification();
+            var settings = await _unitOfWork.Repository<SiteSettings>().GetEntityWithSpec(spec);
+
             if (settings == null)
             {
                 if (heroImage != null)

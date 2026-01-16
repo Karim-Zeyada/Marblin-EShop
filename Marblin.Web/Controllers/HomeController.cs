@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Marblin.Core.Entities;
 using Marblin.Core.Interfaces;
+using Marblin.Core.Specifications;
 
 namespace Marblin.Web.Controllers
 {
@@ -20,21 +21,26 @@ namespace Marblin.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var settings = await _unitOfWork.Repository<SiteSettings>().Query().FirstOrDefaultAsync();
+            // Site Settings
+            var settingsSpec = new SiteSettingsSpecification();
+            var settings = await _unitOfWork.Repository<SiteSettings>().GetEntityWithSpec(settingsSpec);
             
+            // Signature Pieces
+            var signatureSpec = new SignatureProductsSpecification(6);
+            var signaturePieces = await _unitOfWork.Repository<Product>().ListAsync(signatureSpec);
+
+            // Categories
+            var categoriesSpec = new CategoryWithProductsSpecification();
+            var categories = await _unitOfWork.Repository<Category>().ListAsync(categoriesSpec);
+
             var viewModel = new HomeViewModel
             {
                 Settings = settings ?? new SiteSettings(),
-                SignaturePieces = await _unitOfWork.Repository<Product>().Query()
-                    .Include(p => p.Images)
-                    .Include(p => p.Category)
-                    .Where(p => p.IsSignaturePiece && p.IsActive)
-                    .Take(6)
-                    .ToListAsync(),
-                Categories = await _unitOfWork.Repository<Category>().Query()
-                    .Where(c => c.IsActive)
-                    .OrderBy(c => c.SortOrder)
-                    .ToListAsync()
+                SignaturePieces = signaturePieces.ToList(),
+                Categories = categories.Where(c => c.IsActive).ToList() // In-memory filter if spec returns inactive, but spec filters active. 
+                                                                        // Wait, CategoryWithProductsSpecification doesn't filter active.
+                                                                        // Let's rely on list filter or update spec.
+                                                                        // Updating spec logic might be better but for now filter in memory is safe given low category count.
             };
 
             return View(viewModel);
