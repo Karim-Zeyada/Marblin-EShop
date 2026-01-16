@@ -1,0 +1,185 @@
+@model Marblin.Core.Entities.Order
+@{
+    ViewData["Title"] = $"Order {Model.OrderNumber}";
+}
+
+<div class="container my-5" style="max-width: 900px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="serif-font h3 mb-0">Order #@Model.OrderNumber</h1>
+        <a asp-action="Track" class="btn btn-outline-secondary btn-sm rounded-0">Check Another Order</a>
+    </div>
+
+    <!-- Status Timeline & Info -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-5">
+            <h5 class="serif-font mb-5 text-center">Order Status</h5>
+            
+            @{
+                var statuses = new[] {
+                    (Marblin.Core.Enums.OrderStatus.PendingDeposit, "Deposit", "bi-wallet2"),
+                    (Marblin.Core.Enums.OrderStatus.InProduction, "Production", "bi-hammer"),
+                    (Marblin.Core.Enums.OrderStatus.AwaitingBalance, "Balance", "bi-credit-card"),
+                    (Marblin.Core.Enums.OrderStatus.Shipped, "Shipped", "bi-truck")
+                };
+                var currentIndex = Array.FindIndex(statuses, s => s.Item1 == Model.Status);
+                if (Model.Status == Marblin.Core.Enums.OrderStatus.Cancelled) currentIndex = -1;
+            }
+
+            @if (Model.Status == Marblin.Core.Enums.OrderStatus.Cancelled)
+            {
+                <div class="alert alert-danger text-center">This order has been cancelled.</div>
+            }
+            else
+            {
+                <div class="position-relative d-flex justify-content-between my-5 px-md-5">
+                    <!-- Progress Bar Background -->
+                    <div class="position-absolute top-50 start-0 w-100" style="height: 2px; background: #eee; z-index: 0; transform: translateY(-50%);"></div>
+                    <!-- Active Progress -->
+                    <div class="position-absolute top-50 start-0" style="height: 2px; background: #1a1a1a; z-index: 0; transform: translateY(-50%); width: @(Math.Max(0, currentIndex) * 33.33)%;"></div>
+
+                    @for (int i = 0; i < statuses.Length; i++)
+                    {
+                        var (status, label, icon) = statuses[i];
+                        var isCompleted = i < currentIndex;
+                        var isCurrent = i == currentIndex;
+                        var isActive = i <= currentIndex;
+                        
+                        <div class="position-relative z-1 text-center bg-white px-2 d-flex flex-column align-items-center" style="min-width: 100px;">
+                            <div class="d-flex align-items-center justify-content-center mb-3 transition-all shadow-sm" 
+                                 style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid @(isActive ? "#1a1a1a" : "#eee"); background: @(isActive ? "#1a1a1a" : "#fff"); color: @(isActive ? "#fff" : "#ccc"); font-size: 1.25rem;">
+                                @if (isCompleted)
+                                {
+                                    <i class="bi bi-check-lg"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi @icon"></i>
+                                }
+                            </div>
+                            
+                            <div class="d-flex flex-column align-items-center">
+                                <span class="fw-bold small letter-spacing-1 @(isActive ? "text-dark" : "text-muted")">@label</span>
+                                @if (isCurrent)
+                                {
+                                    <div class="badge bg-warning text-dark mt-2 shadow-sm animate-fade-in-up">Current</div>
+                                }
+                                else if (isCompleted)
+                                {
+                                    <div class="badge bg-light text-muted mt-2 border">Done</div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Status Clarification Message -->
+                <div class="mt-5 p-4 bg-light rounded-1 border-start border-4 border-dark animate-fade-in-up">
+                    <div class="d-flex gap-3">
+                        <div class="display-6"><i class="bi bi-info-circle text-secondary"></i></div>
+                        <div>
+                            @switch (Model.Status)
+                            {
+                                case Marblin.Core.Enums.OrderStatus.PendingDeposit:
+                                    <h5 class="serif-font">Deposit Required</h5>
+                                    <p class="mb-0 text-muted">To begin production, please pay the deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>.</p>
+                                    @if (!Model.IsDepositVerified)
+                                    {
+                                        <a asp-controller="Checkout" asp-action="Confirmation" asp-route-id="@Model.OrderNumber" class="btn btn-dark btn-sm mt-3 px-4">Pay Deposit</a>
+                                    }
+                                    break;
+
+                                case Marblin.Core.Enums.OrderStatus.InProduction:
+                                    <h5 class="serif-font">Currently In Production</h5>
+                                    <p class="mb-0 text-muted">Your order is being handcrafted with care. You have paid a deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>. We will notify you when it's ready for the final balance.</p>
+                                    break;
+
+                                case Marblin.Core.Enums.OrderStatus.AwaitingBalance:
+                                    <h5 class="serif-font">Awaiting Final Balance</h5>
+                                    @if(Model.IsBalanceVerified)
+                                    {
+                                         <p class="mb-0 text-success">Balance Payment Verified! Preparing for shipment.</p>
+                                    }
+                                    else if(Model.BalancePaymentProofSubmittedAt.HasValue)
+                                    {
+                                        <p class="mb-0 text-muted">Production is complete! You have submitted proof for the remaining balance of <strong>@Model.RemainingBalance.ToString("C0")</strong>. We are verifying it.</p>
+                                        <div class="alert alert-success d-inline-block py-2 px-3 mt-3 mb-0 small">
+                                            <i class="bi bi-clock-history me-1"></i> Proof Submitted
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-0 text-muted">Production is complete! You have paid the deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>. Please pay the remaining balance of <strong>@Model.RemainingBalance.ToString("C0")</strong> to initiate shipping.</p>
+                                        <a asp-controller="Checkout" asp-action="PayBalance" asp-route-id="@Model.OrderNumber" class="btn btn-dark btn-sm mt-3 px-4 shadow-sm">Pay Balance</a>
+                                    }
+                                    break;
+
+                                case Marblin.Core.Enums.OrderStatus.Shipped:
+                                    <h5 class="serif-font">Order Shipped</h5>
+                                    <p class="mb-0 text-muted">Your order is on its way. Track your shipment using the details below.</p>
+                                    break;
+                                    
+                                default:
+                                    <h5 class="serif-font">Order Processing</h5>
+                                    <p class="mb-0 text-muted">We are processing your order request.</p>
+                                    break;
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 serif-font">Items</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <li class="list-group-item d-flex align-items-center p-3">
+                            @if (item.ImageUrl != null)
+                            {
+                                <img src="@item.ImageUrl" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;" class="me-3" />
+                            }
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">@item.ProductName</h6>
+                                @if (!string.IsNullOrEmpty(item.VariantDescription))
+                                {
+                                    <small class="text-muted">@item.VariantDescription</small>
+                                }
+                            </div>
+                            <div class="text-end">
+                                <div class="small">Qty: @item.Quantity</div>
+                                <div>@item.LineTotal.ToString("C0")</div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+                <div class="card-footer bg-white text-end p-3">
+                    <strong>Total: @Model.TotalAmount.ToString("C0")</strong>
+                </div>
+            </div>
+            
+            <!-- Alert moved to Status Clarification section -->
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="serif-font mb-3">Customer Info</h5>
+                    <p><strong>@Model.CustomerName</strong></p>
+                    <p class="small text-muted mb-0">
+                        @Model.AddressLine<br/>
+                        @Model.City, @Model.Region<br/>
+                        @Model.PostalCode<br/>
+                        @Model.Email<br/>
+                        @Model.Phone
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

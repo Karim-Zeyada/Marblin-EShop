@@ -1,0 +1,12 @@
+using Marblin.Core.Entities;
+using Marblin.Core.Enums;
+
+namespace Marblin.Core.Interfaces
+{
+    public interface IOrderRepository : IRepository<Order>
+    {
+        Task<Order?> GetOrderByNumberAsync(string orderNumber);
+        Task<Order?> GetOrderWithItemsAsync(int id);
+        Task<IEnumerable<Order>> GetOrdersAsync(OrderStatus? status, string? search, bool descending = true);
+    }
+}

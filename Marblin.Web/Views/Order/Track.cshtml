@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Track Order";
+}
+
+<div class="container my-5" style="max-width: 500px;">
+    <div class="stat-card border-0 shadow-sm p-4 text-center">
+        <h2 class="serif-font mb-4">Track Your Order</h2>
+        <p class="text-muted mb-4">Enter your Order ID and Email Address to check the status of your shipment.</p>
+
+        <form asp-action="Track" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger text-start"></div>
+
+            <div class="form-floating mb-3">
+                <input type="text" name="orderNumber" class="form-control" id="orderInput" placeholder="Order ID" required />
+                <label for="orderInput">Order ID (e.g., M-2023...)</label>
+            </div>
+
+            <div class="form-floating mb-4">
+                <input type="email" name="email" class="form-control" id="emailInput" placeholder="Email Address" required />
+                <label for="emailInput">Email Address</label>
+            </div>
+
+            <button type="submit" class="btn btn-dark w-100 py-3 rounded-0">CHECK STATUS</button>
+        </form>
+    </div>
+</div>

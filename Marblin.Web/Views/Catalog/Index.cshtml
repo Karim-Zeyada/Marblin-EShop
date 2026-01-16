@@ -1,0 +1,166 @@
+@model Marblin.Core.Common.PaginatedList<Marblin.Core.Entities.Product>
+@{
+    ViewData["Title"] = "Collection";
+    var currentCategory = ViewBag.CurrentCategory as Marblin.Core.Entities.Category;
+}
+
+<div class="container my-5 pt-3">
+    <div class="text-center mb-5 animate-fade-in-up">
+        <h1 class="display-4 serif-font mb-3">@(currentCategory?.Name ?? "All Collections")</h1>
+        @if (!string.IsNullOrEmpty(currentCategory?.Description))
+        {
+            <p class="lead text-secondary col-md-8 mx-auto" style="font-size: 1.1rem;">@currentCategory.Description</p>
+        }
+        <div class="separator-line mx-auto mt-4"></div>
+    </div>
+
+    <div class="row g-5">
+        <!-- Sidebar Filters -->
+        <div class="col-lg-3 mb-5">
+            <div class="filter-sidebar sticky-sidebar pt-2">
+                <h5 class="serif-font mb-4 pb-2 border-bottom">Filters</h5>
+                
+                <div class="mb-5">
+                    <h6 class="text-uppercase small fw-bold mb-3 letter-spacing-2 text-secondary">Categories</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li>
+                            <a asp-action="Index" class="text-decoration-none transition-all @(ViewBag.CategoryId == null ? "text-dark fw-bold ps-2 border-start border-3 border-dark" : "text-muted hover-underline")">All Products</a>
+                        </li>
+                        @if (ViewBag.Categories is List<Marblin.Core.Entities.Category> categories)
+                        {
+                            foreach (var cat in categories)
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-route-categoryId="@cat.Id" class="text-decoration-none transition-all @(ViewBag.CategoryId == cat.Id ? "text-dark fw-bold ps-2 border-start border-3 border-dark" : "text-muted hover-underline")">
+                                        @cat.Name
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="text-uppercase small fw-bold mb-3 letter-spacing-2 text-secondary">Sort By</h6>
+                    <form method="get" id="sortForm">
+                        @if (ViewBag.CategoryId != null)
+                        {
+                            <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
+                        }
+                        <select name="sort" class="form-select rounded-0 text-secondary small border-0 border-bottom bg-transparent px-0" onchange="this.form.submit()" style="box-shadow: none;">
+                            <option value="" class="text-dark">Featured</option>
+                            <option value="newest" selected="@(ViewBag.Sort == "newest")" class="text-dark">New Arrivals</option>
+                            <option value="price_asc" selected="@(ViewBag.Sort == "price_asc")" class="text-dark">Price: High to Low</option>
+                            <option value="price_desc" selected="@(ViewBag.Sort == "price_desc")" class="text-dark">Price: Low to High</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="col-lg-9">
+            @if (Model.Any())
+            {
+                <div class="row g-4 mb-5">
+                    @foreach (var product in Model)
+                    {
+                        var primaryImage = product.Images.FirstOrDefault(i => i.IsPrimary) ?? product.Images.FirstOrDefault();
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card product-card h-100 border-0 shadow-sm bg-white">
+                                <div class="position-relative overflow-hidden">
+                                    <a asp-action="Details" asp-route-id="@product.Id" class="d-block">
+                                        @if (primaryImage != null)
+                                        {
+                                            <img src="@primaryImage.ImageUrl" class="card-img-top product-image" alt="@product.Name">
+                                        }
+                                        else
+                                        {
+                                            <div class="placeholder-bg d-flex align-items-center justify-content-center product-image-fallback">
+                                                <span class="text-muted">No Image</span>
+                                            </div>
+                                        }
+                                    </a>
+                                    @if(product.IsSignaturePiece)
+                                    {
+                                        <span class="badge bg-dark text-white rounded-0 position-absolute top-0 start-0 m-3 px-3 py-2 small letter-spacing-1 shadow-sm">SIGNATURE</span>
+                                    }
+                                    
+                                    <div class="product-overlay d-flex align-items-center justify-content-center glass-effect border-0">
+                                        <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-dark rounded-0 px-4 py-3 shadow-lg">VIEW DETAILS</a>
+                                    </div>
+                                </div>
+                                <div class="card-body text-center mt-3 pb-4">
+                                    <h5 class="card-title serif-font h6 mb-2">
+                                        <a asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none text-dark hover-underline">@product.Name</a>
+                                    </h5>
+                                    <p class="text-secondary small mb-0 letter-spacing-1">
+                                        @if (product.Availability == Marblin.Core.Enums.ProductAvailability.OutOfStock)
+                                        {
+                                            <span class="text-danger">Out of Stock</span>
+                                        }
+                                        else
+                                        {
+                                            @product.BasePrice.ToString("C0")
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                @if (Model.TotalPages > 1)
+                {
+                    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                    
+                    <nav aria-label="Product pagination" class="mt-5 pt-4 border-top">
+                        <ul class="pagination justify-content-center gap-2">
+                            <li class="page-item @prevDisabled">
+                                <a class="page-link rounded-0 text-dark border-0 shadow-none ps-0 bg-transparent opacity-75 hover-opacity-100" 
+                                   asp-action="Index"
+                                   asp-route-page="@(Model.PageIndex - 1)"
+                                   asp-route-categoryId="@ViewBag.CategoryId"
+                                   asp-route-sort="@ViewBag.Sort"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true" class="serif-font small text-uppercase letter-spacing-1">&laquo; Prev</span>
+                                </a>
+                            </li>
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link rounded-0 border-0 shadow-none @(i == Model.PageIndex ? "text-dark fw-bold text-decoration-underline" : "text-muted") bg-transparent" 
+                                       asp-action="Index"
+                                       asp-route-page="@i"
+                                       asp-route-categoryId="@ViewBag.CategoryId"
+                                       asp-route-sort="@ViewBag.Sort">
+                                        @i
+                                    </a>
+                                </li>
+                            }
+                            <li class="page-item @nextDisabled">
+                                <a class="page-link rounded-0 text-dark border-0 shadow-none pe-0 bg-transparent opacity-75 hover-opacity-100" 
+                                   asp-action="Index"
+                                   asp-route-page="@(Model.PageIndex + 1)"
+                                   asp-route-categoryId="@ViewBag.CategoryId"
+                                   asp-route-sort="@ViewBag.Sort"
+                                   aria-label="Next">
+                                    <span aria-hidden="true" class="serif-font small text-uppercase letter-spacing-1">Next &raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <h3 class="h5 text-muted mb-4">No products found in this category.</h3>
+                    <a asp-action="Index" class="btn btn-outline-dark rounded-0 px-5">View All Collections</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

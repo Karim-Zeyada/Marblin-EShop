@@ -1,0 +1,78 @@
+@model Marblin.Core.Entities.CustomRequest
+@{
+    ViewData["Title"] = "Custom Request Details";
+}
+
+<div class="admin-header">
+    <h1>Custom Request</h1>
+    <a asp-action="Index" class="btn btn-outline-dark">← Back</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Request Details</h5>
+            <table class="table table-borderless">
+                <tr><th style="width: 150px;">Category:</th><td>@Model.Category</td></tr>
+                <tr><th>Dimensions:</th><td>@(Model.Dimensions ?? "Not specified")</td></tr>
+                <tr><th>Material:</th><td>@(Model.Material ?? "Not specified")</td></tr>
+                <tr><th>Budget:</th><td>@(Model.BudgetRange ?? "Not specified")</td></tr>
+                <tr><th>Timeline:</th><td>@(Model.Timeline ?? "Not specified")</td></tr>
+            </table>
+            <hr />
+            <h6>Description / Notes</h6>
+            <p>@Model.Notes</p>
+            
+            @if (Model.Images.Any())
+            {
+                <hr />
+                <h6>Inspiration Images</h6>
+                <div class="row g-2">
+                    @foreach (var img in Model.Images)
+                    {
+                        <div class="col-4">
+                            <a href="@img.ImageUrl" target="_blank">
+                                <img src="@img.ImageUrl" class="img-fluid rounded" />
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Customer</h5>
+            <p><strong>@Model.CustomerName</strong></p>
+            <p>@Model.Email</p>
+            <p>@Model.Phone</p>
+            <small class="text-muted">Submitted: @Model.CreatedAt.ToString("MMM d, yyyy h:mm tt")</small>
+        </div>
+
+        <div class="stat-card">
+            <h5 class="mb-3">Status</h5>
+            @if (Model.IsReviewed)
+            {
+                <span class="badge bg-success mb-2">Reviewed</span>
+                @if (!string.IsNullOrEmpty(Model.AdminNotes))
+                {
+                    <p class="small">@Model.AdminNotes</p>
+                }
+            }
+            else
+            {
+                <form asp-action="MarkReviewed" asp-route-id="@Model.Id" method="post">
+                    <div class="mb-2">
+                        <textarea name="adminNotes" class="form-control" rows="3" placeholder="Admin notes (optional)"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Mark as Reviewed</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

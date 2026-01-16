@@ -1,0 +1,135 @@
+@model Marblin.Core.Models.ShoppingCart
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="container my-5 cart-container">
+    <h1 class="serif-font mb-5 text-center">Your Bag</h1>
+
+    @if (Model.Items.Any())
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-0">
+                        <table class="table table-borderless mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4 small text-uppercase letter-spacing-1 text-muted py-3">Product</th>
+                                    <th class="small text-uppercase letter-spacing-1 text-muted py-3">Price</th>
+                                    <th class="small text-uppercase letter-spacing-1 text-muted py-3">Quantity</th>
+                                    <th class="small text-uppercase letter-spacing-1 text-muted py-3">Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr class="align-middle border-bottom">
+                                        <td class="ps-4 py-4">
+                                            <div class="d-flex align-items-center">
+                                                @if (item.ImageUrl != null)
+                                                {
+                                                    <img src="@item.ImageUrl" alt="@item.ProductName" class="cart-item-img me-3">
+                                                }
+                                                <div>
+                                                    <h6 class="mb-1 serif-font">@item.ProductName</h6>
+                                                    @if (!string.IsNullOrEmpty(item.VariantDescription))
+                                                    {
+                                                        <small class="text-muted d-block">@item.VariantDescription</small>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-4">@item.UnitPrice.ToString("C0")</td>
+                                        <td class="py-4">@item.Quantity</td>
+                                        <td class="py-4 fw-bold">@item.Total.ToString("C0")</td>
+                                        <td class="py-4 text-end pe-4">
+                                            <form asp-action="RemoveFromCart" method="post">
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                <input type="hidden" name="variantId" value="@item.VariantId" />
+                                                <button type="submit" class="btn btn-link text-muted p-0 hover-text-danger"><i class="bi bi-x-lg"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="text-start">
+                     <a asp-controller="Catalog" asp-action="Index" class="btn btn-link text-muted text-decoration-none small p-0"><i class="bi bi-arrow-left me-2"></i> Continue Shopping</a>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm bg-light">
+                    <div class="card-body p-4">
+                        <h5 class="serif-font mb-4">Order Summary</h5>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-secondary">Subtotal</span>
+                            <span class="fw-bold">@Model.TotalAmount.ToString("C0")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="text-secondary small">Shipping calculated at checkout</span>
+                            <span class="text-secondary small">—</span>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="h5 mb-0 serif-font">Total</span>
+                            <span class="h5 mb-0 serif-font">@Model.TotalAmount.ToString("C0")</span>
+                        </div>
+                        <div class="d-grid">
+                            <a asp-controller="Checkout" asp-action="Index" class="btn btn-dark rounded-0 py-3 text-uppercase letter-spacing-1">PROCEED TO CHECKOUT</a>
+                        </div>
+                        <div class="text-center mt-3">
+                            <small class="text-muted"><i class="bi bi-shield-lock me-1"></i> Secure Checkout</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-bag fs-1 text-muted mb-3 d-block"></i>
+            <h3 class="h5 text-muted mb-4">Your bag is empty</h3>
+            <a asp-controller="Catalog" asp-action="Index" class="btn btn-dark rounded-0 px-5 text-uppercase letter-spacing-1">Start Shopping</a>
+        </div>
+    }
+</div>
+
+@if (ViewBag.Recommendations != null && ((List<Marblin.Core.Entities.Product>)ViewBag.Recommendations).Any())
+{
+    <div class="container mb-5">
+        <h3 class="serif-font mb-4 text-center h4">You Might Also Like</h3>
+        <div class="separator-line mx-auto mb-5"></div>
+        <div class="row g-4 justify-content-center">
+            @foreach (var prod in (List<Marblin.Core.Entities.Product>)ViewBag.Recommendations)
+            {
+                var pImage = prod.Images.FirstOrDefault(i => i.IsPrimary) ?? prod.Images.FirstOrDefault();
+                <div class="col-md-3 col-6">
+                    <div class="card product-card h-100 border-0">
+                        <a asp-controller="Catalog" asp-action="Details" asp-route-id="@prod.Id" class="overflow-hidden d-block">
+                            @if (pImage != null)
+                            {
+                                <img src="@pImage.ImageUrl" class="card-img-top recommendation-img" alt="@prod.Name">
+                            }
+                            else
+                            {
+                                <div class="bg-light recommendation-img"></div>
+                            }
+                        </a>
+                        <div class="card-body text-center px-0">
+                            <h6 class="card-title serif-font h6"><a asp-controller="Catalog" asp-action="Details" asp-route-id="@prod.Id" class="text-decoration-none text-dark">@prod.Name</a></h6>
+                            <p class="text-muted small">@prod.BasePrice.ToString("C0")</p>
+                            <a asp-controller="Catalog" asp-action="Details" asp-route-id="@prod.Id" class="btn btn-outline-dark btn-sm rounded-0 text-uppercase" style="font-size: 0.7rem;">View</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

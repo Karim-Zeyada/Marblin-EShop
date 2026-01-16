@@ -1,0 +1,185 @@
+@model Marblin.Core.Entities.Product
+@{
+    ViewData["Title"] = Model.Name;
+    var primaryImage = Model.Images.FirstOrDefault(i => i.IsPrimary) ?? Model.Images.FirstOrDefault();
+    var otherImages = Model.Images.Where(i => i.Id != primaryImage?.Id).ToList();
+}
+
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-5">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted small text-uppercase">Collection</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-route-categoryId="@Model.CategoryId" class="text-decoration-none text-muted small text-uppercase">@Model.Category?.Name</a></li>
+            <li class="breadcrumb-item active small text-uppercase" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <!-- Product Images -->
+        <div class="col-md-7">
+            <div class="product-gallery sticky-sidebar">
+                <div class="main-image mb-3">
+                    @if (primaryImage != null)
+                    {
+                        <img src="@primaryImage.ImageUrl" id="mainImage" class="img-fluid w-100 shadow-sm product-detail-image" alt="@Model.Name">
+                    }
+                    else
+                    {
+                        <div class="placeholder-bg d-flex align-items-center justify-content-center" style="height: 500px;">
+                            <span class="text-muted">No Image Available</span>
+                        </div>
+                    }
+                </div>
+                @if (Model.Images.Count > 1)
+                {
+                    <div class="row g-2">
+                        @if (primaryImage != null)
+                        {
+                            <div class="col-2">
+                                <img src="@primaryImage.ImageUrl" class="img-fluid border thumbnail-img" onclick="changeImage(this.src)">
+                            </div>
+                        }
+                        @foreach (var img in otherImages)
+                        {
+                            <div class="col-2">
+                                <img src="@img.ImageUrl" class="img-fluid border thumbnail-img" onclick="changeImage(this.src)">
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-5">
+            <h1 class="display-5 serif-font mb-3">@Model.Name</h1>
+            <p class="h3 mb-4 fw-light" id="priceDisplay">@Model.BasePrice.ToString("C0")</p>
+
+            <div class="mb-5">
+                <p class="text-muted text-justify">@Model.Description</p>
+            </div>
+
+            @if (Model.Availability == Marblin.Core.Enums.ProductAvailability.OutOfStock)
+            {
+                <div class="alert alert-warning rounded-0 small">
+                    This item is currently out of stock. <a asp-controller="CustomRequest" asp-action="Create" class="alert-link">Request similar custom piece</a>.
+                </div>
+            }
+            else
+            {
+                <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    
+                    @if (Model.Variants.Any())
+                    {
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase letter-spacing-1">Material / Size</label>
+                            <select name="variantId" id="variantSelect" class="form-select rounded-0" onchange="updatePrice()" required>
+                                <option value="" data-price="@Model.BasePrice">Select Option</option>
+                                @foreach (var v in Model.Variants.Where(v => v.Stock > 0 || Model.Availability == Marblin.Core.Enums.ProductAvailability.MadeToOrder))
+                                {
+                                    <option value="@v.Id" data-price="@v.GetFinalPrice(Model.BasePrice)">
+                                        @v.Material - @v.Size (@v.GetFinalPrice(Model.BasePrice).ToString("C0"))
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Hidden input if no variants but product is available -->
+                        <div class="mb-4 text-muted small">
+                            <em>One size / material only</em>
+                        </div>
+                    }
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-dark btn-lg rounded-0 py-3 text-uppercase letter-spacing-1" id="addToCartBtn" @(Model.Variants.Any() ? "disabled" : "")>
+                            Add to Cart
+                        </button>
+                    </div>
+                    
+                    @if (Model.Availability == Marblin.Core.Enums.ProductAvailability.MadeToOrder)
+                    {
+                        <p class="small text-muted mt-3 text-center">
+                            <i class="bi bi-clock me-1"></i> Made to order. Please allow production time.
+                        </p>
+                    }
+                </form>
+            }
+
+            <div class="mt-5 pt-5 border-top">
+                <div class="row text-center g-3">
+                    <div class="col-4">
+                        <i class="bi bi-shield-check fs-4 mb-2 d-block text-secondary"></i>
+                        <small class="text-uppercase" style="font-size: 0.7rem;">Authentic</small>
+                    </div>
+                    <div class="col-4">
+                        <i class="bi bi-truck fs-4 mb-2 d-block text-secondary"></i>
+                        <small class="text-uppercase" style="font-size: 0.7rem;">Shipping</small>
+                    </div>
+                    <div class="col-4">
+                        <i class="bi bi-arrow-counterclockwise fs-4 mb-2 d-block text-secondary"></i>
+                        <small class="text-uppercase" style="font-size: 0.7rem;">Returns</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    @if (ViewBag.RelatedProducts != null && ((List<Marblin.Core.Entities.Product>)ViewBag.RelatedProducts).Any())
+    {
+        <div class="mt-5 pt-5">
+            <h3 class="serif-font mb-4 h4">You May Also Like</h3>
+            <div class="separator-line mb-5"></div>
+            <div class="row g-4">
+                @foreach (var prod in (List<Marblin.Core.Entities.Product>)ViewBag.RelatedProducts)
+                {
+                    var pImage = prod.Images.FirstOrDefault(i => i.IsPrimary) ?? prod.Images.FirstOrDefault();
+                    <div class="col-md-3">
+                        <div class="card product-card h-100 border-0">
+                            <a asp-action="Details" asp-route-id="@prod.Id" class="overflow-hidden d-block">
+                                @if (pImage != null)
+                                {
+                                    <img src="@pImage.ImageUrl" class="card-img-top related-product-img" alt="@prod.Name">
+                                }
+                                else
+                                {
+                                    <div class="bg-light related-product-img"></div>
+                                }
+                            </a>
+                            <div class="card-body text-center px-0">
+                                <h6 class="card-title serif-font"><a asp-action="Details" asp-route-id="@prod.Id" class="text-decoration-none text-dark">@prod.Name</a></h6>
+                                <p class="text-muted small">@prod.BasePrice.ToString("C0")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function changeImage(src) {
+            document.getElementById('mainImage').src = src;
+        }
+
+        function updatePrice() {
+            var select = document.getElementById('variantSelect');
+            var btn = document.getElementById('addToCartBtn');
+            
+            if (select.value) {
+                var price = parseFloat(select.options[select.selectedIndex].getAttribute('data-price'));
+                document.getElementById('priceDisplay').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(price);
+                btn.disabled = false;
+            } else {
+                // Reset to base price or disable
+                btn.disabled = true;
+            }
+        }
+    </script>
+}

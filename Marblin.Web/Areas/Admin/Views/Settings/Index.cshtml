@@ -1,0 +1,110 @@
+@model Marblin.Core.Entities.SiteSettings
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<div class="admin-header">
+    <h1>Settings</h1>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
+}
+
+<form asp-action="Index" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="stat-card mb-4">
+                <h5 class="mb-3">Payment Settings</h5>
+                <div class="mb-3">
+                    <label asp-for="DepositPercentage" class="form-label">Deposit Percentage (%)</label>
+                    <div class="input-group" style="max-width: 200px;">
+                        <input asp-for="DepositPercentage" class="form-control" type="number" step="1" min="0" max="100" />
+                        <span class="input-group-text">%</span>
+                    </div>
+                    <small class="text-muted">Customers pay this % upfront</small>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="InstapayAccount" class="form-label">Instapay Account</label>
+                    <input asp-for="InstapayAccount" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="VodafoneCashNumber" class="form-label">Vodafone Cash Number</label>
+                    <input asp-for="VodafoneCashNumber" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="stat-card mb-4">
+                <h5 class="mb-3">Home Page Content</h5>
+                <div class="mb-3">
+                    <label asp-for="HeroHeadline" class="form-label">Hero Headline</label>
+                    <input asp-for="HeroHeadline" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="HeroSubheadline" class="form-label">Hero Subheadline</label>
+                    <input asp-for="HeroSubheadline" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Hero Image</label>
+                    @if (!string.IsNullOrEmpty(Model.HeroImageUrl))
+                    {
+                        <div class="mb-2">
+                             <img src="@Model.HeroImageUrl" alt="Current Hero" class="img-thumbnail" style="max-height: 150px;" />
+                        </div>
+                    }
+                    <input type="file" name="heroImage" class="form-control" accept="image/*" />
+                    <div class="form-text">Recommended size: 1920x1080px (Landscape)</div>
+                </div>
+            </div>
+
+            <div class="stat-card mb-4">
+                <h5 class="mb-3">Feature Section (Custom Work)</h5>
+                <div class="mb-3">
+                    <label asp-for="FeatureHeadline" class="form-label">Headline</label>
+                    <input asp-for="FeatureHeadline" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="FeatureBody" class="form-label">Body Text</label>
+                    <textarea asp-for="FeatureBody" class="form-control" rows="3"></textarea>
+                </div>
+                 <div class="mb-3">
+                    <label class="form-label">Feature Image</label>
+                    @if (!string.IsNullOrEmpty(Model.FeatureImageUrl))
+                    {
+                        <div class="mb-2">
+                             <img src="@Model.FeatureImageUrl" alt="Current Feature" class="img-thumbnail" style="max-height: 150px;" />
+                        </div>
+                    }
+                    <input type="file" name="featureImage" class="form-control" accept="image/*" />
+                    <div class="form-text">Recommended size: 1200x800px</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FeatureButtonText" class="form-label">Button Text</label>
+                        <input asp-for="FeatureButtonText" class="form-control" placeholder="Leave empty to hide button" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                         <label asp-for="FeatureButtonUrl" class="form-label">Button URL</label>
+                        <input asp-for="FeatureButtonUrl" class="form-control" />
+                    </div>
+                </div>
+            </div>
+                <div class="mb-3">
+                    <label asp-for="ValueStatements" class="form-label">Value Statements</label>
+                    <textarea asp-for="ValueStatements" class="form-control" rows="3" placeholder="One per line"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="ProcessSteps" class="form-label">Process Steps</label>
+                    <textarea asp-for="ProcessSteps" class="form-control" rows="3" placeholder="One per line"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-dark btn-lg">Save Settings</button>
+</form>

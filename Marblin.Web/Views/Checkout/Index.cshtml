@@ -1,0 +1,143 @@
+@model Marblin.Web.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout";
+    var depositAmount = (Model.Cart!.TotalAmount * (Model.Settings?.DepositPercentage ?? 50)) / 100;
+}
+
+<div class="container my-5 checkout-container">
+    <h2 class="serif-font mb-4 text-center">Secure Checkout</h2>
+    
+    <div class="row g-5">
+        <div class="col-md-7">
+            <h5 class="mb-4 serif-font">Shipping Information</h5>
+            <form asp-action="Index" method="post" class="needs-validation">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-0"></div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="CustomerName" class="form-label small text-uppercase letter-spacing-1">Full Name</label>
+                        <input asp-for="CustomerName" class="form-control rounded-0" placeholder="e.g. John Doe" />
+                        <span asp-validation-for="CustomerName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label small text-uppercase letter-spacing-1">Email Address</label>
+                        <input asp-for="Email" class="form-control rounded-0" placeholder="john@example.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                        <div class="form-text small">We'll send order updates here.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Phone" class="form-label small text-uppercase letter-spacing-1">Phone Number</label>
+                        <input asp-for="Phone" class="form-control rounded-0" placeholder="+20 1xx xxx xxxx" />
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="AddressLine" class="form-label small text-uppercase letter-spacing-1">Address</label>
+                        <input asp-for="AddressLine" class="form-control rounded-0" placeholder="123 Street Name" />
+                        <span asp-validation-for="AddressLine" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="City" class="form-label small text-uppercase letter-spacing-1">City</label>
+                        <input asp-for="City" class="form-control rounded-0" />
+                        <span asp-validation-for="City" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Region" class="form-label small text-uppercase letter-spacing-1">Region/State</label>
+                        <input asp-for="Region" class="form-control rounded-0" />
+                        <span asp-validation-for="Region" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label asp-for="PostalCode" class="form-label small text-uppercase letter-spacing-1">Zip</label>
+                        <input asp-for="PostalCode" class="form-control rounded-0" />
+                        <span asp-validation-for="PostalCode" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12">
+                         <label asp-for="Country" class="form-label small text-uppercase letter-spacing-1">Country</label>
+                         <input asp-for="Country" class="form-control rounded-0" readonly />
+                    </div>
+                </div>
+
+                <hr class="my-5 opacity-25">
+
+                <div class="alert alert-light border rounded-0">
+                    <h6 class="mb-2 serif-font"><i class="bi bi-info-circle me-2"></i> Payment Information</h6>
+                    <p class="small text-muted mb-0">
+                        You will not be charged yet. After placing the order, you will be redirected to the confirmation page where you can pay the <strong>@depositAmount.ToString("C0") deposit (@(Model.Settings?.DepositPercentage ?? 50)%)</strong> via Instapay or Vodafone Cash to confirm your order.
+                    </p>
+                </div>
+
+                <button class="btn btn-dark w-100 btn-lg rounded-0 py-3 mt-3 text-uppercase letter-spacing-1" type="submit">PLACE ORDER</button>
+            </form>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card bg-light border-0 shadow-sm sticky-sidebar">
+                <div class="card-body p-4">
+                    <h5 class="serif-font mb-4">Your Order</h5>
+                    <ul class="list-group list-group-flush bg-transparent mb-3">
+                        @foreach (var item in Model.Cart!.Items)
+                        {
+                            <li class="list-group-item bg-transparent d-flex justify-content-between lh-sm px-0 border-bottom">
+                                <div>
+                                    <h6 class="my-0 serif-font h6">@item.ProductName</h6>
+                                    @if (!string.IsNullOrEmpty(item.VariantDescription))
+                                    {
+                                        <small class="text-muted">@item.VariantDescription</small>
+                                    }
+                                </div>
+                                <span class="text-muted">@item.Total.ToString("C0")</span>
+                            </li>
+                        }
+                        
+                        <li class="list-group-item bg-transparent d-flex justify-content-between mt-3 pt-3 border-0 px-0">
+                            <span class="text-secondary">Subtotal</span>
+                            <span class="text-dark">@Model.Cart.SubTotal.ToString("C0")</span>
+                        </li>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Cart.AppliedCouponCode))
+                        {
+                            <li class="list-group-item bg-transparent d-flex justify-content-between border-0 px-0 text-success">
+                                <span class="small">
+                                    Discount (@Model.Cart.AppliedCouponCode)
+                                    <form asp-action="RemoveCoupon" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-link link-danger p-0 ms-1 text-decoration-none" style="font-size: 0.8rem;">(Remove)</button>
+                                    </form>
+                                </span>
+                                <span>-@Model.Cart.DiscountAmount.ToString("C0")</span>
+                            </li>
+                        }
+
+                        <li class="list-group-item bg-transparent d-flex justify-content-between border-0 px-0">
+                            <strong class="text-dark">Total</strong>
+                            <strong class="text-dark">@Model.Cart.TotalAmount.ToString("C0")</strong>
+                        </li>
+
+                        @if (string.IsNullOrEmpty(Model.Cart.AppliedCouponCode))
+                        {
+                            <li class="list-group-item bg-transparent px-0 border-0 pt-3">
+                                <form asp-action="ApplyCoupon" method="post" class="input-group">
+                                    <input type="text" name="code" class="form-control rounded-0 form-control-sm text-uppercase" placeholder="Coupon Code" aria-label="Coupon Code">
+                                    <button class="btn btn-outline-dark rounded-0 btn-sm" type="submit">APPLY</button>
+                                </form>
+                            </li>
+                        }
+                        <li class="list-group-item bg-transparent d-flex justify-content-between border-0 px-0 text-success">
+                            <span class="small text-uppercase fw-bold letter-spacing-1">Required Deposit</span>
+                            <strong>@depositAmount.ToString("C0")</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

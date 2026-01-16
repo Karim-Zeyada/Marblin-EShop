@@ -1,0 +1,128 @@
+@model List<Marblin.Core.Entities.Product>
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="admin-header">
+    <h1>Products</h1>
+    <a asp-action="Create" class="btn btn-dark">+ Add Product</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Filters -->
+<div class="stat-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <input type="text" name="search" class="form-control" placeholder="Search products..." value="@ViewBag.Search" />
+        </div>
+        <div class="col-md-3">
+            <select name="categoryId" class="form-select">
+                <option value="">All Categories</option>
+                @if (ViewBag.Categories is List<Marblin.Core.Entities.Category> categories)
+                {
+                    foreach (var cat in categories)
+                    {
+                        <option value="@cat.Id" selected="@(ViewBag.CategoryId != null && ViewBag.CategoryId == cat.Id)">@cat.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="availability" class="form-select">
+                <option value="">All Availability</option>
+                @foreach (var status in Enum.GetValues<Marblin.Core.Enums.ProductAvailability>())
+                {
+                    <option value="@status" selected="@(ViewBag.Availability != null && ViewBag.Availability == status)">@status</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-dark w-100">Filter</button>
+        </div>
+    </form>
+</div>
+
+<!-- Products Table -->
+<div class="stat-card">
+    @if (Model.Any())
+    {
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Base Price</th>
+                    <th>Variants</th>
+                    <th>Status</th>
+                    <th style="width: 120px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    var primaryImage = product.Images.FirstOrDefault(i => i.IsPrimary) ?? product.Images.FirstOrDefault();
+                    <tr>
+                        <td>
+                            @if (primaryImage != null)
+                            {
+                                <img src="@primaryImage.ImageUrl" alt="@product.Name" class="admin-product-img" />
+                            }
+                            else
+                            {
+                                <div class="admin-no-img">
+                                    <span class="text-muted small">No img</span>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <strong>@product.Name</strong>
+                            @if (product.IsSignaturePiece)
+                            {
+                                <span class="badge bg-warning text-dark ms-1">Signature</span>
+                            }
+                            @if (!product.IsActive)
+                            {
+                                <span class="badge bg-secondary ms-1">Inactive</span>
+                            }
+                        </td>
+                        <td>@product.Category?.Name</td>
+                        <td>@product.BasePrice.ToString("C2")</td>
+                        <td>@product.Variants.Count</td>
+                        <td>
+                            @switch (product.Availability)
+                            {
+                                case Marblin.Core.Enums.ProductAvailability.InStock:
+                                    <span class="badge bg-success">In Stock</span>
+                                    break;
+                                case Marblin.Core.Enums.ProductAvailability.MadeToOrder:
+                                    <span class="badge bg-info">Made to Order</span>
+                                    break;
+                                case Marblin.Core.Enums.ProductAvailability.OutOfStock:
+                                    <span class="badge bg-danger">Out of Stock</span>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this product?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted mb-0">No products found. <a asp-action="Create">Add your first product</a>.</p>
+    }
+</div>

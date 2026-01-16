@@ -1,0 +1,198 @@
+@model Marblin.Web.Areas.Admin.Models.ProductEditViewModel
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<div class="admin-header">
+    <h1>Edit Product</h1>
+    <a asp-action="Index" class="btn btn-outline-dark">← Back to Products</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <!-- Product Details -->
+    <div class="col-md-7">
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Product Details</h5>
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="BasePrice" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="BasePrice" class="form-control" type="number" step="0.01" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CategoryId" class="form-label"></label>
+                        <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-select"></select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Availability" class="form-label"></label>
+                        <select asp-for="Availability" asp-items="Html.GetEnumSelectList<Marblin.Core.Enums.ProductAvailability>()" class="form-select"></select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-check mt-4">
+                            <input asp-for="IsSignaturePiece" class="form-check-input" />
+                            <label asp-for="IsSignaturePiece" class="form-check-label">Signature Piece</label>
+                        </div>
+                        <div class="form-check">
+                            <input asp-for="IsActive" class="form-check-input" />
+                            <label asp-for="IsActive" class="form-check-label">Active</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-dark">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Variants -->
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Variants</h5>
+            @if (Model.Variants.Any())
+            {
+                <table class="table table-sm mb-3">
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Size</th>
+                            <th>Price Adj.</th>
+                            <th>Stock</th>
+                            <th>SKU</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var v in Model.Variants)
+                        {
+                            <tr>
+                                <td>@v.Material</td>
+                                <td>@v.Size</td>
+                                <td>@(v.PriceAdjustment >= 0 ? "+" : "")@v.PriceAdjustment.ToString("C2")</td>
+                                <td>
+                                    @if (v.Stock <= 3 && v.Stock > 0)
+                                    {
+                                        <span class="text-warning">@v.Stock (Low)</span>
+                                    }
+                                    else if (v.Stock == 0)
+                                    {
+                                        <span class="text-danger">0</span>
+                                    }
+                                    else
+                                    {
+                                        @v.Stock
+                                    }
+                                </td>
+                                <td><code>@v.SKU</code></td>
+                                <td>
+                                    <form asp-action="DeleteVariant" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@v.Id" />
+                                        <input type="hidden" name="productId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this variant?');">×</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            <form asp-action="AddVariant" method="post" class="row g-2">
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <div class="col-md-2">
+                    <input type="text" name="material" class="form-control form-control-sm" placeholder="Material" required />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="size" class="form-control form-control-sm" placeholder="Size" required />
+                </div>
+                <div class="col-md-2">
+                    <input type="number" step="0.01" name="priceAdjustment" class="form-control form-control-sm" placeholder="+/- Price" value="0" />
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="stock" class="form-control form-control-sm" placeholder="Stock" value="0" />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="sku" class="form-control form-control-sm" placeholder="SKU" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-sm btn-outline-dark w-100">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Images -->
+    <div class="col-md-5">
+        <div class="stat-card">
+            <h5 class="mb-3">Images</h5>
+            <div class="row g-2 mb-3">
+                @foreach (var img in Model.Images)
+                {
+                    <div class="col-6">
+                        <div style="position: relative;">
+                            <img src="@img.ImageUrl" alt="@img.AltText" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;" />
+                            @if (img.IsPrimary)
+                            {
+                                <span class="badge bg-warning text-dark" style="position: absolute; top: 5px; left: 5px;">Primary</span>
+                            }
+                            <form asp-action="DeleteImage" method="post" style="position: absolute; top: 5px; right: 5px;">
+                                <input type="hidden" name="id" value="@img.Id" />
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete image?');">×</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+            <form asp-action="UploadImage" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <div class="mb-2">
+                    <input type="file" name="image" class="form-control form-control-sm" accept="image/*" required />
+                </div>
+                <div class="mb-2">
+                    <input type="text" name="altText" class="form-control form-control-sm" placeholder="Alt text (optional)" />
+                </div>
+                <div class="form-check mb-2">
+                    <input type="checkbox" name="isPrimary" value="true" class="form-check-input" id="isPrimary" />
+                    <label class="form-check-label" for="isPrimary">Set as primary image</label>
+                </div>
+                <button type="submit" class="btn btn-sm btn-outline-dark">Upload Image</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

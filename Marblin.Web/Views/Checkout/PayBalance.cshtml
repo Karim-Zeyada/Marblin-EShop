@@ -1,0 +1,131 @@
+@model Marblin.Core.Entities.Order
+@{
+    ViewData["Title"] = "Pay Balance";
+    var settings = ViewBag.Settings as Marblin.Core.Entities.SiteSettings;
+}
+
+<div class="container my-5 text-center confirmation-container animate-fade-in-up">
+    <div class="mb-5">
+        <div class="d-inline-flex align-items-center justify-content-center bg-dark text-white rounded-circle shadow-lg" style="width: 80px; height: 80px;">
+            <i class="bi bi-credit-card fs-1"></i>
+        </div>
+    </div>
+    <h1 class="serif-font mb-3 display-5">Final Step</h1>
+    <p class="lead text-secondary mb-5">Complete your payment for Order <strong>#@Model.OrderNumber</strong> to initialize shipping.</p>
+    
+    <div class="card border-0 shadow-lg text-start mb-5 overflow-hidden" style="max-width: 800px; margin: 0 auto;">
+        <div class="card-header bg-dark text-white py-4 position-relative overflow-hidden">
+            <div class="position-absolute top-0 start-0 w-100 h-100 glass-effect opacity-10"></div>
+            <h5 class="mb-0 text-center text-uppercase letter-spacing-2 small position-relative z-1">Final Balance Payment</h5>
+        </div>
+        <div class="card-body p-5">
+            @if (Model.IsBalanceVerified)
+            {
+                 <div class="alert alert-success border-0 text-center py-4 bg-light">
+                    <i class="bi bi-check-circle-fill text-success fs-3 mb-3 d-block"></i>
+                    <strong class="h5 serif-font">Payment Verified!</strong>
+                    <p class="text-secondary mb-0 mt-2">Your balance payment has been verified. We are preparing to ship your order.</p>
+                </div>
+                <div class="text-center mt-4">
+                     <a asp-controller="Order" asp-action="Details" asp-route-id="@Model.OrderNumber" class="btn btn-dark px-5 py-3 rounded-0 shadow-sm transition-all hover-translate-up">View Order Details</a>
+                </div>
+            }
+            else if (Model.BalancePaymentProofSubmittedAt.HasValue)
+            {
+                <div class="alert alert-success border-0 text-center py-4 bg-light">
+                    <i class="bi bi-clock-history text-success fs-3 mb-3 d-block"></i>
+                    <strong class="h5 serif-font">Proof Submitted!</strong>
+                    <p class="text-secondary mb-0 mt-2">We are currently verifying your balance payment. We will notify you via email once approved.</p>
+                </div>
+                <div class="text-center mt-4">
+                     <a asp-controller="Order" asp-action="Details" asp-route-id="@Model.OrderNumber" class="btn btn-outline-dark px-5 py-3 rounded-0">Return to Order</a>
+                </div>
+            }
+            else
+            {
+                <div class="text-center mb-5">
+                    <h5 class="mb-3 serif-font h4">Balance Due: <span class="text-success">@Model.RemainingBalance.ToString("C0")</span></h5>
+                    <p class="text-secondary small">Please transfer the remaining balance to one of the following accounts:</p>
+                    
+                    <div class="row g-3 justify-content-center mt-4">
+                        @if (!string.IsNullOrEmpty(settings?.InstapayAccount))
+                        {
+                            <div class="col-md-5">
+                                <div class="p-4 border text-center bg-light transition-all hover-shadow-sm h-100">
+                                    <strong class="d-block mb-2 text-uppercase small letter-spacing-2 text-secondary">Instapay</strong>
+                                    <i class="bi bi-qr-code-scan fs-4 mb-2 d-block text-dark opacity-50"></i>
+                                    <span class="text-monospace fs-5 fw-bold text-dark">@settings.InstapayAccount</span>
+                                </div>
+                            </div>
+                        }
+                         @if (!string.IsNullOrEmpty(settings?.VodafoneCashNumber))
+                        {
+                            <div class="col-md-5">
+                                 <div class="p-4 border text-center bg-light transition-all hover-shadow-sm h-100">
+                                    <strong class="d-block mb-2 text-uppercase small letter-spacing-2 text-secondary">Vodafone Cash</strong>
+                                    <i class="bi bi-phone fs-4 mb-2 d-block text-dark opacity-50"></i>
+                                    <span class="text-monospace fs-5 fw-bold text-dark">@settings.VodafoneCashNumber</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="separator-line mx-auto mb-5"></div>
+
+                <h6 class="mb-4 text-center text-uppercase small letter-spacing-2 fw-bold text-secondary">Submit Payment Proof</h6>
+                <form asp-action="UploadBalanceProof" method="post" enctype="multipart/form-data" class="col-md-10 mx-auto">
+                    <input type="hidden" name="orderId" value="@Model.Id" />
+                    
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger small rounded-0 text-center mb-4">@TempData["Error"]</div>
+                    }
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success small rounded-0 text-center mb-4">@TempData["Success"]</div>
+                    }
+
+                    <ul class="nav nav-tabs mb-3 justify-content-center border-bottom-0 gap-2" id="paymentTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active text-dark rounded-0 px-4 border shadow-none bg-light" id="receipt-tab" data-bs-toggle="tab" data-bs-target="#receipt" type="button" role="tab">Upload Receipt</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link text-dark rounded-0 px-4 border shadow-none bg-light" id="transaction-tab" data-bs-toggle="tab" data-bs-target="#transaction" type="button" role="tab">Transaction ID</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content border p-4 bg-white shadow-sm" id="paymentTabContent">
+                        <div class="tab-pane fade show active" id="receipt" role="tabpanel">
+                            <div class="mb-2">
+                                <label class="form-label small text-secondary text-uppercase letter-spacing-1 fw-bold">Upload screenshot/photo of transfer</label>
+                                <input type="file" name="receiptImage" class="form-control rounded-0 p-3" accept="image/*" />
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="transaction" role="tabpanel">
+                            <div class="mb-2">
+                                <label class="form-label small text-secondary text-uppercase letter-spacing-1 fw-bold">Enter Transaction ID / Reference Number</label>
+                                <input type="text" name="transactionId" class="form-control rounded-0 p-3" placeholder="e.g. 1234567890" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 mt-4 py-3 rounded-0 text-uppercase letter-spacing-2 shadow-hover transition-all">Submit Proof</button>
+                </form>
+            }
+        </div>
+    </div>
+    
+    <div class="text-center">
+        <a asp-controller="Order" asp-action="Track" class="text-secondary text-decoration-none small hover-underline d-block mb-3">Track Another Order</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-link text-dark text-uppercase letter-spacing-2 p-0 text-decoration-none hover-opacity-75">Return Home</a>
+    </div>
+</div>
+
+<style>
+    .nav-link.active {
+        background-color: #fff !important;
+        border-bottom-color: #fff !important;
+        font-weight: 600;
+        box-shadow: 0 -2px 5px rgba(0,0,0,0.05) !important;
+    }
+</style>

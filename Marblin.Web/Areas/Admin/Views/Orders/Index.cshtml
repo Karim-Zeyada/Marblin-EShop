@@ -1,0 +1,98 @@
+@model List<Marblin.Core.Entities.Order>
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<div class="admin-header">
+    <h1>Orders</h1>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
+}
+
+<!-- Filters -->
+<div class="stat-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <input type="text" name="search" class="form-control" placeholder="Search by Order #, email, name..." value="@ViewBag.Search" />
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All Statuses</option>
+                @foreach (var s in Enum.GetValues<Marblin.Core.Enums.OrderStatus>())
+                {
+                    <option value="@s" selected="@(ViewBag.Status != null && ViewBag.Status == s)">@s</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-dark w-100">Filter</button>
+        </div>
+    </form>
+</div>
+
+<div class="stat-card">
+    @if (Model.Any())
+    {
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Deposit</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model)
+                {
+                    <tr>
+                        <td><a asp-action="Details" asp-route-id="@o.Id">@o.OrderNumber</a></td>
+                        <td>@o.CustomerName<br /><small class="text-muted">@o.Email</small></td>
+                        <td>@o.OrderItems.Count</td>
+                        <td>@o.TotalAmount.ToString("C2")</td>
+                        <td>
+                            @o.DepositAmount.ToString("C2")
+                            @if (o.IsDepositVerified)
+                            {
+                                <span class="badge bg-success">✓</span>
+                            }
+                        </td>
+                        <td>
+                            @switch (o.Status)
+                            {
+                                case Marblin.Core.Enums.OrderStatus.PendingDeposit:
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                    break;
+                                case Marblin.Core.Enums.OrderStatus.InProduction:
+                                    <span class="badge bg-primary">Production</span>
+                                    break;
+                                case Marblin.Core.Enums.OrderStatus.AwaitingBalance:
+                                    <span class="badge bg-info">Awaiting</span>
+                                    break;
+                                case Marblin.Core.Enums.OrderStatus.Shipped:
+                                    <span class="badge bg-success">Shipped</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary">@o.Status</span>
+                                    break;
+                            }
+                        </td>
+                        <td>@o.CreatedAt.ToString("MMM d")</td>
+                        <td><a asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-outline-dark">View</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted mb-0">No orders found.</p>
+    }
+</div>
