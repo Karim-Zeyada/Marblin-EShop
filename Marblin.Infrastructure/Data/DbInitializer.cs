@@ -11,11 +11,6 @@ namespace Marblin.Infrastructure.Data
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            // Ensure the database is created (optional, depending on migration strategy)
-            // var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-            // await context.Database.MigrateAsync();
-
-            // Ensure Admin role exists
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
                 await roleManager.CreateAsync(new IdentityRole("Admin"));

@@ -70,7 +70,7 @@
     </header>
 
     <!-- Main content with top margin handling for fixed navbar -->
-    <main role="main" class="flex-grow-1" style="padding-top: 0;">
+    <main role="main" class="flex-grow-1" style="@(!isHomePage ? "padding-top: var(--navbar-height);" : "padding-top: 0;")">
         @RenderBody()
     </main>
 

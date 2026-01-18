@@ -96,17 +96,9 @@ namespace Marblin.Web.Controllers
             }
             else
             {
-                // We need the order number to redirect back in case of error, but we don't have it if we didn't fetch the order.
-                // However, the previous logic relied on pre-fetching. 
-                // To avoid pre-fetching, we can only redirect if we have the ID.
-                // If we don't assume pre-fetch, we might fail to redirect gracefully to "Confirmation" with OrderNumber if the user provides nothing.
-                // BUT, in a standard flow, one of these is provided.
-                // If neither is provided, we can try to fetch just for redirect, or Error page.
-                // Let's stick to the double-fetch ONLY for the error case, or return BadRequest.
-                // Returning BadRequest (or same view) is acceptable if input is missing.
+
                 TempData["Error"] = "Please provide a receipt image or transaction ID.";
                 
-                // Fallback: Try fetching just for redirect. This is rare edge case (validation error).
                 order = await _orderService.GetOrderByIdAsync(orderId);
                 if (order == null) return NotFound();
                 
@@ -126,12 +118,9 @@ namespace Marblin.Web.Controllers
 
             if (order == null) return NotFound();
             
-            // Only allow access if status is AwaitingBalance (or maybe just show the page regardless but disable simple checks?)
-            // It's safer to ensure they should be paying balance.
+
             if (order.Status != OrderStatus.AwaitingBalance && order.Status != OrderStatus.InProduction) 
             {
-               // Allow early viewing if needed, but strictly it's for AwaitingBalance.
-               // Let's be lenient for now or strict? Strict is better for UX flow.
                if(order.Status != OrderStatus.AwaitingBalance) 
                {
                    return RedirectToAction(nameof(Confirmation), new { id = order.OrderNumber });

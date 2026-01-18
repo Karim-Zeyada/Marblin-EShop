@@ -37,10 +37,8 @@ namespace Marblin.Web.Controllers
             {
                 Settings = settings ?? new SiteSettings(),
                 SignaturePieces = signaturePieces.ToList(),
-                Categories = categories.Where(c => c.IsActive).ToList() // In-memory filter if spec returns inactive, but spec filters active. 
-                                                                        // Wait, CategoryWithProductsSpecification doesn't filter active.
-                                                                        // Let's rely on list filter or update spec.
-                                                                        // Updating spec logic might be better but for now filter in memory is safe given low category count.
+                Categories = categories.Where(c => c.IsActive).ToList()
+
             };
 
             return View(viewModel);
