@@ -130,31 +130,54 @@
 }
 
 <!-- Custom Request Teaser -->
-<section class="container my-5 py-5 feature-section-container">
-    <div class="row align-items-center g-5">
-        <div class="col-lg-6 order-lg-2">
-            <div class="feature-image-wrapper shadow-lg overflow-hidden rounded-0 position-relative">
-                @if (!string.IsNullOrEmpty(Model.Settings.FeatureImageUrl))
-                {
-                    <img src="@Model.Settings.FeatureImageUrl" class="img-fluid w-100 object-fit-cover feature-section-img" alt="Custom Work" />
-                }
-                else
-                {
-                    <img src="/images/custom-work.jpg" class="img-fluid w-100 object-fit-cover feature-section-img" alt="Custom Work" onerror="this.src='https://placehold.co/800x600/e5e5e5/1a1a1a?text=Custom+Marblin+Work'" />
-                }
-            </div>
-        </div>
-        <div class="col-lg-6 order-lg-1">
-            <div class="p-4 animate-fade-in-up">
-                <span class="text-secondary text-uppercase letter-spacing-2 small d-block mb-2">Bespoke Design</span>
-                <h2 class="display-5 serif-font mb-4 text-dark">@Model.Settings.FeatureHeadline</h2>
-                <div class="lead text-secondary mb-5" style="white-space: pre-wrap; font-size: 1.1rem;">@Model.Settings.FeatureBody</div>
-                
-                @if (!string.IsNullOrEmpty(Model.Settings.FeatureButtonText))
-                {
-                    <a href="@(Model.Settings.FeatureButtonUrl ?? "#")" class="btn btn-dark btn-lg rounded-0 px-5">@Model.Settings.FeatureButtonText</a>
-                }
+<!-- Custom Request Teaser -->
+<section class="container my-5 py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0">
+                <div class="row g-0 align-items-center" style="min-height: 600px;">
+                    <!-- Øæá ÃßÈÑ -->
+                    <!-- Image Side -->
+                    <div class="col-lg-6 order-lg-2 d-flex justify-content-center align-items-center p-3">
+                        <div class="w-100" style="max-width: 500px;">
+                            <!-- ÖÇÈØ ÇáÚÑÖ -->
+                            @if (!string.IsNullOrEmpty(Model.Settings.FeatureImageUrl))
+                            {
+                                <img src="@Model.Settings.FeatureImageUrl"
+                                     class="img-fluid rounded object-fit-cover"
+                                     alt="Custom Work"
+                                     style="object-position: center;"
+                                     onerror="this.src='https://placehold.co/800x600/e5e5e5/1a1a1a?text=Custom+Marblin+Work'" />
+                            }
+                            else
+                            {
+                                <img src="/images/custom-work.jpg"
+                                     class="img-fluid rounded object-fit-cover"
+                                     alt="Custom Work"
+                                     onerror="this.src='https://placehold.co/800x600/e5e5e5/1a1a1a?text=Custom+Marblin+Work'" />
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Text Side -->
+                    <div class="col-lg-6 order-lg-1 d-flex flex-column justify-content-center p-5">
+                        <span class="text-secondary text-uppercase letter-spacing-2 small mb-2">Bespoke Design</span>
+                        <h2 class="display-5 serif-font mb-4 text-dark">@Model.Settings.FeatureHeadline</h2>
+                        <div class="lead text-secondary mb-4" style="font-size: 1.1rem;">
+                            @Model.Settings.FeatureBody
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Settings.FeatureButtonText))
+                        {
+                            <a href="@(Model.Settings.FeatureButtonUrl ?? "#")"
+                               class="btn btn-dark btn-lg rounded-0 px-5">
+                                @Model.Settings.FeatureButtonText
+                            </a>
+                        }
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
 </section>
+
