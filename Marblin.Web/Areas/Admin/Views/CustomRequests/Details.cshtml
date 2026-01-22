@@ -36,8 +36,8 @@
                     @foreach (var img in Model.Images)
                     {
                         <div class="col-4">
-                            <a href="@img.ImageUrl" target="_blank">
-                                <img src="@img.ImageUrl" class="img-fluid rounded" />
+                            <a href="@Url.Action("GetFile", "Receipts", new { fileName = img.ImageUrl, type = "document" })" target="_blank">
+                                <img src="@Url.Action("GetFile", "Receipts", new { fileName = img.ImageUrl, type = "document" })" class="img-fluid rounded" />
                             </a>
                         </div>
                     }

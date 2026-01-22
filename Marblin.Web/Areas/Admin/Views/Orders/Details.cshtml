@@ -76,8 +76,8 @@
                     else if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.ReceiptImage)
                     {
                         <p><strong>Receipt:</strong></p>
-                        <a href="@Model.ReceiptImageUrl" target="_blank">
-                            <img src="@Model.ReceiptImageUrl" style="max-width: 200px; border-radius: 4px;" />
+                        <a href="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" target="_blank">
+                            <img src="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" style="max-width: 200px; border-radius: 4px;" />
                         </a>
                     }
                 </div>
