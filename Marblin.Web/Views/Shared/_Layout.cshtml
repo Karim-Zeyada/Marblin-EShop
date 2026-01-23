@@ -88,9 +88,74 @@
         @RenderBody()
     </main>
 
-    <footer class="bg-dark text-white pt-5 pb-4 mt-auto border-top">
-        <div class="container text-center small text-secondary">
-            &copy; @DateTime.Now.Year MARBLIN. All rights reserved.
+    <footer class="mt-auto">
+        <div class="container">
+            <div class="row g-5">
+                <!-- Section 1: Brand & Bio -->
+                <div class="col-lg-4 col-md-6 col-12">
+                    <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                        <span class="footer-brand">MARBLIN</span>
+                    </a>
+                    <p class="footer-bio">
+                        Exceptional craftsmanship meets contemporary minimalism.
+                        Dedicated to providing a curated selection of luxury goods
+                        that define modern elegance and timeless style.
+                    </p>
+                </div>
+
+                <!-- Section 2: Links -->
+                <div class="col-lg-4 col-md-6 col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5 class="footer-heading">Discover</h5>
+                            <ul class="footer-links">
+                                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                                <li><a asp-controller="Catalog" asp-action="Index">Shop Collection</a></li>
+                                <li><a asp-controller="CustomRequest" asp-action="Create">Bespoke</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="footer-heading">Assistance</h5>
+                            <ul class="footer-links">
+                                <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                                <li><a asp-controller="Order" asp-action="Track">Track Order</a></li>
+                                <li><a asp-controller="Home" asp-action="About">About</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Contact -->
+                <div class="col-lg-4 col-md-6 col-12">
+                    <h5 class="footer-heading">Contact</h5>
+                    <ul class="footer-links mt-4">
+                        <li>
+                            <p class="text-sm text-white-60 mb-2">123 Design Avenue, New York, NY</p>
+                        </li>
+                        <li>
+                            <a class="text-sm text-white-60 hover-white" href="mailto:contact@marblin.com">contact@marblin.com</a>
+                        </li>
+                    </ul>
+                    <div class="social-links d-flex gap-3 mt-4">
+                        <a class="text-white-60 hover-white fs-5" href="#">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a class="text-white-60 hover-white fs-5" href="#">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a class="text-white-60 hover-white fs-5" href="#">
+                            <i class="bi bi-twitter-x"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom text-center">
+                <p class="mb-0">
+                    &copy; @DateTime.Now.Year MARBLIN. Curated with precision.
+                </p>
+            </div>
         </div>
     </footer>
 
