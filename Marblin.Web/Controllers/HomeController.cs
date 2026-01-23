@@ -12,11 +12,13 @@ namespace Marblin.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmailService _emailService;
 
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IEmailService emailService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _emailService = emailService;
         }
 
         public async Task<IActionResult> Index()
@@ -54,9 +56,32 @@ namespace Marblin.Web.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult Contact()
         {
-            return View();
+            return View(new ContactViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Contact(ContactViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                await _emailService.SendContactFormEmailAsync(model.Name, model.Email, model.Message);
+                TempData["Success"] = "Thank you for your message! We'll get back to you soon.";
+                return RedirectToAction(nameof(Contact));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send contact form email from {Email}", model.Email);
+                TempData["Error"] = "Sorry, there was a problem sending your message. Please try again.";
+                return View(model);
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

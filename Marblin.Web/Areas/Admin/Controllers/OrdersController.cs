@@ -64,5 +64,16 @@ namespace Marblin.Web.Areas.Admin.Controllers
             TempData["Success"] = $"Order status updated to {newStatus}!";
             return RedirectToAction(nameof(Details), new { id });
         }
+
+        // POST: Admin/Orders/VerifyBalance/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyBalance(int id)
+        {
+            await _orderService.VerifyBalanceAsync(id);
+
+            TempData["Success"] = "Balance verified!";
+            return RedirectToAction(nameof(Details), new { id });
+        }
     }
 }
