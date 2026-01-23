@@ -736,3 +736,51 @@ footer {
     align-items: center;
     justify-content: center;
 }
+
+/* =========================================
+   MOBILE MENU OVERRIDE (Small Devices Only)
+   ========================================= */
+
+/* Drawer Container */
+.mobile-offcanvas {
+    background-color: #000000 !important;
+    /* Solid Black */
+    width: 320px !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 9999 !important;
+    /* Maximum priority */
+}
+
+/* Links in the Drawer */
+.mobile-drawer-link {
+    display: flex;
+    align-items: center;
+    color: #FFFFFF !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 1rem 0;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Subtle divider */
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+.mobile-drawer-link:hover {
+    padding-left: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    opacity: 1;
+}
+
+.mobile-drawer-link i {
+    margin-right: 15px;
+    font-size: 1.25rem;
+    color: #FFFFFF;
+}
+
+/* Close Button */
+.btn-close-white-mobile {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 1;
+}
