@@ -25,11 +25,9 @@
             ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
             ViewContext.RouteData.Values["action"]?.ToString() == "Index";
 
-            var navClasses = isHomePage
-            ? "fixed-top transition-all"
-            : "fixed-top glass-dark transition-all";
+            var navClasses = "fixed-top transition-all";
         }
-        <nav class="navbar navbar-expand-lg navbar-dark sticky-top @navClasses" id="mainNavbar">
+        <nav class="navbar navbar-expand-xl navbar-dark sticky-top @navClasses" id="mainNavbar">
             <div class="container-fluid px-lg-5">
 
                 <a class="navbar-brand d-flex align-items-center gap-2"
@@ -38,36 +36,33 @@
                     <span class="fw-bold fs-4 text-white">MARBLIN</span>
                 </a>
 
+                <!-- 2. MOBILE TOGGLER (Right) -->
                 <button class="navbar-toggler border-0" type="button"
-                        data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                        data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvas"
+                        aria-controls="mobileOffcanvas">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="navbar-collapse collapse">
+                <!-- 3. DESKTOP NAVIGATION (Unchanged) -->
+                <div class="collapse navbar-collapse d-none d-xl-block">
                     <ul class="navbar-nav mx-auto gap-4">
                         <li class="nav-item">
-                            <a class="nav-link text-white"
-                               asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white"
-                               asp-controller="Catalog" asp-action="Index">Shop</a>
+                            <a class="nav-link text-white-50 hover-white" asp-controller="Catalog" asp-action="Index">Shop</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white"
-                               asp-controller="CustomRequest" asp-action="Create">Custom Request</a>
+                            <a class="nav-link text-white-50 hover-white" asp-controller="CustomRequest" asp-action="Create">Custom Request</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white"
-                               asp-controller="Home" asp-action="About">About</a>
+                            <a class="nav-link text-white-50 hover-white" asp-controller="Home" asp-action="About">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white"
-                               asp-controller="Home" asp-action="Contact">Contact</a>
+                            <a class="nav-link text-white-50 hover-white" asp-controller="Home" asp-action="Contact">Contact</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white"
-                               asp-controller="Order" asp-action="Track">Track Order</a>
+                            <a class="nav-link text-white-50 hover-white" asp-controller="Order" asp-action="Track">Track Order</a>
                         </li>
                     </ul>
 
@@ -79,6 +74,57 @@
                         </a>
                     </div>
                 </div>
+
+                <!-- 4. MOBILE OFFCANVAS (Inserted for Small Devices) -->
+                <div class="offcanvas offcanvas-start mobile-offcanvas d-xl-none" tabindex="-1" id="mobileOffcanvas" aria-labelledby="mobileOffcanvasLabel">
+
+                    <!-- Header -->
+                    <div class="offcanvas-header p-4 border-bottom border-white-10">
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- Brand Logo Copy -->
+                            <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                <img src="~/images/logo.jpg" alt="Logo" class="img-fluid rounded-circle" />
+                            </div>
+                            <span class="font-playfair fw-bold fs-4 text-white">MARBLIN</span>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white-mobile" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="offcanvas-body p-4">
+                        <nav class="d-flex flex-column">
+                            <a class="mobile-drawer-link" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                            <a class="mobile-drawer-link" asp-controller="Catalog" asp-action="Index">
+                                <i class="bi bi-bag"></i> Shop
+                            </a>
+                            <a class="mobile-drawer-link" asp-controller="CustomRequest" asp-action="Create">
+                                <i class="bi bi-palette"></i> Custom Request
+                            </a>
+                            <a class="mobile-drawer-link" asp-controller="Home" asp-action="About">
+                                <i class="bi bi-info-circle"></i> About
+                            </a>
+                            <a class="mobile-drawer-link" asp-controller="Home" asp-action="Contact">
+                                <i class="bi bi-envelope"></i> Contact
+                            </a>
+                            <a class="mobile-drawer-link" asp-controller="Order" asp-action="Track">
+                                <i class="bi bi-truck"></i> Track Order
+                            </a>
+                            <partial name="_MobileLoginPartial" />
+                        </nav>
+
+                        <!-- Mobile Footer -->
+                        <div class="mt-5 pt-4 border-top border-white-10">
+                            <p class="text-white small mb-3">Follow Us</p>
+                            <div class="d-flex gap-4">
+                                <a href="#" class="text-white fs-5"><i class="bi bi-instagram"></i></a>
+                                <a href="#" class="text-white fs-5"><i class="bi bi-facebook"></i></a>
+                                <a href="#" class="text-white fs-5"><i class="bi bi-twitter-x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
@@ -88,9 +134,74 @@
         @RenderBody()
     </main>
 
-    <footer class="bg-dark text-white pt-5 pb-4 mt-auto border-top">
-        <div class="container text-center small text-secondary">
-            &copy; @DateTime.Now.Year MARBLIN. All rights reserved.
+    <footer class="mt-auto">
+        <div class="container">
+            <div class="row g-5">
+                <!-- Section 1: Brand & Bio -->
+                <div class="col-lg-4 col-md-6 col-12">
+                    <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                        <span class="footer-brand">MARBLIN</span>
+                    </a>
+                    <p class="footer-bio">
+                        Exceptional craftsmanship meets contemporary minimalism.
+                        Dedicated to providing a curated selection of luxury goods
+                        that define modern elegance and timeless style.
+                    </p>
+                </div>
+
+                <!-- Section 2: Links -->
+                <div class="col-lg-4 col-md-6 col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5 class="footer-heading">Discover</h5>
+                            <ul class="footer-links">
+                                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                                <li><a asp-controller="Catalog" asp-action="Index">Shop Collection</a></li>
+                                <li><a asp-controller="CustomRequest" asp-action="Create">Bespoke</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="footer-heading">Assistance</h5>
+                            <ul class="footer-links">
+                                <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                                <li><a asp-controller="Order" asp-action="Track">Track Order</a></li>
+                                <li><a asp-controller="Home" asp-action="About">About</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Contact -->
+                <div class="col-lg-4 col-md-6 col-12">
+                    <h5 class="footer-heading">Contact</h5>
+                    <ul class="footer-links mt-4">
+                        <li>
+                            <p class="text-sm text-white-60 mb-2">123 Design Avenue, New York, NY</p>
+                        </li>
+                        <li>
+                            <a class="text-sm text-white-60 hover-white" href="mailto:contact@marblin.com">contact@marblin.com</a>
+                        </li>
+                    </ul>
+                    <div class="social-links d-flex gap-3 mt-4">
+                        <a class="text-white-60 hover-white fs-5" href="#">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a class="text-white-60 hover-white fs-5" href="#">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a class="text-white-60 hover-white fs-5" href="#">
+                            <i class="bi bi-twitter-x"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom text-center">
+                <p class="mb-0">
+                    &copy; @DateTime.Now.Year MARBLIN. Curated with precision.
+                </p>
+            </div>
         </div>
     </footer>
 
