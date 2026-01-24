@@ -4,6 +4,5 @@ namespace Marblin.Core.Interfaces
     {
         IRepository<T> Repository<T>() where T : class;
         Task<int> SaveChangesAsync();
-        void ClearCache(string key);
     }
 }

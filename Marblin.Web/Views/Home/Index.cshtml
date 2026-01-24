@@ -1,4 +1,4 @@
-ï»¿@model Marblin.Web.ViewModels.HomeViewModel
+@model Marblin.Web.ViewModels.HomeViewModel
 @{
     ViewData["Title"] = "Luxury Marble & Stone";
 }
@@ -114,11 +114,11 @@
                                 {
                                     <img src="@cat.ImageUrl" class="w-100 h-100 object-fit-cover category-image" alt="@cat.Name">
                                 }
-                                <div class="category-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+                                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.3); transition: background 0.3s ease;"></div>
                                 
-                                <div class="category-content position-absolute top-50 start-50 translate-middle text-center w-100 p-3">
+                                <div class="position-absolute top-50 start-50 translate-middle text-center w-100 p-3">
                                     <h3 class="display-6 serif-font mb-0 text-white text-shadow">@cat.Name</h3>
-                                    <span class="btn btn-light btn-sm mt-3 px-4 rounded-0 text-uppercase letter-spacing-1 btn-reveal">Browse Collection</span>
+                                    <span class="btn btn-light btn-sm mt-3 px-4 rounded-0 text-uppercase letter-spacing-1">Browse Collection</span>
                                 </div>
                             </div>
                         </a>
@@ -136,11 +136,11 @@
         <div class="col-lg-10">
             <div class="card shadow-sm border-0">
                 <div class="row g-0 align-items-center" style="min-height: 600px;">
-                    <!-- Ã˜Ã¦Ã¡ ÃƒÃŸÃˆÃ‘ -->
+                    <!-- Øæá ÃßÈÑ -->
                     <!-- Image Side -->
                     <div class="col-lg-6 order-lg-2 d-flex justify-content-center align-items-center p-3">
                         <div class="w-100" style="max-width: 500px;">
-                            <!-- Ã–Ã‡ÃˆÃ˜ Ã‡Ã¡ÃšÃ‘Ã– -->
+                            <!-- ÖÇÈØ ÇáÚÑÖ -->
                             @if (!string.IsNullOrEmpty(Model.Settings.FeatureImageUrl))
                             {
                                 <img src="@Model.Settings.FeatureImageUrl"
@@ -180,5 +180,4 @@
         </div>
     </div>
 </section>
-
 

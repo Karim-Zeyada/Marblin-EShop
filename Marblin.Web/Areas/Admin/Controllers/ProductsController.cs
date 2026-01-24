@@ -72,7 +72,6 @@ namespace Marblin.Web.Areas.Admin.Controllers
 
             _productRepository.Add(product);
             await _unitOfWork.SaveChangesAsync();
-            _unitOfWork.ClearCache("categories_list");
 
             TempData["Success"] = "Product created successfully!";
             return RedirectToAction(nameof(Edit), new { id = product.Id });
@@ -139,7 +138,6 @@ namespace Marblin.Web.Areas.Admin.Controllers
             product.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.SaveChangesAsync();
-            _unitOfWork.ClearCache("categories_list");
 
             TempData["Success"] = "Product updated successfully!";
             return RedirectToAction(nameof(Edit), new { id });
@@ -173,7 +171,6 @@ namespace Marblin.Web.Areas.Admin.Controllers
             // 3. Remove product (variants and images cascade-delete automatically)
             _productRepository.Remove(product);
             await _unitOfWork.SaveChangesAsync();
-            _unitOfWork.ClearCache("categories_list");
 
             TempData["Success"] = "Product deleted successfully!";
             return RedirectToAction(nameof(Index));

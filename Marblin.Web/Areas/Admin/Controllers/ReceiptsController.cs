@@ -16,27 +16,16 @@ namespace Marblin.Web.Areas.Admin.Controllers
             _fileService = fileService;
         }
 
-        // GET: Admin/Receipts/GetFile?fileName=abc.jpg&type=receipt
+        // GET: Admin/Receipts/GetFile?fileName=abc.jpg
         [HttpGet]
-        public IActionResult GetFile(string fileName, string type = "receipt")
+        public IActionResult GetFile(string fileName)
         {
             if (string.IsNullOrEmpty(fileName)) return BadRequest();
 
             try
             {
-                FileCategory category;
-                if (type == "document")
-                {
-                    category = FileCategory.PrivateDocument;
-                }
-                else
-                {
-                    // Default to receipt
-                    category = FileCategory.ReceiptImage;
-                }
-
-                // Receipts/Documents are stored in private folders
-                var stream = _fileService.GetFileStream(fileName, category);
+                // Receipts are stored in "receipts" folder in PrivateUploads
+                var stream = _fileService.GetFileStream(fileName, FileCategory.ReceiptImage);
                 
                 var contentType = GetContentType(fileName);
                 return File(stream, contentType);
