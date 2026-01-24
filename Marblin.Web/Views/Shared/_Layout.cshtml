@@ -31,7 +31,7 @@
             <div class="container-fluid px-lg-5">
 
                 <a class="navbar-brand d-flex align-items-center gap-2"
-                   asp-controller="Home" asp-action="Index">
+                   asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/images/logo.jpg" alt="Logo" class="logo-img" />
                     <span class="fw-bold fs-4 text-white">MARBLIN</span>
                 </a>
@@ -47,28 +47,28 @@
                 <div class="collapse navbar-collapse d-none d-xl-block">
                     <ul class="navbar-nav mx-auto gap-4">
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white" asp-controller="Catalog" asp-action="Index">Shop</a>
+                            <a class="nav-link text-white-50 hover-white" asp-area="" asp-controller="Catalog" asp-action="Index">Shop</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white" asp-controller="CustomRequest" asp-action="Create">Custom Request</a>
+                            <a class="nav-link text-white-50 hover-white" asp-area="" asp-controller="CustomRequest" asp-action="Create">Custom Request</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white" asp-controller="Home" asp-action="About">About</a>
+                            <a class="nav-link text-white-50 hover-white" asp-area="" asp-controller="Home" asp-action="About">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white" asp-controller="Home" asp-action="Contact">Contact</a>
+                            <a class="nav-link text-white-50 hover-white" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50 hover-white" asp-controller="Order" asp-action="Track">Track Order</a>
+                            <a class="nav-link text-white-50 hover-white" asp-area="" asp-controller="Order" asp-action="Track">Track Order</a>
                         </li>
                     </ul>
 
                     <div class="d-flex align-items-center gap-3">
                         <partial name="_LoginPartial" />
-                        <a asp-controller="Cart" asp-action="Index"
+                        <a asp-area="" asp-controller="Cart" asp-action="Index"
                            class="btn btn-link text-white position-relative p-0 border-0">
                             <i class="bi bi-cart3 fs-5"></i>
                         </a>
@@ -93,22 +93,22 @@
                     <!-- Body -->
                     <div class="offcanvas-body p-4">
                         <nav class="d-flex flex-column">
-                            <a class="mobile-drawer-link" asp-controller="Home" asp-action="Index">
+                            <a class="mobile-drawer-link" asp-area="" asp-controller="Home" asp-action="Index">
                                 <i class="bi bi-house"></i> Home
                             </a>
-                            <a class="mobile-drawer-link" asp-controller="Catalog" asp-action="Index">
+                            <a class="mobile-drawer-link" asp-area="" asp-controller="Catalog" asp-action="Index">
                                 <i class="bi bi-bag"></i> Shop
                             </a>
-                            <a class="mobile-drawer-link" asp-controller="CustomRequest" asp-action="Create">
+                            <a class="mobile-drawer-link" asp-area="" asp-controller="CustomRequest" asp-action="Create">
                                 <i class="bi bi-palette"></i> Custom Request
                             </a>
-                            <a class="mobile-drawer-link" asp-controller="Home" asp-action="About">
+                            <a class="mobile-drawer-link" asp-area="" asp-controller="Home" asp-action="About">
                                 <i class="bi bi-info-circle"></i> About
                             </a>
-                            <a class="mobile-drawer-link" asp-controller="Home" asp-action="Contact">
+                            <a class="mobile-drawer-link" asp-area="" asp-controller="Home" asp-action="Contact">
                                 <i class="bi bi-envelope"></i> Contact
                             </a>
-                            <a class="mobile-drawer-link" asp-controller="Order" asp-action="Track">
+                            <a class="mobile-drawer-link" asp-area="" asp-controller="Order" asp-action="Track">
                                 <i class="bi bi-truck"></i> Track Order
                             </a>
                             <partial name="_MobileLoginPartial" />
@@ -139,7 +139,7 @@
             <div class="row g-5">
                 <!-- Section 1: Brand & Bio -->
                 <div class="col-lg-4 col-md-6 col-12">
-                    <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="text-decoration-none">
                         <span class="footer-brand">MARBLIN</span>
                     </a>
                     <p class="footer-bio">
@@ -155,17 +155,17 @@
                         <div class="col-6">
                             <h5 class="footer-heading">Discover</h5>
                             <ul class="footer-links">
-                                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                                <li><a asp-controller="Catalog" asp-action="Index">Shop Collection</a></li>
-                                <li><a asp-controller="CustomRequest" asp-action="Create">Bespoke</a></li>
+                                <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                                <li><a asp-area="" asp-controller="Catalog" asp-action="Index">Shop Collection</a></li>
+                                <li><a asp-area="" asp-controller="CustomRequest" asp-action="Create">Bespoke</a></li>
                             </ul>
                         </div>
                         <div class="col-6">
                             <h5 class="footer-heading">Assistance</h5>
                             <ul class="footer-links">
-                                <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
-                                <li><a asp-controller="Order" asp-action="Track">Track Order</a></li>
-                                <li><a asp-controller="Home" asp-action="About">About</a></li>
+                                <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                                <li><a asp-area="" asp-controller="Order" asp-action="Track">Track Order</a></li>
+                                <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                             </ul>
                         </div>
                     </div>
