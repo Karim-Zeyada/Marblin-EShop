@@ -3,23 +3,29 @@
     ViewData["Title"] = "Orders";
 }
 
-<div class="admin-header">
-    <h1>Orders</h1>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">Order Registry</h1>
+    <span class="text-secondary small text-uppercase ls-1">Management Console</span>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
+    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
+        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 }
 
-<!-- Filters -->
-<div class="stat-card mb-4">
-    <form method="get" class="row g-3">
-        <div class="col-md-4">
-            <input type="text" name="search" class="form-control" placeholder="Search by Order #, email, name..." value="@ViewBag.Search" />
+<!-- Filters Section -->
+<div class="admin-luxury-card mb-4">
+    <form method="get" class="row g-4 align-items-end">
+        <div class="col-12 col-sm-6 col-lg-5">
+            <label class="form-label-luxury">Search Registry</label>
+            <input type="text" name="search" class="form-control form-luxury" placeholder="Order ID, Customer name or email..." value="@ViewBag.Search" />
         </div>
-        <div class="col-md-3">
-            <select name="status" class="form-select">
+        <div class="col-12 col-sm-6 col-lg-4">
+            <label class="form-label-luxury">Disposition</label>
+            <select name="status" class="form-select form-luxury">
                 <option value="">All Statuses</option>
                 @foreach (var s in Enum.GetValues<Marblin.Core.Enums.OrderStatus>())
                 {
@@ -27,72 +33,78 @@
                 }
             </select>
         </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-dark w-100">Filter</button>
+        <div class="col-12 col-lg-3">
+            <button type="submit" class="btn-luxury-outline w-100 justify-content-center">
+                <i class="bi bi-funnel"></i> Filter Registry
+            </button>
         </div>
     </form>
 </div>
 
-<div class="stat-card">
+<!-- Orders Table -->
+<div class="admin-luxury-card p-0 overflow-hidden">
     @if (Model.Any())
     {
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>Order #</th>
-                    <th>Customer</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                    <th>Deposit</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var o in Model)
-                {
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
                     <tr>
-                        <td><a asp-action="Details" asp-route-id="@o.Id">@o.OrderNumber</a></td>
-                        <td>@o.CustomerName<br /><small class="text-muted">@o.Email</small></td>
-                        <td>@o.OrderItems.Count</td>
-                        <td>@o.TotalAmount.ToString("C2")</td>
-                        <td>
-                            @o.DepositAmount.ToString("C2")
-                            @if (o.IsDepositVerified)
-                            {
-                                <span class="badge bg-success">✓</span>
-                            }
-                        </td>
-                        <td>
-                            @switch (o.Status)
-                            {
-                                case Marblin.Core.Enums.OrderStatus.PendingDeposit:
-                                    <span class="badge bg-warning text-dark">Pending</span>
-                                    break;
-                                case Marblin.Core.Enums.OrderStatus.InProduction:
-                                    <span class="badge bg-primary">Production</span>
-                                    break;
-                                case Marblin.Core.Enums.OrderStatus.AwaitingBalance:
-                                    <span class="badge bg-info">Awaiting</span>
-                                    break;
-                                case Marblin.Core.Enums.OrderStatus.Shipped:
-                                    <span class="badge bg-success">Shipped</span>
-                                    break;
-                                default:
-                                    <span class="badge bg-secondary">@o.Status</span>
-                                    break;
-                            }
-                        </td>
-                        <td>@o.CreatedAt.ToString("MMM d")</td>
-                        <td><a asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-outline-dark">View</a></td>
+                        <th class="ps-4">Reference</th>
+                        <th>Client Details</th>
+                        <th>Value</th>
+                        <th>Deposit Status</th>
+                        <th>Aesthetic State</th>
+                        <th>Registry Date</th>
+                        <th class="text-end pe-4">Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <a asp-action="Details" asp-route-id="@o.Id" class="text-dark text-decoration-none fw-bold ls-1 hover-dark">
+                                    #@o.OrderNumber
+                                </a>
+                            </td>
+                            <td>
+                                <div class="text-dark fw-bold">@o.CustomerName</div>
+                                <div class="text-secondary small">@o.Email</div>
+                            </td>
+                            <td class="admin-font-serif font-playfair text-dark">@o.TotalAmount.ToString("C2")</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-secondary small">@o.DepositAmount.ToString("C2")</span>
+                                    @if (o.IsDepositVerified)
+                                    {
+                                        <i class="bi bi-patch-check-fill text-success" title="Verified"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-clock-history text-muted" title="Awaiting Verification"></i>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge-luxury">@o.Status</span>
+                            </td>
+                            <td class="text-secondary small">@o.CreatedAt.ToString("MMM d, yyyy")</td>
+                            <td class="text-end pe-4">
+                                <a asp-action="Details" asp-route-id="@o.Id" class="btn-luxury-outline btn-luxury-sm">
+                                    Inspect &rarr;
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
-        <p class="text-muted mb-0">No orders found.</p>
+        <div class="text-center py-5">
+            <i class="bi bi-receipt h1 opacity-10 mb-3 d-block"></i>
+            <p class="text-secondary mb-0">No entries found in the order registry.</p>
+        </div>
     }
 </div>

@@ -3,27 +3,31 @@
     ViewData["Title"] = "Products";
 }
 
-<div class="admin-header">
-    <h1>Products</h1>
-    <a asp-action="Create" class="btn btn-dark">+ Add Product</a>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">Products</h1>
+    <a asp-action="Create" class="btn-luxury-outline">
+        <i class="bi bi-plus-lg"></i> Add Product
+    </a>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["Success"]
+    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
+        <span><i class="bi bi-check2-circle me-2"></i> @TempData["Success"]</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
 
-<!-- Filters -->
-<div class="stat-card mb-4">
-    <form method="get" class="row g-3">
-        <div class="col-md-4">
-            <input type="text" name="search" class="form-control" placeholder="Search products..." value="@ViewBag.Search" />
+<!-- Filters Section -->
+<div class="admin-luxury-card mb-4">
+    <form method="get" class="row g-4 align-items-end">
+        <div class="col-12 col-sm-6 col-lg-4">
+            <label class="form-label-luxury">Search Catalog</label>
+            <input type="text" name="search" class="form-control form-luxury" placeholder="Product name or SKU..." value="@ViewBag.Search" />
         </div>
-        <div class="col-md-3">
-            <select name="categoryId" class="form-select">
+        <div class="col-12 col-sm-6 col-lg-3">
+            <label class="form-label-luxury">Category</label>
+            <select name="categoryId" class="form-select form-luxury">
                 <option value="">All Categories</option>
                 @if (ViewBag.Categories is List<Marblin.Core.Entities.Category> categories)
                 {
@@ -34,95 +38,116 @@
                 }
             </select>
         </div>
-        <div class="col-md-3">
-            <select name="availability" class="form-select">
-                <option value="">All Availability</option>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <label class="form-label-luxury">Availability</label>
+            <select name="availability" class="form-select form-luxury">
+                <option value="">All Statuses</option>
                 @foreach (var status in Enum.GetValues<Marblin.Core.Enums.ProductAvailability>())
                 {
                     <option value="@status" selected="@(ViewBag.Availability != null && ViewBag.Availability == status)">@status</option>
                 }
             </select>
         </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-dark w-100">Filter</button>
+        <div class="col-12 col-lg-2">
+            <button type="submit" class="btn-luxury-outline w-100 justify-content-center">
+                <i class="bi bi-filter"></i> Apply
+            </button>
         </div>
     </form>
 </div>
 
 <!-- Products Table -->
-<div class="stat-card">
+<div class="admin-luxury-card p-0 overflow-hidden">
     @if (Model.Any())
     {
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th style="width: 60px;">Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Base Price</th>
-                    <th>Variants</th>
-                    <th>Status</th>
-                    <th style="width: 120px;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var product in Model)
-                {
-                    var primaryImage = product.Images.FirstOrDefault(i => i.IsPrimary) ?? product.Images.FirstOrDefault();
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
                     <tr>
-                        <td>
-                            @if (primaryImage != null)
-                            {
-                                <img src="@primaryImage.ImageUrl" alt="@product.Name" class="admin-product-img" />
-                            }
-                            else
-                            {
-                                <div class="admin-no-img">
-                                    <span class="text-muted small">No img</span>
-                                </div>
-                            }
-                        </td>
-                        <td>
-                            <strong>@product.Name</strong>
-                            @if (product.IsSignaturePiece)
-                            {
-                                <span class="badge bg-warning text-dark ms-1">Signature</span>
-                            }
-                            @if (!product.IsActive)
-                            {
-                                <span class="badge bg-secondary ms-1">Inactive</span>
-                            }
-                        </td>
-                        <td>@product.Category?.Name</td>
-                        <td>@product.BasePrice.ToString("C2")</td>
-                        <td>@product.Variants.Count</td>
-                        <td>
-                            @switch (product.Availability)
-                            {
-                                case Marblin.Core.Enums.ProductAvailability.InStock:
-                                    <span class="badge bg-success">In Stock</span>
-                                    break;
-                                case Marblin.Core.Enums.ProductAvailability.MadeToOrder:
-                                    <span class="badge bg-info">Made to Order</span>
-                                    break;
-                                case Marblin.Core.Enums.ProductAvailability.OutOfStock:
-                                    <span class="badge bg-danger">Out of Stock</span>
-                                    break;
-                            }
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <form asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this product?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                            </form>
-                        </td>
+                        <th style="width: 80px;" class="ps-4">Preview</th>
+                        <th>Product Details</th>
+                        <th>Category</th>
+                        <th>Base Price</th>
+                        <th>Inventory</th>
+                        <th>Status</th>
+                        <th style="width: 150px;" class="pe-4 text-end">Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        var primaryImage = product.Images.FirstOrDefault(i => i.IsPrimary) ?? product.Images.FirstOrDefault();
+                        <tr>
+                            <td class="ps-4">
+                                @if (primaryImage != null)
+                                {
+                                    <div class="bg-light p-1 border border-dark-10" style="width: 50px; height: 50px;">
+                                        <img src="@primaryImage.ImageUrl" alt="@product.Name" style="width: 100%; height: 100%; object-fit: cover;" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="bg-light border border-dark-10 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark mb-1">@product.Name</div>
+                                <div class="d-flex gap-2">
+                                    @if (product.IsSignaturePiece)
+                                    {
+                                        <span class="badge-luxury py-0" style="font-size: 0.6rem; background: #FFF9C4; border-color: #FBC02D;">Signature</span>
+                                    }
+                                    @if (!product.IsActive)
+                                    {
+                                        <span class="badge-luxury py-0" style="font-size: 0.6rem;">Hidden</span>
+                                    }
+                                </div>
+                            </td>
+                            <td><span class="text-secondary">@product.Category?.Name</span></td>
+                            <td class="admin-font-serif font-playfair text-dark">@product.BasePrice.ToString("C2")</td>
+                            <td>
+                                <span class="text-secondary small">@product.Variants.Count Variants</span>
+                            </td>
+                            <td>
+                                @switch (product.Availability)
+                                {
+                                    case Marblin.Core.Enums.ProductAvailability.InStock:
+                                        <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill me-1"></i> In Stock</span>
+                                        break;
+                                    case Marblin.Core.Enums.ProductAvailability.MadeToOrder:
+                                        <span class="text-info small fw-bold"><i class="bi bi-hammer me-1"></i> Made to Order</span>
+                                        break;
+                                    case Marblin.Core.Enums.ProductAvailability.OutOfStock:
+                                        <span class="text-danger small fw-bold"><i class="bi bi-x-circle-fill me-1"></i> Out of Stock</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="pe-4 text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a asp-action="Edit" asp-route-id="@product.Id" class="btn-luxury-outline btn-luxury-sm" title="Edit Product">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline" onsubmit="return confirm('Archive this piece?');">
+                                        <button type="submit" class="btn-luxury-outline btn-luxury-sm text-danger border-danger" title="Delete Product">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
-        <p class="text-muted mb-0">No products found. <a asp-action="Create">Add your first product</a>.</p>
+        <div class="text-center py-5">
+            <i class="bi bi-box-seam h1 opacity-10 mb-3 d-block"></i>
+            <p class="text-secondary mb-0">No products match your criteria.</p>
+            <a asp-action="Create" class="text-dark small text-decoration-none border-bottom border-dark mt-2 d-inline-block">Add your first product &rarr;</a>
+        </div>
     }
 </div>
