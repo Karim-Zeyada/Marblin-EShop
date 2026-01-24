@@ -57,8 +57,8 @@
                         @foreach (var img in Model.Images)
                         {
                             <div class="col-4 col-md-3">
-                                <a href="@img.ImageUrl" target="_blank" class="d-block border border-light overflow-hidden">
-                                    <img src="@img.ImageUrl" class="img-fluid" />
+                                <a href="@Url.Action("GetFile", "Receipts", new { area = "Admin", fileName = img.ImageUrl, type = "document" })" target="_blank" class="d-block border border-light overflow-hidden">
+                                    <img src="@Url.Action("GetFile", "Receipts", new { area = "Admin", fileName = img.ImageUrl, type = "document" })" class="img-fluid" />
                                 </a>
                             </div>
                         }
