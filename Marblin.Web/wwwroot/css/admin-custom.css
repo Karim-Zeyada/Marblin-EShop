@@ -1,0 +1,390 @@
+﻿/* 
+   MARBLIN - Luxury Minimalist Admin Theme
+   LIGHT VERSION - Professional Responsive Architecture
+*/
+
+:root {
+    --admin-bg: #FFFFFF;
+    --admin-surface: #F8F9FA;
+    --admin-card-bg: #FFFFFF;
+    --admin-text: #000000;
+    --admin-text-muted: #6C757D;
+    --admin-accent: #000000;
+    --admin-border: rgba(0, 0, 0, 0.08);
+    --admin-sidebar-width: 280px;
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Inter', sans-serif;
+    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Body Setup */
+body.admin-body {
+    background-color: var(--admin-surface);
+    font-family: var(--font-sans);
+    color: var(--admin-text);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Typography Global */
+.admin-font-serif {
+    font-family: var(--font-serif);
+}
+
+.admin-font-sans {
+    font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    color: #000;
+    letter-spacing: 0.01em;
+}
+
+/* ==========================================================================
+   LAYOUT STRUCTURE
+   ========================================================================== */
+
+@media (min-width: 1200px) {
+    .admin-sidebar-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: var(--admin-sidebar-width);
+        background-color: #000;
+        /* Sidebar remains black for premium feel */
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 2000;
+        overflow: hidden;
+        /* Prevent sidebar itself from scrolling */
+    }
+
+    .admin-main-viewport {
+        margin-left: var(--admin-sidebar-width);
+        width: calc(100% - var(--admin-sidebar-width));
+        min-height: 100vh;
+        background-color: var(--admin-surface);
+    }
+
+    .admin-top-navbar {
+        display: none !important;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .admin-top-navbar {
+        position: sticky;
+        top: 0;
+        height: 70px;
+        background-color: #000 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 3000;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem !important;
+    }
+
+    .admin-sidebar-wrapper {
+        display: none;
+    }
+
+    .admin-main-viewport {
+        margin-left: 0;
+        width: 100%;
+        background-color: var(--admin-surface);
+    }
+}
+
+/* ==========================================================================
+   OFFCANVAS (MOBILE DRAWER)
+   ========================================================================== */
+
+.admin-offcanvas {
+    background-color: #000 !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+    width: 320px !important;
+    z-index: 3001 !important;
+}
+
+    .admin-offcanvas .offcanvas-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1.5rem 2rem;
+    }
+
+/* ==========================================================================
+   COMPONENTS
+   ========================================================================== */
+
+/* Luxury Card */
+.admin-luxury-card {
+    background: var(--admin-card-bg);
+    border: 1px solid var(--admin-border);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    transition: var(--transition-base);
+}
+
+    .admin-luxury-card:hover {
+        border-color: rgba(0, 0, 0, 0.15);
+    }
+
+/* Brand Logo (Sidebar) */
+.admin-brand {
+    display: block;
+    padding: 2.5rem 1.75rem;
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #fff !important;
+    text-decoration: none !important;
+    letter-spacing: 0.15em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+    .admin-brand span {
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 400;
+    }
+
+/* Content Container */
+.admin-content-container {
+    padding: 3rem 4rem;
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .admin-content-container {
+        padding: 1.5rem;
+    }
+}
+
+/* Tables Refresh */
+.table-responsive {
+    border: 1px solid var(--admin-border);
+    background: #FFFFFF;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+.table {
+    margin-bottom: 0;
+    color: var(--admin-text) !important;
+}
+
+    .table thead th {
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #888 !important;
+        font-weight: 700;
+        padding: 1.5rem 1rem;
+        border-bottom: 2px solid #F0F0F0 !important;
+        background: #FAFAFA !important;
+    }
+
+    .table tbody td {
+        padding: 1.25rem 1rem;
+        vertical-align: middle;
+        font-size: 0.92rem;
+        border-bottom: 1px solid #F0F0F0 !important;
+        background: transparent !important;
+        color: #222 !important;
+    }
+
+/* Buttons */
+.btn-luxury-outline {
+    background: transparent;
+    color: #000000 !important;
+    border: 1px solid #000000;
+    border-radius: 0;
+    padding: 0.7rem 1.75rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    transition: var(--transition-base);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+    .btn-luxury-outline:hover {
+        background: #000000;
+        color: #FFFFFF !important;
+    }
+
+.btn-luxury-sm {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.68rem;
+}
+
+/* Navigation Links (In Sidebar - remain white on black) */
+.admin-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 1rem 1.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none !important;
+    font-size: 0.95rem;
+    border-left: 3px solid transparent;
+    transition: var(--transition-base);
+}
+
+    .admin-link i {
+        font-size: 1.15rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    .admin-link:hover,
+    .admin-link.active {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .admin-link.active {
+        border-left-color: #fff;
+        font-weight: 600;
+    }
+
+/* Sidebar Specific labels */
+.admin-sidebar-content {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.admin-nav-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+    .admin-nav-list::-webkit-scrollbar {
+        display: none;
+        /* Chrome/Safari */
+    }
+
+.admin-sidebar-footer {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #000;
+}
+
+.admin-nav-label {
+    padding: 1.5rem 1.75rem 0.5rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Stats */
+.stat-item {
+    padding: 2rem;
+    border-right: 1px solid var(--admin-border);
+}
+
+    .stat-item:last-child {
+        border-right: none;
+    }
+
+.stat-value {
+    font-size: 2.5rem;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    display: block;
+    color: #000;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #888;
+}
+
+/* Forms Styling */
+.form-luxury {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #DDD !important;
+    border-radius: 0 !important;
+    color: #000 !important;
+    padding: 0.85rem 0 !important;
+    margin-bottom: 1.5rem;
+}
+
+    .form-luxury:focus {
+        border-bottom-color: #000 !important;
+        box-shadow: none !important;
+    }
+
+.form-label-luxury {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #555;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-weight: 700;
+}
+
+/* Indicators */
+.badge-luxury {
+    border-radius: 0;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    padding: 0.5em 1em;
+    font-weight: 600;
+    background: #F0F0F0;
+    border: 1px solid #DDD;
+    color: #333;
+}
+
+    .badge-luxury.active {
+        background: #E8F5E9;
+        color: #2E7D32;
+        border-color: #C8E6C9;
+    }
+
+/* Logout Button (remains luxury on black) */
+.btn-luxury-logout {
+    background: transparent;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0;
+    padding: 0.85rem 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: var(--transition-base);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+    .btn-luxury-logout:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.6);
+    }

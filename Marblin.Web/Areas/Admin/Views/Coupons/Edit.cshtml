@@ -1,84 +1,94 @@
 @model Marblin.Core.Entities.Coupon
-
 @{
-    ViewData["Title"] = "Edit Coupon";
+    ViewData["Title"] = "Edit Promotion";
 }
 
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Edit Coupon</h1>
-        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">Modify Promotion</h1>
+    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
+        <i class="bi bi-arrow-left"></i> Back to Promotions
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-12 col-xl-7">
+        <div class="admin-luxury-card">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="badge-luxury w-100 mb-4 py-3 border-danger text-danger" role="alert"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="TimesUsed" />
+
+                <div class="mb-5">
+                    <label asp-for="Code" class="form-label-luxury">PROMO CODE</label>
+                    <input asp-for="Code" class="form-control form-luxury text-uppercase fs-4 fw-bold" />
+                    <span asp-validation-for="Code" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-4 mb-5">
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="DiscountPercentage" class="form-label-luxury">Percentage Deduction (%)</label>
+                        <div class="input-group">
+                            <input asp-for="DiscountPercentage" class="form-control form-luxury" />
+                            <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">%</span>
+                        </div>
+                        <span asp-validation-for="DiscountPercentage" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="DiscountAmount" class="form-label-luxury">Fixed Valuation Deduction</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">$</span>
+                            <input asp-for="DiscountAmount" class="form-control form-luxury" />
+                        </div>
+                        <span asp-validation-for="DiscountAmount" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-5">
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="ExpiryDate" class="form-label-luxury">Expiry Registry</label>
+                        <input asp-for="ExpiryDate" type="date" class="form-control form-luxury" />
+                        <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="UsageLimit" class="form-label-luxury">Utilization Threshold</label>
+                        <input asp-for="UsageLimit" class="form-control form-luxury" />
+                        <span asp-validation-for="UsageLimit" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="form-check mb-5">
+                    <input class="form-check-input border-dark" type="checkbox" asp-for="IsActive" />
+                    <label class="form-check-label text-secondary small ls-1 fw-bold" asp-for="IsActive">
+                        PROMOTION ACTIVE
+                    </label>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn-luxury-outline">
+                        <i class="bi bi-save"></i> Commit Changes
+                    </button>
+                    <a asp-action="Index" class="btn-luxury-outline border-light text-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="row">
-        <div class="col-xl-6 col-lg-8">
-            <div class="card shadow border-0">
-                <div class="card-body p-4">
-                    <form asp-action="Edit">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
-                        <input type="hidden" asp-for="Id" />
-                        <input type="hidden" asp-for="TimesUsed" />
-
-                        <div class="mb-4">
-                            <label asp-for="Code" class="form-label text-uppercase small fw-bold text-secondary">Coupon Code</label>
-                            <input asp-for="Code" class="form-control form-control-lg text-uppercase" />
-                            <span asp-validation-for="Code" class="text-danger small"></span>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label asp-for="DiscountPercentage" class="form-label text-uppercase small fw-bold text-secondary">Discount Percentage (%)</label>
-                                <div class="input-group">
-                                    <input asp-for="DiscountPercentage" class="form-control" />
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                <span asp-validation-for="DiscountPercentage" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="DiscountAmount" class="form-label text-uppercase small fw-bold text-secondary">Discount Amount (Fixed)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">EGP</span>
-                                    <input asp-for="DiscountAmount" class="form-control" />
-                                </div>
-                                <span asp-validation-for="DiscountAmount" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label asp-for="ExpiryDate" class="form-label text-uppercase small fw-bold text-secondary">Expiry Date</label>
-                                <input asp-for="ExpiryDate" type="date" class="form-control" />
-                                <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="UsageLimit" class="form-label text-uppercase small fw-bold text-secondary">Usage Limit</label>
-                                <input asp-for="UsageLimit" class="form-control" />
-                                <span asp-validation-for="UsageLimit" class="text-danger small"></span>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label text-uppercase small fw-bold text-secondary">Times Used</label>
-                             <div class="form-control bg-light">@Model.TimesUsed</div>
-                        </div>
-
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" asp-for="IsActive" />
-                            <label class="form-check-label" asp-for="IsActive">
-                                Active
-                            </label>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                             <button type="submit" class="btn btn-dark btn-lg">Save Changes</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="col-12 col-xl-5">
+        <div class="admin-luxury-card bg-light border-light shadow-none">
+            <h5 class="admin-font-serif mb-4 small text-uppercase ls-1 text-dark">Promotion Lifecycle</h5>
+            <div class="d-flex align-items-center justify-content-between p-4 border border-dark-10 mb-4 bg-white">
+                <div class="small ls-1 text-secondary fw-bold">CURRENT UTILIZATION</div>
+                <div class="h2 mb-0 admin-font-serif text-dark fw-bold">@Model.TimesUsed</div>
             </div>
+            <p class="text-secondary small lh-lg">
+                Modifiers to the promotion lifecycle should be carefully considered to maintain curation integrity.
+            </p>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

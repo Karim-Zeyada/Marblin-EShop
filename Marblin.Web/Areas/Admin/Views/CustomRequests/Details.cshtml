@@ -1,77 +1,118 @@
 @model Marblin.Core.Entities.CustomRequest
 @{
-    ViewData["Title"] = "Custom Request Details";
+    ViewData["Title"] = "Inquiry Details";
 }
 
-<div class="admin-header">
-    <h1>Custom Request</h1>
-    <a asp-action="Index" class="btn btn-outline-dark">← Back</a>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">Commission Request</h1>
+    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
+        <i class="bi bi-arrow-left"></i> Inquiry Archive
+    </a>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
+    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
+        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 }
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="stat-card mb-4">
-            <h5 class="mb-3">Request Details</h5>
-            <table class="table table-borderless">
-                <tr><th style="width: 150px;">Category:</th><td>@Model.Category</td></tr>
-                <tr><th>Dimensions:</th><td>@(Model.Dimensions ?? "Not specified")</td></tr>
-                <tr><th>Material:</th><td>@(Model.Material ?? "Not specified")</td></tr>
-                <tr><th>Budget:</th><td>@(Model.BudgetRange ?? "Not specified")</td></tr>
-                <tr><th>Timeline:</th><td>@(Model.Timeline ?? "Not specified")</td></tr>
-            </table>
-            <hr />
-            <h6>Description / Notes</h6>
-            <p>@Model.Notes</p>
-            
+<div class="row g-5">
+    <!-- Left Column: Inquiry Specs -->
+    <div class="col-12 col-xl-8">
+        <div class="admin-luxury-card mb-5">
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Artisanal Specifications</h5>
+            <div class="row g-4 mb-5 border-bottom border-light pb-5">
+                <div class="col-6 col-md-4">
+                    <span class="text-secondary small ls-1 d-block mb-1 fw-bold">COLLECTION TYPE</span>
+                    <span class="text-dark fw-bold">@Model.Category</span>
+                </div>
+                <div class="col-6 col-md-4">
+                    <span class="text-secondary small ls-1 d-block mb-1 fw-bold">DIMENSIONS</span>
+                    <span class="text-dark fw-bold">@(Model.Dimensions ?? "Proportional")</span>
+                </div>
+                <div class="col-6 col-md-4">
+                    <span class="text-secondary small ls-1 d-block mb-1 fw-bold">CORE MATERIAL</span>
+                    <span class="text-dark fw-bold">@(Model.Material ?? "Artisan Choice")</span>
+                </div>
+                <div class="col-6 col-md-4">
+                    <span class="text-secondary small ls-1 d-block mb-1 fw-bold">PROPOSED BUDGET</span>
+                    <span class="text-dark admin-font-serif fw-bold">@(Model.BudgetRange ?? "Flexible")</span>
+                </div>
+                <div class="col-6 col-md-4">
+                    <span class="text-secondary small ls-1 d-block mb-1 fw-bold">DESIRED TIMELINE</span>
+                    <span class="text-dark fw-bold">@(Model.Timeline ?? "Flexible")</span>
+                </div>
+            </div>
+
+            <h6 class="text-secondary small text-uppercase ls-1 mb-3 fw-bold">Patron Narrative & Notes</h6>
+            <p class="text-dark lh-lg font-playfair fs-5">"@Model.Notes"</p>
+
             @if (Model.Images.Any())
             {
-                <hr />
-                <h6>Inspiration Images</h6>
-                <div class="row g-2">
-                    @foreach (var img in Model.Images)
-                    {
-                        <div class="col-4">
-                            <a href="@Url.Action("GetFile", "Receipts", new { fileName = img.ImageUrl, type = "document" })" target="_blank">
-                                <img src="@Url.Action("GetFile", "Receipts", new { fileName = img.ImageUrl, type = "document" })" class="img-fluid rounded" />
-                            </a>
-                        </div>
-                    }
+                <div class="mt-5 pt-5 border-top border-light">
+                    <h6 class="text-secondary small text-uppercase ls-1 mb-4 fw-bold">Inspiration Portfolio</h6>
+                    <div class="row g-3">
+                        @foreach (var img in Model.Images)
+                        {
+                            <div class="col-4 col-md-3">
+                                <a href="@img.ImageUrl" target="_blank" class="d-block border border-light overflow-hidden">
+                                    <img src="@img.ImageUrl" class="img-fluid" />
+                                </a>
+                            </div>
+                        }
+                    </div>
                 </div>
             }
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="stat-card mb-4">
-            <h5 class="mb-3">Customer</h5>
-            <p><strong>@Model.CustomerName</strong></p>
-            <p>@Model.Email</p>
-            <p>@Model.Phone</p>
-            <small class="text-muted">Submitted: @Model.CreatedAt.ToString("MMM d, yyyy h:mm tt")</small>
+
+    <!-- Right Column: Patron & Logistics -->
+    <div class="col-12 col-xl-4">
+        <div class="admin-luxury-card mb-5">
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Patron Dossier</h5>
+            <div class="mb-2 text-dark fs-5 fw-bold">@Model.CustomerName</div>
+            <div class="text-secondary small mb-1">@Model.Email</div>
+            <div class="text-secondary small mb-4">@Model.Phone</div>
+            <div class="text-muted small ls-1 pt-3 border-top border-light fw-bold">SUBMITTED ON @Model.CreatedAt.ToString("MMM d, yyyy")</div>
         </div>
 
-        <div class="stat-card">
-            <h5 class="mb-3">Status</h5>
+        <div class="admin-luxury-card">
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Curation Status</h5>
             @if (Model.IsReviewed)
             {
-                <span class="badge bg-success mb-2">Reviewed</span>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <i class="bi bi-patch-check-fill text-success fs-3"></i>
+                    <div>
+                        <div class="text-dark fw-bold">ARCHIVED & REVIEWED</div>
+                        <div class="text-secondary small">Inquiry has been processed.</div>
+                    </div>
+                </div>
                 @if (!string.IsNullOrEmpty(Model.AdminNotes))
                 {
-                    <p class="small">@Model.AdminNotes</p>
+                    <div class="bg-light p-4 border border-light">
+                        <span class="text-secondary small ls-1 d-block mb-2 fw-bold">CURATORIAL NOTES</span>
+                        <p class="text-dark small mb-0">@Model.AdminNotes</p>
+                    </div>
                 }
             }
             else
             {
-                <form asp-action="MarkReviewed" asp-route-id="@Model.Id" method="post">
-                    <div class="mb-2">
-                        <textarea name="adminNotes" class="form-control" rows="3" placeholder="Admin notes (optional)"></textarea>
+                <div class="bg-light p-4 border border-light mb-4">
+                    <div class="d-flex align-items-center gap-2 text-success small fw-bold ls-1 mb-3">
+                        <i class="bi bi-star-fill"></i> NEW UNREAD INQUIRY
                     </div>
-                    <button type="submit" class="btn btn-success w-100">Mark as Reviewed</button>
-                </form>
+                    <form asp-action="MarkReviewed" asp-route-id="@Model.Id" method="post">
+                        <div class="mb-4">
+                            <label class="form-label-luxury">Admin Narrative (Internal)</label>
+                            <textarea name="adminNotes" class="form-control form-luxury" rows="4" placeholder="Document specific reactions or plans for this piece..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-luxury-outline w-100 justify-content-center">
+                            <i class="bi bi-eye"></i> Mark as Reviewed
+                        </button>
+                    </form>
+                </div>
             }
         </div>
     </div>
