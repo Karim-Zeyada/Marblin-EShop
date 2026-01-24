@@ -43,6 +43,7 @@ namespace Marblin.Web.Areas.Admin.Controllers
             model.SortOrder = await _unitOfWork.Repository<Category>().CountAsync(c => true);
             _unitOfWork.Repository<Category>().Add(model);
             await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.ClearCache("categories_list");
 
             TempData["Success"] = "Category created!";
             return RedirectToAction(nameof(Index));
@@ -74,6 +75,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
             category.IsActive = model.IsActive;
 
             await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.ClearCache("categories_list");
+
             TempData["Success"] = "Category updated!";
             return RedirectToAction(nameof(Index));
         }
@@ -96,6 +99,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
 
             _unitOfWork.Repository<Category>().Remove(category);
             await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.ClearCache("categories_list");
+
             TempData["Success"] = "Category deleted!";
             return RedirectToAction(nameof(Index));
         }
