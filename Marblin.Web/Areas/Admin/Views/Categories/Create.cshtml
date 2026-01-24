@@ -1,36 +1,51 @@
 @model Marblin.Core.Entities.Category
-@{ ViewData["Title"] = Model.Id == 0 ? "Create Category" : "Edit Category"; }
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Create Collection" : "Edit Collection";
+}
 
-<div class="admin-header">
-    <h1>@ViewData["Title"]</h1>
-    <a asp-action="Index" class="btn btn-outline-dark">← Back</a>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">@ViewData["Title"]</h1>
+    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
+        <i class="bi bi-arrow-left"></i> Back to Collections
+    </a>
 </div>
 
-<div class="stat-card" style="max-width: 500px;">
-    <form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post">
-        <input type="hidden" asp-for="Id" />
-        
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" required />
-        </div>
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-        </div>
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label asp-for="SortOrder" class="form-label">Display Order</label>
-                <input asp-for="SortOrder" class="form-control" type="number" />
-            </div>
-            <div class="col-md-6 mb-3">
-                <div class="form-check mt-4">
-                    <input asp-for="IsActive" class="form-check-input" />
-                    <label asp-for="IsActive" class="form-check-label">Active</label>
+<div class="row">
+    <div class="col-12 col-lg-6">
+        <div class="admin-luxury-card">
+            <form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-4">
+                    <label asp-for="Name" class="form-label-luxury">Collection Name</label>
+                    <input asp-for="Name" class="form-control form-luxury" required placeholder="e.g., The Midnight Series" />
                 </div>
-            </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label-luxury">Curatorial Description</label>
+                    <textarea asp-for="Description" class="form-control form-luxury" rows="4" placeholder="Describe the aesthetic and philosophy of this collection..."></textarea>
+                </div>
+
+                <div class="row g-4 mb-5">
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="SortOrder" class="form-label-luxury">Curation Order</label>
+                        <input asp-for="SortOrder" class="form-control form-luxury" type="number" />
+                    </div>
+                    <div class="col-12 col-sm-6 d-flex align-items-end">
+                        <div class="form-check pb-2">
+                            <input asp-for="IsActive" class="form-check-input border-dark" />
+                            <label asp-for="IsActive" class="form-check-label text-secondary small ls-1 fw-bold">COLLECTION VISIBILITY</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn-luxury-outline">
+                        <i class="bi bi-save"></i> Save Collection
+                    </button>
+                    <a asp-action="Index" class="btn-luxury-outline text-secondary border-light">Cancel</a>
+                </div>
+            </form>
         </div>
-        <button type="submit" class="btn btn-dark">Save</button>
-        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-    </form>
+    </div>
 </div>

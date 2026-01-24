@@ -3,72 +3,93 @@
     ViewData["Title"] = "Custom Requests";
 }
 
-<div class="admin-header">
-    <h1>Custom Requests</h1>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">Artisanal Inquiries</h1>
+    <span class="text-secondary small text-uppercase ls-1">Custom Commissions</span>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
+    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
+        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 }
 
-<div class="stat-card mb-4">
-    <form method="get" class="row g-3">
-        <div class="col-md-3">
-            <select name="reviewed" class="form-select">
-                <option value="">All</option>
-                <option value="false" selected="@(ViewBag.Reviewed == false)">Unreviewed</option>
-                <option value="true" selected="@(ViewBag.Reviewed == true)">Reviewed</option>
+<!-- Filters Section -->
+<div class="admin-luxury-card mb-4">
+    <form method="get" class="row g-4 align-items-end">
+        <div class="col-12 col-sm-6 col-lg-4">
+            <label class="form-label-luxury">Review State</label>
+            <select name="reviewed" class="form-select form-luxury">
+                <option value="">All Inquiries</option>
+                <option value="false" selected="@(ViewBag.Reviewed == false)">Unread Commissions</option>
+                <option value="true" selected="@(ViewBag.Reviewed == true)">Reviewed Archive</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-dark w-100">Filter</button>
+        <div class="col-12 col-lg-3">
+            <button type="submit" class="btn-luxury-outline w-100 justify-content-center">
+                <i class="bi bi-funnel"></i> Filter
+            </button>
         </div>
     </form>
 </div>
 
-<div class="stat-card">
+<!-- Requests Table -->
+<div class="admin-luxury-card p-0 overflow-hidden">
     @if (Model.Any())
     {
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>Customer</th>
-                    <th>Category</th>
-                    <th>Material</th>
-                    <th>Budget</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var r in Model)
-                {
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
                     <tr>
-                        <td>@r.CustomerName<br /><small class="text-muted">@r.Email</small></td>
-                        <td>@r.Category</td>
-                        <td>@(r.Material ?? "Not specified")</td>
-                        <td>@(r.BudgetRange ?? "—")</td>
-                        <td>
-                            @if (r.IsReviewed)
-                            {
-                                <span class="badge bg-success">Reviewed</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-warning text-dark">New</span>
-                            }
-                        </td>
-                        <td>@r.CreatedAt.ToString("MMM d")</td>
-                        <td><a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-outline-dark">View</a></td>
+                        <th class="ps-4">Patron Details</th>
+                        <th>Category</th>
+                        <th>Material Specs</th>
+                        <th>Proposed Budget</th>
+                        <th>Disposition</th>
+                        <th>Inquiry Date</th>
+                        <th class="text-end pe-4">Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="text-dark fw-bold">@r.CustomerName</div>
+                                <div class="text-secondary small">@r.Email</div>
+                            </td>
+                            <td><span class="text-secondary">@r.Category</span></td>
+                            <td><span class="text-secondary small">@(r.Material ?? "Not Specified")</span></td>
+                            <td class="admin-font-serif text-dark fw-bold">@(r.BudgetRange ?? "—")</td>
+                            <td>
+                                @if (r.IsReviewed)
+                                {
+                                    <span class="text-secondary small"><i class="bi bi-check2-all me-1"></i> Reviewed</span>
+                                }
+                                else
+                                {
+                                    <span class="text-success small fw-bold"><i class="bi bi-star-fill me-1"></i> New</span>
+                                }
+                            </td>
+                            <td class="text-secondary small">@r.CreatedAt.ToString("MMM d, yyyy")</td>
+                            <td class="text-end pe-4">
+                                <a asp-action="Details" asp-route-id="@r.Id" class="btn-luxury-outline btn-luxury-sm">
+                                    Inspect &rarr;
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
-        <p class="text-muted mb-0">No custom requests yet.</p>
+        <div class="text-center py-5">
+            <i class="bi bi-palette h1 opacity-10 mb-3 d-block"></i>
+            <p class="text-secondary mb-0">No artisanal inquiries found.</p>
+        </div>
     }
 </div>
