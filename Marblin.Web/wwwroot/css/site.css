@@ -1569,3 +1569,32 @@ footer {
     filter: invert(1) grayscale(100%) brightness(200%);
     opacity: 1;
 }
+/* Refined Collection/Category Card Styles */
+.category-card .category-overlay {
+    background: rgba(0, 0, 0, 0.3);
+    transition: background 0.4s ease;
+}
+
+.category-card:hover .category-overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.category-card .category-content {
+    transition: transform 0.4s ease;
+    z-index: 2;
+}
+
+.category-card:hover .category-content {
+    transform: translate(-50%, -55%) !important;
+}
+
+.category-card .btn-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.category-card:hover .btn-reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
