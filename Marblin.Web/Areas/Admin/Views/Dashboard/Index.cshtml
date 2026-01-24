@@ -3,34 +3,34 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="admin-header">
-    <h1>Dashboard</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Dashboard</h1>
     <span class="text-muted">@DateTime.Now.ToString("dddd, MMMM d, yyyy")</span>
 </div>
 
 <!-- Stats Row -->
 <div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="stat-card accent">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
             <div class="stat-value">@Model.TodayOrdersCount</div>
             <div class="stat-label">Orders Today</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card success">
-            <div class="stat-value">@Model.TodayRevenue.ToString("C0")</div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-value text-success">@Model.TodayRevenue.ToString("C0")</div>
             <div class="stat-label">Revenue Today</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card info">
-            <div class="stat-value">@Model.TodayDeposits.ToString("C0")</div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-value text-info">@Model.TodayDeposits.ToString("C0")</div>
             <div class="stat-label">Deposits Collected</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card warning">
-            <div class="stat-value">@Model.TotalActiveOrders</div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-value text-warning">@Model.TotalActiveOrders</div>
             <div class="stat-label">Active Orders</div>
         </div>
     </div>
@@ -38,77 +38,74 @@
 
 <!-- Orders by Status -->
 <div class="row g-4 mb-4">
-    <div class="col-md-8">
-        <div class="stat-card">
-            <h5 class="mb-3">Orders by Status</h5>
-            <div class="row text-center">
-                <div class="col">
-                    <div class="display-6 text-warning">@Model.PendingDepositCount</div>
-                    <small class="text-muted">Pending Deposit</small>
+    <div class="col-12 col-lg-8">
+        <div class="admin-card h-100">
+            <h5 class="mb-4">Orders by Status</h5>
+            <div class="row text-center g-3">
+                <div class="col-6 col-md-3">
+                    <div class="display-6 fw-normal mb-2 text-warning">@Model.PendingDepositCount</div>
+                    <small class="text-muted text-uppercase small ls-1">Pending Deposit</small>
                 </div>
-                <div class="col">
-                    <div class="display-6 text-primary">@Model.InProductionCount</div>
-                    <small class="text-muted">In Production</small>
+                <div class="col-6 col-md-3">
+                    <div class="display-6 fw-normal mb-2 text-primary">@Model.InProductionCount</div>
+                    <small class="text-muted text-uppercase small ls-1">In Production</small>
                 </div>
-                <div class="col">
-                    <div class="display-6 text-info">@Model.AwaitingBalanceCount</div>
-                    <small class="text-muted">Awaiting Balance</small>
+                <div class="col-6 col-md-3">
+                    <div class="display-6 fw-normal mb-2 text-info">@Model.AwaitingBalanceCount</div>
+                    <small class="text-muted text-uppercase small ls-1">Awaiting Balance</small>
                 </div>
-                <div class="col">
-                    <div class="display-6 text-success">@Model.ShippedCount</div>
-                    <small class="text-muted">Shipped</small>
+                <div class="col-6 col-md-3">
+                    <div class="display-6 fw-normal mb-2 text-success">@Model.ShippedCount</div>
+                    <small class="text-muted text-uppercase small ls-1">Shipped</small>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="stat-card">
+    <div class="col-12 col-lg-4">
+        <div class="admin-card h-100">
             <h5 class="mb-3">Alerts</h5>
             @if (Model.UnreviewedRequestsCount > 0)
             {
-                <div class="alert alert-warning mb-2 py-2">
+                <div class="alert alert-warning mb-2 py-2 border-0 rounded-0">
                     <strong>@Model.UnreviewedRequestsCount</strong> unreviewed custom requests
                 </div>
             }
             @if (Model.LowStockCount > 0)
             {
-                <div class="alert alert-danger mb-2 py-2">
+                <div class="alert alert-danger mb-2 py-2 border-0 rounded-0">
                     <strong>@Model.LowStockCount</strong> products low in stock
                 </div>
             }
             @if (Model.UnreviewedRequestsCount == 0 && Model.LowStockCount == 0)
             {
-                <div class="alert alert-success mb-0 py-2">All clear! No alerts.</div>
+                <div class="alert alert-success mb-0 py-2 border-0 rounded-0 text-center">All clear! No alerts.</div>
             }
         </div>
     </div>
 </div>
 
-    </div>
-</div>
-
 <!-- Analytics Row -->
 <div class="row g-4 mb-4">
-    <div class="col-md-8">
-        <div class="stat-card">
+    <div class="col-12 col-lg-8">
+        <div class="admin-card">
             <h5 class="mb-4">Revenue (Last 7 Days)</h5>
-            <canvas id="revenueChart" height="100"></canvas>
+            <canvas id="revenueChart" height="300" style="max-height: 300px; width: 100%;"></canvas>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="stat-card">
+    <div class="col-12 col-lg-4">
+        <div class="admin-card h-100">
             <h5 class="mb-4">Top Selling Products</h5>
-            @if(Model.TopSellingProducts.Any())
+            @if (Model.TopSellingProducts.Any())
             {
                 <ul class="list-group list-group-flush">
-                    @foreach(var prod in Model.TopSellingProducts)
+                    @foreach (var prod in Model.TopSellingProducts)
                     {
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0 border-bottom">
                             <div>
-                                <span class="fw-bold d-block">@prod.ProductName</span>
+                                <span class="fw-bold d-block mb-1">@prod.ProductName</span>
                                 <small class="text-muted">@prod.Revenue.ToString("C0") revenue</small>
                             </div>
-                            <span class="badge bg-light text-dark rounded-pill border">@prod.UnitsSold sold</span>
+                            <span class="badge bg-light text-dark rounded-0 border">@prod.UnitsSold sold</span>
                         </li>
                     }
                 </ul>
@@ -121,95 +118,119 @@
     </div>
 </div>
 
+<!-- Recent Orders -->
+<div class="admin-card">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-2">
+        <h5 class="mb-0">Recent Orders</h5>
+        <a asp-action="Index" asp-controller="Orders" class="btn btn-admin-outline">View All Orders</a>
+    </div>
+
+    <div class="table-responsive">
+        @if (Model.RecentOrders.Any())
+        {
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.RecentOrders)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id" class="text-decoration-none fw-bold text-dark">
+                                    @order.OrderNumber
+                                </a>
+                            </td>
+                            <td>@order.CustomerName</td>
+                            <td>@order.TotalAmount.ToString("C2")</td>
+                            <td>
+                                @switch (order.Status)
+                                {
+                                    case Marblin.Core.Enums.OrderStatus.PendingDeposit:
+                                        <span class="badge bg-warning text-dark rounded-0 fw-normal">Pending Deposit</span>
+                                        break;
+                                    case Marblin.Core.Enums.OrderStatus.InProduction:
+                                        <span class="badge bg-primary rounded-0 fw-normal">In Production</span>
+                                        break;
+                                    case Marblin.Core.Enums.OrderStatus.AwaitingBalance:
+                                        <span class="badge bg-info rounded-0 fw-normal">Awaiting Balance</span>
+                                        break;
+                                    case Marblin.Core.Enums.OrderStatus.Shipped:
+                                        <span class="badge bg-success rounded-0 fw-normal">Shipped</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary rounded-0 fw-normal">@order.Status</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="text-muted">@order.CreatedAt.ToString("MMM d, h:mm tt")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted mb-0">No orders yet.</p>
+        }
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const ctx = document.getElementById('revenueChart');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: @Html.Raw(Json.Serialize(Model.ChartLabels)),
-                datasets: [{
-                    label: 'Revenue',
-                    data: @Html.Raw(Json.Serialize(Model.ChartData)),
-                    borderColor: '#1a1a1a',
-                    backgroundColor: 'rgba(26, 26, 26, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
+        if(ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @Html.Raw(Json.Serialize(Model.ChartLabels)),
+                    datasets: [{
+                        label: 'Revenue',
+                        data: @Html.Raw(Json.Serialize(Model.ChartData)),
+                        borderColor: '#000000',
+                        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#000000',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#000000'
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { borderDash: [2, 4] }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#000',
+                            titleFont: { family: 'Inter', size: 13 },
+                            bodyFont: { family: 'Inter', size: 13 },
+                            padding: 10,
+                            cornerRadius: 0,
+                            displayColors: false
+                        }
                     },
-                    x: {
-                        grid: { display: false }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [2, 4], color: '#eee' },
+                            ticks: { font: { family: 'Inter' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter' } }
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     </script>
 }
-
-<!-- Recent Orders -->
-<div class="stat-card">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">Recent Orders</h5>
-        <a asp-action="Index" asp-controller="Orders" class="btn btn-sm btn-outline-dark">View All</a>
-    </div>
-    @if (Model.RecentOrders.Any())
-    {
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>Order #</th>
-                    <th>Customer</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var order in Model.RecentOrders)
-                {
-                    <tr>
-                        <td><a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id">@order.OrderNumber</a></td>
-                        <td>@order.CustomerName</td>
-                        <td>@order.TotalAmount.ToString("C2")</td>
-                        <td>
-                            @switch (order.Status)
-                            {
-                                case Marblin.Core.Enums.OrderStatus.PendingDeposit:
-                                    <span class="badge bg-warning text-dark">Pending Deposit</span>
-                                    break;
-                                case Marblin.Core.Enums.OrderStatus.InProduction:
-                                    <span class="badge bg-primary">In Production</span>
-                                    break;
-                                case Marblin.Core.Enums.OrderStatus.AwaitingBalance:
-                                    <span class="badge bg-info">Awaiting Balance</span>
-                                    break;
-                                case Marblin.Core.Enums.OrderStatus.Shipped:
-                                    <span class="badge bg-success">Shipped</span>
-                                    break;
-                                default:
-                                    <span class="badge bg-secondary">@order.Status</span>
-                                    break;
-                            }
-                        </td>
-                        <td>@order.CreatedAt.ToString("MMM d, h:mm tt")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p class="text-muted mb-0">No orders yet.</p>
-    }
-</div>

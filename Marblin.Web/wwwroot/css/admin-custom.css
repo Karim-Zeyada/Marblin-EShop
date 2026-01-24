@@ -1,0 +1,364 @@
+﻿/* 
+   MARBLIN - Luxury Minimalist Admin Theme
+   REBUILT FROM SCRATCH - Professional Responsive Architecture
+*/
+
+:root {
+    --admin-bg: #000000;
+    --admin-surface: #111111;
+    --admin-text: #FFFFFF;
+    --admin-text-muted: rgba(255, 255, 255, 0.6);
+    --admin-accent: #ffffff;
+    --admin-border: rgba(255, 255, 255, 0.1);
+    --admin-sidebar-width: 280px;
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Inter', sans-serif;
+    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Body Setup */
+body.admin-body {
+    background-color: #FAFAFA;
+    font-family: var(--font-sans);
+    color: #111;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Typography Global */
+.admin-font-serif {
+    font-family: var(--font-serif);
+}
+
+.admin-font-sans {
+    font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    color: #000;
+}
+
+/* ==========================================================================
+   LAYOUT STRUCTURE (DESKTOP)
+   ========================================================================== */
+
+@media (min-width: 992px) {
+
+    /* Permanent Sidebar */
+    .admin-sidebar-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: var(--admin-sidebar-width);
+        background-color: var(--admin-bg);
+        border-right: 1px solid var(--admin-border);
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Main Content Shift */
+    .admin-main-viewport {
+        margin-left: var(--admin-sidebar-width);
+        width: calc(100% - var(--admin-sidebar-width));
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Hide mobile-specific topbar on desktop */
+    .admin-top-navbar {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   LAYOUT STRUCTURE (MOBILE)
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+
+    /* Top Sticky Navbar */
+    .admin-top-navbar {
+        position: sticky;
+        top: 0;
+        height: 70px;
+        background-color: #000 !important;
+        border-bottom: 1px solid var(--admin-border);
+        z-index: 3000;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem !important;
+        /* Force consistency */
+    }
+
+        .admin-top-navbar .navbar-brand {
+            margin-right: auto;
+        }
+
+        /* Forced White Icons on Mobile */
+        .admin-top-navbar .navbar-toggler,
+        .admin-top-navbar .navbar-toggler i {
+            color: #FFFFFF !important;
+            opacity: 1 !important;
+        }
+
+    /* Sidebar Wrapper becomes Offcanvas on Mobile */
+    .admin-sidebar-wrapper {
+        display: none;
+    }
+
+    .admin-main-viewport {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   OFFCANVAS (MOBILE DRAWER)
+   ========================================================================== */
+
+.admin-offcanvas {
+    background-color: var(--admin-bg) !important;
+    border-left: 1px solid var(--admin-border) !important;
+    width: 320px !important;
+    z-index: 3001 !important;
+}
+
+    .admin-offcanvas .offcanvas-header {
+        border-bottom: 1px solid var(--admin-border);
+        padding: 1.5rem 2rem;
+    }
+
+    .admin-offcanvas .offcanvas-body {
+        padding: 0;
+        /* Let content handle padding */
+    }
+
+/* ==========================================================================
+   SIDEBAR & NAV COMPONENTS (UNIFIED)
+   ========================================================================== */
+
+.admin-sidebar-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Brand */
+.admin-brand {
+    padding: 2rem 1.75rem;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    display: block;
+}
+
+    .admin-brand span {
+        font-weight: 300;
+        opacity: 0.6;
+    }
+
+/* Navigation Links */
+.admin-nav-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+.admin-nav-label {
+    padding: 1.5rem 1.75rem 0.5rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    color: var(--admin-text-muted);
+}
+
+.admin-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 1rem 1.75rem;
+    /* py-3 equivalent spacing */
+    color: var(--admin-text-muted);
+    text-decoration: none !important;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    border-left: 3px solid transparent;
+    transition: var(--transition-base);
+}
+
+    .admin-link i {
+        font-size: 1.15rem;
+        width: 20px;
+        text-align: center;
+        color: var(--admin-text-muted);
+    }
+
+    .admin-link:hover {
+        color: #fff;
+        background-color: var(--admin-surface);
+    }
+
+        .admin-link:hover i {
+            color: #fff;
+        }
+
+    .admin-link.active {
+        color: #fff;
+        background-color: var(--admin-surface);
+        border-left-color: #fff;
+        font-weight: 600;
+    }
+
+        .admin-link.active i {
+            color: #fff;
+        }
+
+/* Sidebar Footer */
+.admin-sidebar-footer {
+    padding: 2rem 1.75rem;
+    border-top: 1px solid var(--admin-border);
+    margin-top: auto;
+}
+
+/* Logout Button Luxury Refactor */
+.btn-luxury-logout {
+    background: transparent;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: var(--transition-base);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+    .btn-luxury-logout:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+
+/* ==========================================================================
+   CONTENT UI COMPONENTS
+   ========================================================================== */
+
+.admin-content-container {
+    padding: 2rem 3rem;
+    /* Generous padding for high-end feel */
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .admin-content-container {
+        padding: 1.5rem;
+    }
+}
+
+/* Responsive Tables Standardization */
+.table-responsive {
+    border: 1px solid #EFEFEF;
+    background: #fff;
+    padding: 0.5rem;
+}
+
+.table thead th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    font-weight: 600;
+    padding: 1.25rem 1rem;
+    border-bottom: 2px solid #F5F5F5;
+}
+
+.table tbody td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+    font-size: 0.92rem;
+    border-bottom: 1px solid #F5F5F5;
+}
+
+/* Luxury Cards */
+.admin-card {
+    background: #fff;
+    border: 1px solid #EFEFEF;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+/* Stats */
+.stat-card {
+    background: #fff;
+    border: 1px solid #EFEFEF;
+    padding: 2rem;
+    height: 100%;
+}
+
+.stat-value {
+    font-size: 2.25rem;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    color: #000;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #999;
+}
+
+/* Buttons (Universal) */
+.btn-luxury {
+    background: #000;
+    color: #fff;
+    border: 1px solid #000;
+    border-radius: 0;
+    padding: 0.75rem 1.5rem;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    transition: var(--transition-base);
+}
+
+    .btn-luxury:hover {
+        background: #333;
+        color: #fff;
+    }
+
+/* Forms Cleanup */
+.form-luxury {
+    border: none !important;
+    border-bottom: 1px solid #DDD !important;
+    border-radius: 0 !important;
+    padding: 0.75rem 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+    .form-luxury:focus {
+        border-bottom-color: #000 !important;
+    }
