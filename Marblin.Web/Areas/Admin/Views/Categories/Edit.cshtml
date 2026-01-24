@@ -1,59 +1,81 @@
 @model Marblin.Core.Entities.Category
-@{
-    ViewData["Title"] = "Edit Collection";
-}
+@{ ViewData["Title"] = "Edit Category"; }
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
-    <h1 class="h2 admin-font-serif mb-0 text-dark">Edit Collection</h1>
-    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
-        <i class="bi bi-arrow-left"></i> Back to Collections
-    </a>
+<div class="admin-header">
+    <h1>Edit Category</h1>
+    <a asp-action="Index" class="btn btn-outline-dark">← Back</a>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
-        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
 }
 
-<div class="row">
-    <div class="col-12 col-lg-6">
-        <div class="admin-luxury-card">
-            <form asp-action="Edit" method="post">
-                <input type="hidden" asp-for="Id" />
-
+<div class="stat-card">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ImageUrl" />
+        
+        <div class="row">
+            <div class="col-md-8">
                 <div class="mb-4">
-                    <label asp-for="Name" class="form-label-luxury">Collection Name</label>
-                    <input asp-for="Name" class="form-control form-luxury" required />
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="Description" class="form-label-luxury">Curatorial Description</label>
-                    <textarea asp-for="Description" class="form-control form-luxury" rows="4"></textarea>
-                </div>
-
-                <div class="row g-4 mb-5">
-                    <div class="col-12 col-sm-6">
-                        <label asp-for="SortOrder" class="form-label-luxury">Curation Order</label>
-                        <input asp-for="SortOrder" class="form-control form-luxury" type="number" />
+                    <h5 class="mb-3">Category Details</h5>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" required />
                     </div>
-                    <div class="col-12 col-sm-6 d-flex align-items-end">
-                        <div class="form-check pb-2">
-                            <input asp-for="IsActive" class="form-check-input border-dark" />
-                            <label asp-for="IsActive" class="form-check-label text-secondary small ls-1 fw-bold">COLLECTION VISIBILITY</label>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="SortOrder" class="form-label">Display Order</label>
+                            <input asp-for="SortOrder" class="form-control" type="number" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                <input asp-for="IsActive" class="form-check-input" />
+                                <label asp-for="IsActive" class="form-check-label">Active</label>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="d-flex gap-3">
-                    <button type="submit" class="btn-luxury-outline">
-                        <i class="bi bi-save"></i> Save Changes
-                    </button>
-                    <a asp-action="Index" class="btn-luxury-outline text-secondary border-light">Cancel</a>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-dark">Save Changes</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </div>
                 </div>
-            </form>
+            </div>
+
+            <div class="col-md-4">
+                <div class="mb-4">
+                    <h5 class="mb-3">Category Image</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Current Image</label>
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <div class="mb-2 position-relative">
+                                <img src="@Model.ImageUrl" alt="Current Image" class="w-100 rounded border" style="object-fit: cover; aspect-ratio: 1;" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center bg-light rounded p-5 text-muted small mb-3">
+                                No image uploaded
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Upload New Image</label>
+                        <input type="file" name="file" class="form-control" accept="image/*" />
+                        <div class="form-text small">Replaces the current image if one exists.</div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </form>
 </div>

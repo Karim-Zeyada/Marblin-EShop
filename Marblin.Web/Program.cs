@@ -51,6 +51,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IFileService, LocalFileService>();
+builder.Services.AddScoped<IEmailService, SendGridEmailService>();
 
 // =============================================================================
 // APPLICATION LAYER - Use Cases, Application Services

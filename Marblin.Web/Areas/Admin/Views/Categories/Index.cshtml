@@ -3,83 +3,63 @@
     ViewData["Title"] = "Categories";
 }
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
-    <h1 class="h2 admin-font-serif mb-0 text-dark">Collections</h1>
-    <a asp-action="Create" class="btn-luxury-outline">
-        <i class="bi bi-plus-lg"></i> Add Collection
-    </a>
+<div class="admin-header">
+    <h1>Categories</h1>
+    <a asp-action="Create" class="btn btn-dark">+ Add Category</a>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
-        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
 }
 @if (TempData["Error"] != null)
 {
-    <div class="alert badge-luxury w-100 mb-4 py-3 border-danger text-danger d-flex justify-content-between align-items-center" role="alert">
-        <span><i class="bi bi-exclamation-triangle me-2"></i> @TempData["Error"]</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <div class="alert alert-danger alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Error"]</div>
 }
 
-<div class="admin-luxury-card p-0 overflow-hidden">
+<div class="stat-card">
     @if (Model.Any())
     {
-        <div class="table-responsive">
-            <table class="table mb-0">
-                <thead>
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Products</th>
+                    <th>Order</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cat in Model)
+                {
                     <tr>
-                        <th class="ps-4">Collection Name</th>
-                        <th>Piece Count</th>
-                        <th>Sort Order</th>
-                        <th>Status</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <td><strong>@cat.Name</strong></td>
+                        <td>@cat.Products.Count</td>
+                        <td>@cat.SortOrder</td>
+                        <td>
+                            @if (cat.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@cat.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@cat.Id" method="post" class="d-inline" onsubmit="return confirm('Delete?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var cat in Model)
-                    {
-                        <tr>
-                            <td class="ps-4 fw-bold text-dark">@cat.Name</td>
-                            <td><span class="text-secondary small">@cat.Products.Count Items</span></td>
-                            <td class="admin-font-serif text-dark fw-bold">@cat.SortOrder</td>
-                            <td>
-                                @if (cat.IsActive)
-                                {
-                                    <span class="text-success small fw-bold"><i class="bi bi-eye-fill me-1"></i> Visible</span>
-                                }
-                                else
-                                {
-                                    <span class="text-secondary small"><i class="bi bi-eye-slash-fill me-1"></i> Hidden</span>
-                                }
-                            </td>
-                            <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a asp-action="Edit" asp-route-id="@cat.Id" class="btn-luxury-outline btn-luxury-sm" title="Edit Collection">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form asp-action="Delete" asp-route-id="@cat.Id" method="post" class="d-inline" onsubmit="return confirm('Archive this collection?');">
-                                        <button type="submit" class="btn-luxury-outline btn-luxury-sm text-danger border-danger" title="Delete Collection">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                }
+            </tbody>
+        </table>
     }
     else
     {
-        <div class="text-center py-5">
-            <i class="bi bi-tags h1 opacity-10 mb-3 d-block"></i>
-            <p class="text-secondary mb-0">No collections defined yet.</p>
-            <a asp-action="Create" class="text-dark small text-decoration-none border-bottom border-dark mt-2 d-inline-block">Initialize your first collection &rarr;</a>
-        </div>
+        <p class="text-muted mb-0">No categories yet. <a asp-action="Create">Create one</a>.</p>
     }
 </div>
