@@ -6,31 +6,61 @@
     <a asp-action="Index" class="btn btn-outline-dark">← Back</a>
 </div>
 
-<div class="stat-card" style="max-width: 500px;">
-    <form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post">
+<div class="stat-card">
+    <form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="Id" />
         
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" required />
-        </div>
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-        </div>
         <div class="row">
-            <div class="col-md-6 mb-3">
-                <label asp-for="SortOrder" class="form-label">Display Order</label>
-                <input asp-for="SortOrder" class="form-control" type="number" />
+            <div class="col-md-8">
+                <div class="mb-4">
+                    <h5 class="mb-3">Category Details</h5>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" required />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="SortOrder" class="form-label">Display Order</label>
+                            <input asp-for="SortOrder" class="form-control" type="number" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                <input asp-for="IsActive" class="form-check-input" />
+                                <label asp-for="IsActive" class="form-check-label">Active</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-dark">Save Category</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <div class="form-check mt-4">
-                    <input asp-for="IsActive" class="form-check-input" />
-                    <label asp-for="IsActive" class="form-check-label">Active</label>
+
+            <div class="col-md-4">
+                <div class="mb-4">
+                    <h5 class="mb-3">Category Image</h5>
+                    <div class="alert alert-light border small text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Used for the "Our Collections" section on the home page.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Upload Image</label>
+                        <input type="file" name="file" class="form-control" accept="image/*" />
+                    </div>
+                    <div class="text-center bg-light rounded p-4 text-muted small">
+                        No image selected
+                    </div>
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-dark">Save</button>
-        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
     </form>
 </div>
