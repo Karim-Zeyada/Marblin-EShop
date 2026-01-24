@@ -1,110 +1,90 @@
 @model IEnumerable<Marblin.Core.Entities.Coupon>
+
 @{
     ViewData["Title"] = "Coupons";
 }
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
-    <h1 class="h2 admin-font-serif mb-0 text-dark">Promotions</h1>
-    <a asp-action="Create" class="btn-luxury-outline">
-        <i class="bi bi-plus-lg"></i> Create Promotion
-    </a>
-</div>
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
-        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Coupons</h1>
+        <a asp-action="Create" class="btn btn-dark shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg me-2" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
+            </svg>
+            Create New Coupon
+        </a>
     </div>
-}
 
-<div class="admin-luxury-card p-0 overflow-hidden">
-    @if (Model.Any())
-    {
-        <div class="table-responsive">
-            <table class="table mb-0">
-                <thead>
-                    <tr>
-                        <th class="ps-4">Promo Code</th>
-                        <th>Valuation</th>
-                        <th>Expiry Registry</th>
-                        <th>Status</th>
-                        <th>Utilization</th>
-                        <th class="text-end pe-4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+    <div class="card shadow border-0 mb-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-uppercase text-secondary small">
                         <tr>
-                            <td class="ps-4 fw-bold text-dark ls-1">@item.Code</td>
-                            <td>
-                                @if (item.DiscountPercentage.HasValue)
-                                {
-                                    <span class="badge-luxury" style="background: #E3F2FD; color: #1565C0; border-color: #BBDEFB;">@item.DiscountPercentage% OFF</span>
-                                }
-                                @if (item.DiscountAmount.HasValue)
-                                {
-                                    <span class="badge-luxury" style="background: #E8F5E9; color: #2E7D32; border-color: #C8E6C9;">@item.DiscountAmount?.ToString("C0") OFF</span>
-                                }
-                            </td>
-                            <td>
-                                @if (item.ExpiryDate.HasValue)
-                                {
-                                    <div class="text-dark-50 small">
-                                        @item.ExpiryDate.Value.ToString("MMM dd, yyyy")
-                                        @if (item.ExpiryDate < DateTime.UtcNow)
-                                        {
-                                            <span class="text-danger d-block fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05em;">EXPIRED</span>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <span class="text-secondary small ls-1">INDEFINITE</span>
-                                }
-                            </td>
-                            <td>
-                                @if (item.IsActive)
-                                {
-                                    <span class="text-success small fw-bold"><i class="bi bi-lightning-fill me-1"></i> Active</span>
-                                }
-                                else
-                                {
-                                    <span class="text-secondary small"><i class="bi bi-pause-fill me-1"></i> Inactive</span>
-                                }
-                            </td>
-                            <td class="text-dark">
-                                <div class="fw-bold">@item.TimesUsed</div>
-                                @if (item.UsageLimit.HasValue)
-                                {
-                                    <div class="text-secondary small" style="font-size: 0.65rem;">MAX @item.UsageLimit</div>
-                                }
-                            </td>
-                            <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-luxury-outline btn-luxury-sm" title="Edit Promotion">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Archive this promotion?');">
-                                        <button type="submit" class="btn-luxury-outline btn-luxury-sm text-danger border-danger" title="Delete Promotion">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+                            <th class="px-4 border-0">Code</th>
+                            <th class="border-0">Discount</th>
+                            <th class="border-0">Expiry</th>
+                            <th class="border-0">Status</th>
+                            <th class="border-0">Usage</th>
+                            <th class="border-0 text-end pe-4">Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="px-4 fw-bold">@item.Code</td>
+                                <td>
+                                    @if(item.DiscountPercentage.HasValue)
+                                    {
+                                        <span class="badge bg-info text-dark">@item.DiscountPercentage% OFF</span>
+                                    }
+                                    @if(item.DiscountAmount.HasValue)
+                                    {
+                                         <span class="badge bg-success">@item.DiscountAmount?.ToString("C") OFF</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if(item.ExpiryDate.HasValue)
+                                    {
+                                        @item.ExpiryDate.Value.ToString("MMM dd, yyyy")
+                                        if(item.ExpiryDate < DateTime.UtcNow) { <span class="text-danger small">(Expired)</span> }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No Expiry</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if(item.IsActive)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill">Inactive</span>
+                                    }
+                                </td>
+                                <td>
+                                    @item.TimesUsed @if(item.UsageLimit.HasValue) { <span class="text-muted">/ @item.UsageLimit</span> }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark me-2">Edit</a>
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this coupon?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <p class="text-muted mb-0">No coupons found.</p>
+                </div>
+            }
         </div>
-    }
-    else
-    {
-        <div class="text-center py-5">
-            <i class="bi bi-ticket-perforated h1 opacity-10 mb-3 d-block"></i>
-            <p class="text-secondary mb-0">No entries in the promotion registry.</p>
-            <a asp-action="Create" class="text-dark small text-decoration-none border-bottom border-dark mt-2 d-inline-block">Initialize first promotion &rarr;</a>
-        </div>
-    }
+    </div>
 </div>

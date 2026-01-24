@@ -3,166 +3,142 @@
     ViewData["Title"] = $"Order {Model.OrderNumber}";
 }
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
-    <h1 class="h2 admin-font-serif mb-0 text-dark">Order #@Model.OrderNumber</h1>
-    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
-        <i class="bi bi-arrow-left"></i> Registry Overview
-    </a>
+<div class="admin-header">
+    <h1>Order @Model.OrderNumber</h1>
+    <a asp-action="Index" class="btn btn-outline-dark">← Back to Orders</a>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
-        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
 }
 
-<div class="row g-5">
-    <!-- Left Column: Items & Payment -->
-    <div class="col-12 col-xl-8">
+<div class="row">
+    <div class="col-md-8">
         <!-- Order Items -->
-        <div class="admin-luxury-card p-0 overflow-hidden mb-5">
-            <div class="p-4 border-bottom border-light d-flex justify-content-between align-items-center bg-light">
-                <h5 class="admin-font-serif mb-0 text-secondary small text-uppercase ls-1 fw-bold">Acquisition List</h5>
-                <span class="badge-luxury">@Model.OrderItems.Count Items</span>
-            </div>
-            <div class="table-responsive">
-                <table class="table mb-0">
-                    <thead>
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Order Items</h5>
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Variant</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
                         <tr>
-                            <th class="ps-4">Artisan Piece</th>
-                            <th>Artisan Specification</th>
-                            <th>Qty</th>
-                            <th>Unit Valuation</th>
-                            <th class="text-end pe-4">Total</th>
+                            <td>@item.ProductName</td>
+                            <td>@item.VariantDescription</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.UnitPrice.ToString("C2")</td>
+                            <td>@item.LineTotal.ToString("C2")</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.OrderItems)
-                        {
-                            <tr>
-                                <td class="ps-4 text-dark fw-bold">@item.ProductName</td>
-                                <td><span class="text-secondary small">@item.VariantDescription</span></td>
-                                <td class="text-dark">@item.Quantity</td>
-                                <td class="admin-font-serif text-secondary">@item.UnitPrice.ToString("C2")</td>
-                                <td class="text-end pe-4 text-dark fw-bold admin-font-serif">@item.LineTotal.ToString("C2")</td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot class="bg-light">
-                        <tr>
-                            <td colspan="4" class="ps-4 py-4 text-secondary text-uppercase ls-1 small fw-bold">Grand Curation Total</td>
-                            <td class="text-end pe-4 py-4 h4 mb-0 admin-font-serif text-dark fw-bold">@Model.TotalAmount.ToString("C2")</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-end">Total:</th>
+                        <th>@Model.TotalAmount.ToString("C2")</th>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
 
-        <!-- Payment Intelligence -->
-        <div class="admin-luxury-card">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Fiscal Intelligence</h5>
-            <div class="row g-4">
-                <div class="col-12 col-md-6 border-end border-light">
-                    <div class="d-flex flex-column gap-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-secondary small ls-1 fw-bold">DEPOSIT (@Model.DepositPercentage%)</span>
-                            <span class="text-dark admin-font-serif fw-bold">@Model.DepositAmount.ToString("C2")</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-secondary small ls-1 fw-bold">RESIDUAL BALANCE</span>
-                            <span class="text-dark admin-font-serif fw-bold">@Model.RemainingBalance.ToString("C2")</span>
-                        </div>
-                        <div class="pt-3 mt-2 border-top border-light">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="text-secondary small ls-1 fw-bold">VERIFICATION</span>
-                                @if (Model.IsDepositVerified)
-                                {
-                                    <span class="text-success small fw-bold"><i class="bi bi-patch-check-fill me-1"></i> Verified on @Model.DepositVerifiedAt?.ToString("MMM d, yyyy")</span>
-                                }
-                                else
-                                {
-                                    <span class="text-warning small fw-bold"><i class="bi bi-clock-history me-1"></i> Awaiting Verification</span>
-                                }
-                            </div>
-                        </div>
-                    </div>
+        <!-- Payment -->
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Payment</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Deposit (@Model.DepositPercentage%):</strong> @Model.DepositAmount.ToString("C2")</p>
+                    <p><strong>Remaining:</strong> @Model.RemainingBalance.ToString("C2")</p>
+                    <p>
+                        <strong>Status:</strong>
+                        @if (Model.IsDepositVerified)
+                        {
+                            <span class="badge bg-success">Verified on @Model.DepositVerifiedAt?.ToString("MMM d, yyyy")</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Pending Verification</span>
+                        }
+                    </p>
                 </div>
-                <div class="col-12 col-md-6 text-center">
-                    <div class="bg-light p-4 border border-light h-100 d-flex flex-column justify-content-center">
-                        @if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.TransactionId)
-                        {
-                            <div class="text-center">
-                                <span class="text-secondary small ls-1 d-block mb-2 fw-bold">TRANS. ID</span>
-                                <code class="text-dark fs-5 fw-bold">@Model.TransactionId</code>
-                            </div>
-                        }
-                        else if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.ReceiptImage)
-                        {
-                            <span class="text-secondary small ls-1 d-block mb-3 fw-bold">DIGITAL RECEIPT</span>
-                            <a href="@Model.ReceiptImageUrl" target="_blank" class="d-block overflow-hidden border border-light mx-auto" style="max-width: 250px;">
-                                <img src="@Model.ReceiptImageUrl" class="img-fluid" />
-                            </a>
-                        }
-                    </div>
+                <div class="col-md-6">
+                    @if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.TransactionId)
+                    {
+                        <p><strong>Transaction ID:</strong> <code>@Model.TransactionId</code></p>
+                    }
+                    else if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.ReceiptImage)
+                    {
+                        <p><strong>Receipt:</strong></p>
+                        <a href="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" target="_blank">
+                            <img src="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" style="max-width: 200px; border-radius: 4px;" />
+                        </a>
+                    }
                 </div>
             </div>
             @if (!Model.IsDepositVerified)
             {
-                <form asp-action="VerifyDeposit" asp-route-id="@Model.Id" method="post" class="mt-5 text-center">
-                    <button type="submit" class="btn-luxury-outline text-success border-success w-100 justify-content-center" onclick="return confirm('Officially verify this fiscal deposit?');">
-                        <i class="bi bi-patch-check"></i> Authorize Payment Receipt
-                    </button>
+                <form asp-action="VerifyDeposit" asp-route-id="@Model.Id" method="post" class="mt-3">
+                    <button type="submit" class="btn btn-success" onclick="return confirm('Mark deposit as verified?');">✓ Verify Deposit</button>
+                </form>
+            }
+            else if (!Model.IsBalanceVerified && (Model.Status == Marblin.Core.Enums.OrderStatus.AwaitingBalance || Model.Status == Marblin.Core.Enums.OrderStatus.Shipped))
+            {
+                <form asp-action="VerifyBalance" asp-route-id="@Model.Id" method="post" class="mt-3">
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('Mark balance as verified?');">✓ Verify Balance</button>
                 </form>
             }
         </div>
     </div>
 
-    <!-- Right Column: Customer & Disposition -->
-    <div class="col-12 col-xl-4">
-        <!-- Client Profile -->
-        <div class="admin-luxury-card mb-5">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Client Profile</h5>
-            <div class="mb-4">
-                <div class="text-dark fs-5 mb-1 fw-bold">@Model.CustomerName</div>
-                <div class="text-secondary small">@Model.Email</div>
-                <div class="text-secondary small">@Model.Phone</div>
-            </div>
-            <div class="pt-4 border-top border-light">
-                <span class="text-secondary small ls-1 d-block mb-2 fw-bold">DELIVERY REGISTRY</span>
-                <address class="text-dark small lh-lg mb-0 font-monospace">
-                    @Model.AddressLine<br />
-                    @Model.City, @Model.Region<br />
-                    @Model.Country @Model.PostalCode
-                </address>
-            </div>
+    <div class="col-md-4">
+        <!-- Customer -->
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Customer</h5>
+            <p><strong>@Model.CustomerName</strong></p>
+            <p>@Model.Email</p>
+            <p>@Model.Phone</p>
+            <hr />
+            <p class="small text-muted mb-0">
+                @Model.AddressLine<br />
+                @Model.City, @Model.Region<br />
+                @Model.Country @Model.PostalCode
+            </p>
         </div>
 
-        <!-- Disposition Timeline -->
-        <div class="admin-luxury-card">
-            <h5 class="admin-font-serif mb-5 text-secondary small text-uppercase ls-1">Disposition State</h5>
-
-            <div class="ps-3 border-start border-light mb-5 d-flex flex-column gap-5">
+        <!-- Status -->
+        <div class="stat-card">
+            <h5 class="mb-3">Status</h5>
+            
+            <!-- Timeline -->
+            <div class="mb-3">
                 @{
                     var statuses = new[] {
-                (Marblin.Core.Enums.OrderStatus.PendingDeposit, "PENDING RECEIPT", Model.CreatedAt),
-                (Marblin.Core.Enums.OrderStatus.InProduction, "ARTISAN PRODUCTION", Model.InProductionAt),
-                (Marblin.Core.Enums.OrderStatus.AwaitingBalance, "AWAITING SETTLEMENT", Model.AwaitingBalanceAt),
-                (Marblin.Core.Enums.OrderStatus.Shipped, "CURATED DISPATCH", Model.ShippedAt)
-                };
+                        (Marblin.Core.Enums.OrderStatus.PendingDeposit, "Pending", Model.CreatedAt),
+                        (Marblin.Core.Enums.OrderStatus.InProduction, "Production", Model.InProductionAt),
+                        (Marblin.Core.Enums.OrderStatus.AwaitingBalance, "Awaiting", Model.AwaitingBalanceAt),
+                        (Marblin.Core.Enums.OrderStatus.Shipped, "Shipped", Model.ShippedAt)
+                    };
                 }
                 @foreach (var (status, label, date) in statuses)
                 {
                     var isCurrent = Model.Status == status;
                     var isPast = Model.Status > status;
-                    <div class="position-relative">
-                        <div class="position-absolute" style="left: -24px; top: 4px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid @(isPast || isCurrent ? "#000" : "#DDD"); background: @(isPast || isCurrent ? "#000" : "#FFF");"></div>
-                        <div class="ps-3">
-                            <div class="small fw-bold ls-1 @(isCurrent ? "text-dark" : (isPast ? "text-secondary" : "text-muted"))">@label</div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div style="width: 20px; height: 20px; border-radius: 50%; background: @(isPast || isCurrent ? "#1a1a1a" : "#ddd"); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px;">
+                            @if (isPast || isCurrent) { <span>✓</span> }
+                        </div>
+                        <div class="ms-2">
+                            <strong style="color: @(isCurrent ? "#c9a962" : "#333");">@label</strong>
                             @if (date.HasValue || status == Marblin.Core.Enums.OrderStatus.PendingDeposit)
                             {
-                                <div class="text-muted small" style="font-size: 0.65rem;">@((date ?? Model.CreatedAt).ToString("MMM d, yyyy · H:mm"))</div>
+                                <small class="text-muted d-block">@((date ?? Model.CreatedAt).ToString("MMM d, h:mm tt"))</small>
                             }
                         </div>
                     </div>
@@ -171,30 +147,21 @@
 
             @if (Model.Status != Marblin.Core.Enums.OrderStatus.Shipped && Model.Status != Marblin.Core.Enums.OrderStatus.Cancelled)
             {
-                <div class="bg-light p-4 border border-light">
-                    <label class="form-label-luxury mb-3">Manifest Disposition Change</label>
-                    <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post">
-                        <div class="d-flex flex-column gap-3">
-                            <select name="newStatus" class="form-select form-luxury m-0">
-                                @foreach (var s in Enum.GetValues<Marblin.Core.Enums.OrderStatus>())
+                <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post">
+                    <div class="input-group">
+                        <select name="newStatus" class="form-select">
+                            @foreach (var s in Enum.GetValues<Marblin.Core.Enums.OrderStatus>())
+                            {
+                                @if (s != Marblin.Core.Enums.OrderStatus.Cancelled)
                                 {
-                                    @if (s != Marblin.Core.Enums.OrderStatus.Cancelled)
-                                    {
-                                        <option value="@s" selected="@(s == Model.Status)">@s</option>
-                                    }
+                                    <option value="@s" selected="@(s == Model.Status)">@s</option>
                                 }
-                            </select>
-                            <button type="submit" class="btn-luxury-outline w-100 justify-content-center">
-                                <i class="bi bi-arrow-repeat"></i> Update State
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-dark">Update</button>
+                    </div>
+                </form>
             }
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

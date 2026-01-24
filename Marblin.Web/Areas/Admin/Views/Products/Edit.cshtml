@@ -3,229 +3,192 @@
     ViewData["Title"] = "Edit Product";
 }
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
-    <h1 class="h2 admin-font-serif mb-0 text-dark">Modify Piece</h1>
-    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
-        <i class="bi bi-arrow-left"></i> Back to Catalog
-    </a>
+<div class="admin-header">
+    <h1>Edit Product</h1>
+    <a asp-action="Index" class="btn btn-outline-dark">← Back to Products</a>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
-        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
 @if (TempData["Error"] != null)
 {
-    <div class="alert badge-luxury w-100 mb-4 py-3 border-danger text-danger d-flex justify-content-between align-items-center" role="alert">
-        <span><i class="bi bi-exclamation-triangle me-2"></i> @TempData["Error"]</span>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
 
-<div class="row g-5">
-    <!-- Left Column: Details & Variants -->
-    <div class="col-12 col-xl-7">
-        <!-- Main Details -->
-        <div class="admin-luxury-card mb-5">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Core Specifications</h5>
+<div class="row">
+    <!-- Product Details -->
+    <div class="col-md-7">
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Product Details</h5>
             <form asp-action="Edit" method="post">
                 <input type="hidden" asp-for="Id" />
-                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-
-                <div class="mb-4">
-                    <label asp-for="Name" class="form-label-luxury">Piece Nomenclature</label>
-                    <input asp-for="Name" class="form-control form-luxury" />
-                    <span asp-validation-for="Name" class="text-danger small"></span>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
-                <div class="mb-4">
-                    <label asp-for="Description" class="form-label-luxury">Craftsmanship Narrative</label>
-                    <textarea asp-for="Description" class="form-control form-luxury" rows="6"></textarea>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
                 </div>
 
-                <div class="row g-4 mb-4">
-                    <div class="col-12 col-sm-6">
-                        <label asp-for="BasePrice" class="form-label-luxury">Base Valuation (USD)</label>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="BasePrice" class="form-label"></label>
                         <div class="input-group">
-                            <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">$</span>
-                            <input asp-for="BasePrice" class="form-control form-luxury" type="number" step="0.01" />
+                            <span class="input-group-text">$</span>
+                            <input asp-for="BasePrice" class="form-control" type="number" step="0.01" />
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6">
-                        <label asp-for="CategoryId" class="form-label-luxury">Curation Collection</label>
-                        <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-select form-luxury"></select>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CategoryId" class="form-label"></label>
+                        <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-select"></select>
                     </div>
                 </div>
 
-                <div class="row g-4 mb-5">
-                    <div class="col-12 col-sm-6">
-                        <label asp-for="Availability" class="form-label-luxury">Inventory Disposition</label>
-                        <select asp-for="Availability" asp-items="Html.GetEnumSelectList<Marblin.Core.Enums.ProductAvailability>()" class="form-select form-luxury"></select>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Availability" class="form-label"></label>
+                        <select asp-for="Availability" asp-items="Html.GetEnumSelectList<Marblin.Core.Enums.ProductAvailability>()" class="form-select"></select>
                     </div>
-                    <div class="col-12 col-sm-6">
-                        <div class="d-flex flex-column gap-2 mt-2">
-                            <div class="form-check">
-                                <input asp-for="IsSignaturePiece" class="form-check-input border-dark" />
-                                <label asp-for="IsSignaturePiece" class="form-check-label text-secondary small ls-1 fw-bold">SIGNATURE PIECE</label>
-                            </div>
-                            <div class="form-check">
-                                <input asp-for="IsActive" class="form-check-input border-dark" />
-                                <label asp-for="IsActive" class="form-check-label text-secondary small ls-1 fw-bold">PUBLIC VISIBILITY</label>
-                            </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-check mt-4">
+                            <input asp-for="IsSignaturePiece" class="form-check-input" />
+                            <label asp-for="IsSignaturePiece" class="form-check-label">Signature Piece</label>
+                        </div>
+                        <div class="form-check">
+                            <input asp-for="IsActive" class="form-check-input" />
+                            <label asp-for="IsActive" class="form-check-label">Active</label>
                         </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-luxury-outline">
-                    <i class="bi bi-save"></i> Commit Changes
-                </button>
+                <button type="submit" class="btn btn-dark">Save Changes</button>
             </form>
         </div>
 
         <!-- Variants -->
-        <div class="admin-luxury-card">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Artisan Variants</h5>
-
-            <div class="table-responsive mb-4">
-                @if (Model.Variants.Any())
-                {
-                    <table class="table mb-0">
-                        <thead>
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Variants</h5>
+            @if (Model.Variants.Any())
+            {
+                <table class="table table-sm mb-3">
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Size</th>
+                            <th>Price Adj.</th>
+                            <th>Stock</th>
+                            <th>SKU</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var v in Model.Variants)
+                        {
                             <tr>
-                                <th>Material</th>
-                                <th>Size</th>
-                                <th>Adjustment</th>
-                                <th>Stock</th>
-                                <th>SKU</th>
-                                <th class="text-end"></th>
+                                <td>@v.Material</td>
+                                <td>@v.Size</td>
+                                <td>@(v.PriceAdjustment >= 0 ? "+" : "")@v.PriceAdjustment.ToString("C2")</td>
+                                <td>
+                                    @if (v.Stock <= 3 && v.Stock > 0)
+                                    {
+                                        <span class="text-warning">@v.Stock (Low)</span>
+                                    }
+                                    else if (v.Stock == 0)
+                                    {
+                                        <span class="text-danger">0</span>
+                                    }
+                                    else
+                                    {
+                                        @v.Stock
+                                    }
+                                </td>
+                                <td><code>@v.SKU</code></td>
+                                <td>
+                                    <form asp-action="DeleteVariant" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@v.Id" />
+                                        <input type="hidden" name="productId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this variant?');">×</button>
+                                    </form>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var v in Model.Variants)
-                            {
-                                <tr>
-                                    <td class="text-dark fw-bold">@v.Material</td>
-                                    <td class="text-dark">@v.Size</td>
-                                    <td class="admin-font-serif text-dark fw-bold">@(v.PriceAdjustment >= 0 ? "+" : "")@v.PriceAdjustment.ToString("C0")</td>
-                                    <td>
-                                        @if (v.Stock <= 3 && v.Stock > 0)
-                                        {
-                                            <span class="text-warning small fw-bold"><i class="bi bi-exclamation-triangle"></i> @v.Stock</span>
-                                        }
-                                        else if (v.Stock == 0)
-                                        {
-                                            <span class="text-danger small fw-bold"><i class="bi bi-x-circle"></i> Out</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-secondary">@v.Stock</span>
-                                        }
-                                    </td>
-                                    <td><code class="text-secondary small">@v.SKU</code></td>
-                                    <td class="text-end">
-                                        <form asp-action="DeleteVariant" method="post" class="d-inline">
-                                            <input type="hidden" name="id" value="@v.Id" />
-                                            <input type="hidden" name="productId" value="@Model.Id" />
-                                            <button type="submit" class="btn btn-sm btn-link text-muted p-0 hover-dark" onclick="return confirm('Remove this variant?');">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p class="text-secondary small py-4 text-center border">No variations defined for this piece.</p>
-                }
-            </div>
-
-            <div class="bg-light p-4 border border-light">
-                <h6 class="small text-uppercase ls-1 mb-3 text-dark fw-bold">Add Variation</h6>
-                <form asp-action="AddVariant" method="post" class="row g-3">
-                    <input type="hidden" name="productId" value="@Model.Id" />
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <input type="text" name="material" class="form-control form-luxury m-0" placeholder="Material" required />
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <input type="text" name="size" class="form-control form-luxury m-0" placeholder="Size" required />
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-2">
-                        <input type="number" step="0.01" name="priceAdjustment" class="form-control form-luxury m-0" placeholder="+/- Price" value="0" />
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-2">
-                        <input type="number" name="stock" class="form-control form-luxury m-0" placeholder="Stock" value="0" />
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-2">
-                        <input type="text" name="sku" class="form-control form-luxury m-0" placeholder="SKU" />
-                    </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn-luxury-outline btn-luxury-sm w-100 justify-content-center">Add Variant</button>
-                    </div>
-                </form>
-            </div>
+                        }
+                    </tbody>
+                </table>
+            }
+            <form asp-action="AddVariant" method="post" class="row g-2">
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <div class="col-md-2">
+                    <input type="text" name="material" class="form-control form-control-sm" placeholder="Material" required />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="size" class="form-control form-control-sm" placeholder="Size" required />
+                </div>
+                <div class="col-md-2">
+                    <input type="number" step="0.01" name="priceAdjustment" class="form-control form-control-sm" placeholder="+/- Price" value="0" />
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="stock" class="form-control form-control-sm" placeholder="Stock" value="0" />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="sku" class="form-control form-control-sm" placeholder="SKU" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-sm btn-outline-dark w-100">Add</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Right Column: Imagery -->
-    <div class="col-12 col-xl-5">
-        <div class="admin-luxury-card sticky-top" style="top: 100px;">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Imagery Portfolio</h5>
-
-            <div class="row g-3 mb-5">
+    <!-- Images -->
+    <div class="col-md-5">
+        <div class="stat-card">
+            <h5 class="mb-3">Images</h5>
+            <div class="row g-2 mb-3">
                 @foreach (var img in Model.Images)
                 {
                     <div class="col-6">
-                        <div class="bg-light border border-light position-relative">
-                            <img src="@img.ImageUrl" alt="@img.AltText" style="width: 100%; aspect-ratio: 1; object-fit: cover;" />
-
+                        <div style="position: relative;">
+                            <img src="@img.ImageUrl" alt="@img.AltText" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;" />
                             @if (img.IsPrimary)
                             {
-                                <div class="position-absolute top-0 start-0 m-2">
-                                    <span class="badge-luxury" style="font-size: 0.55rem; background: #000; color: #fff; border: none;">Primary</span>
-                                </div>
+                                <span class="badge bg-warning text-dark" style="position: absolute; top: 5px; left: 5px;">Primary</span>
                             }
-
-                            <div class="position-absolute top-0 end-0 m-2">
-                                <form asp-action="DeleteImage" method="post">
-                                    <input type="hidden" name="id" value="@img.Id" />
-                                    <input type="hidden" name="productId" value="@Model.Id" />
-                                    <button type="submit" class="btn btn-sm btn-dark p-1 lh-1 border-0" onclick="return confirm('Remove image?');">
-                                        <i class="bi bi-x fs-5"></i>
-                                    </button>
-                                </form>
-                            </div>
+                            <form asp-action="DeleteImage" method="post" style="position: absolute; top: 5px; right: 5px;">
+                                <input type="hidden" name="id" value="@img.Id" />
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete image?');">×</button>
+                            </form>
                         </div>
                     </div>
                 }
             </div>
-
-            <div class="bg-light p-4 border border-light">
-                <h6 class="small text-uppercase ls-1 mb-4 text-dark fw-bold">Upload New Visual</h6>
-                <form asp-action="UploadImage" method="post" enctype="multipart/form-data">
-                    <input type="hidden" name="productId" value="@Model.Id" />
-                    <div class="mb-3">
-                        <label class="form-label-luxury">Select File</label>
-                        <input type="file" name="image" class="form-control form-luxury pb-2" accept="image/*" required />
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label-luxury">Alt Text</label>
-                        <input type="text" name="altText" class="form-control form-luxury" placeholder="Accessibility description" />
-                    </div>
-                    <div class="form-check mb-4">
-                        <input type="checkbox" name="isPrimary" value="true" class="form-check-input border-dark" id="isPrimary" />
-                        <label class="form-check-label text-secondary small ls-1 fw-bold" for="isPrimary">SET AS PRIMARY EXHIBIT</label>
-                    </div>
-                    <button type="submit" class="btn-luxury-outline w-100 justify-content-center">
-                        <i class="bi bi-upload"></i> Upload to Gallery
-                    </button>
-                </form>
-            </div>
+            <form asp-action="UploadImage" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <div class="mb-2">
+                    <input type="file" name="image" class="form-control form-control-sm" accept="image/*" required />
+                </div>
+                <div class="mb-2">
+                    <input type="text" name="altText" class="form-control form-control-sm" placeholder="Alt text (optional)" />
+                </div>
+                <div class="form-check mb-2">
+                    <input type="checkbox" name="isPrimary" value="true" class="form-check-input" id="isPrimary" />
+                    <label class="form-check-label" for="isPrimary">Set as primary image</label>
+                </div>
+                <button type="submit" class="btn btn-sm btn-outline-dark">Upload Image</button>
+            </form>
         </div>
     </div>
 </div>

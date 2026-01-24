@@ -36,6 +36,11 @@ namespace Marblin.Infrastructure.Data.Repositories
             return await _context.SaveChangesAsync();
         }
 
+        public void ClearCache(string key)
+        {
+            _cache.Remove(key);
+        }
+
         public void Dispose()
         {
             _context.Dispose();

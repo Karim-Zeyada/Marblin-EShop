@@ -3,81 +3,63 @@
     ViewData["Title"] = "Create Product";
 }
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
-    <h1 class="h2 admin-font-serif mb-0 text-dark">Create Piece</h1>
-    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
-        <i class="bi bi-arrow-left"></i> Back to Catalog
-    </a>
+<div class="admin-header">
+    <h1>Create Product</h1>
+    <a asp-action="Index" class="btn btn-outline-dark">← Back to Products</a>
 </div>
 
-<div class="row g-4">
-    <div class="col-12 col-xl-8">
-        <div class="admin-luxury-card">
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="badge-luxury w-100 mb-4 py-3 border-danger text-danger" role="alert"></div>
-
-                <div class="mb-4">
-                    <label asp-for="Name" class="form-label-luxury">Piece Name</label>
-                    <input asp-for="Name" class="form-control form-luxury" placeholder="e.g., Midnight Marble Sidetable" />
-                    <span asp-validation-for="Name" class="text-danger small"></span>
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="Description" class="form-label-luxury">Artisan Description</label>
-                    <textarea asp-for="Description" class="form-control form-luxury" rows="5" placeholder="Detail the craftsmanship and materials..."></textarea>
-                    <span asp-validation-for="Description" class="text-danger small"></span>
-                </div>
-
-                <div class="row g-4 mb-4">
-                    <div class="col-12 col-sm-6">
-                        <label asp-for="BasePrice" class="form-label-luxury">Base Price (USD)</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">$</span>
-                            <input asp-for="BasePrice" class="form-control form-luxury" type="number" step="0.01" />
-                        </div>
-                        <span asp-validation-for="BasePrice" class="text-danger small"></span>
-                    </div>
-                    <div class="col-12 col-sm-6">
-                        <label asp-for="CategoryId" class="form-label-luxury">Collection</label>
-                        <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-select form-luxury">
-                            <option value="">-- Select Collection --</option>
-                        </select>
-                        <span asp-validation-for="CategoryId" class="text-danger small"></span>
-                    </div>
-                </div>
-
-                <div class="row g-4 mb-5">
-                    <div class="col-12 col-sm-6">
-                        <label asp-for="Availability" class="form-label-luxury">Availability Status</label>
-                        <select asp-for="Availability" asp-items="Html.GetEnumSelectList<Marblin.Core.Enums.ProductAvailability>()" class="form-select form-luxury"></select>
-                    </div>
-                    <div class="col-12 col-sm-6 d-flex align-items-end">
-                        <div class="form-check pb-2">
-                            <input asp-for="IsSignaturePiece" class="form-check-input border-dark" />
-                            <label asp-for="IsSignaturePiece" class="form-check-label text-secondary small ls-1 fw-bold">FEATURE AS SIGNATURE PIECE</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-flex flex-column flex-sm-row gap-3">
-                    <button type="submit" class="btn-luxury-outline">
-                        <i class="bi bi-check2"></i> Initialize Piece
-                    </button>
-                    <a asp-action="Index" class="btn-luxury-outline text-secondary border-light">Cancel</a>
-                </div>
-            </form>
+<div class="stat-card" style="max-width: 700px;">
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+        
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
         </div>
-    </div>
 
-    <div class="col-12 col-xl-4">
-        <div class="admin-luxury-card bg-light border-light shadow-none">
-            <h5 class="admin-font-serif mb-3 small text-uppercase ls-1 text-dark">Instruction</h5>
-            <p class="text-secondary small lh-lg">
-                When creating a new piece, remember that images and variants are managed after the initial creation.
-                Ensure the description highlights the unique luxury aspects of the piece.
-            </p>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
         </div>
-    </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="BasePrice" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input asp-for="BasePrice" class="form-control" type="number" step="0.01" />
+                </div>
+                <span asp-validation-for="BasePrice" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="CategoryId" class="form-label"></label>
+                <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-select">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Availability" class="form-label"></label>
+                <select asp-for="Availability" asp-items="Html.GetEnumSelectList<Marblin.Core.Enums.ProductAvailability>()" class="form-select"></select>
+            </div>
+            <div class="col-md-6 mb-3 d-flex align-items-end">
+                <div class="form-check">
+                    <input asp-for="IsSignaturePiece" class="form-check-input" />
+                    <label asp-for="IsSignaturePiece" class="form-check-label">Feature as Signature Piece</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-dark">Create Product</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

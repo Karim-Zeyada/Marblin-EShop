@@ -1,51 +1,66 @@
 @model Marblin.Core.Entities.Category
-@{
-    ViewData["Title"] = Model.Id == 0 ? "Create Collection" : "Edit Collection";
-}
+@{ ViewData["Title"] = Model.Id == 0 ? "Create Category" : "Edit Category"; }
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
-    <h1 class="h2 admin-font-serif mb-0 text-dark">@ViewData["Title"]</h1>
-    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
-        <i class="bi bi-arrow-left"></i> Back to Collections
-    </a>
+<div class="admin-header">
+    <h1>@ViewData["Title"]</h1>
+    <a asp-action="Index" class="btn btn-outline-dark">← Back</a>
 </div>
 
-<div class="row">
-    <div class="col-12 col-lg-6">
-        <div class="admin-luxury-card">
-            <form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post">
-                <input type="hidden" asp-for="Id" />
-
+<div class="stat-card">
+    <form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        
+        <div class="row">
+            <div class="col-md-8">
                 <div class="mb-4">
-                    <label asp-for="Name" class="form-label-luxury">Collection Name</label>
-                    <input asp-for="Name" class="form-control form-luxury" required placeholder="e.g., The Midnight Series" />
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="Description" class="form-label-luxury">Curatorial Description</label>
-                    <textarea asp-for="Description" class="form-control form-luxury" rows="4" placeholder="Describe the aesthetic and philosophy of this collection..."></textarea>
-                </div>
-
-                <div class="row g-4 mb-5">
-                    <div class="col-12 col-sm-6">
-                        <label asp-for="SortOrder" class="form-label-luxury">Curation Order</label>
-                        <input asp-for="SortOrder" class="form-control form-luxury" type="number" />
+                    <h5 class="mb-3">Category Details</h5>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" required />
                     </div>
-                    <div class="col-12 col-sm-6 d-flex align-items-end">
-                        <div class="form-check pb-2">
-                            <input asp-for="IsActive" class="form-check-input border-dark" />
-                            <label asp-for="IsActive" class="form-check-label text-secondary small ls-1 fw-bold">COLLECTION VISIBILITY</label>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="SortOrder" class="form-label">Display Order</label>
+                            <input asp-for="SortOrder" class="form-control" type="number" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                <input asp-for="IsActive" class="form-check-input" />
+                                <label asp-for="IsActive" class="form-check-label">Active</label>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="d-flex gap-3">
-                    <button type="submit" class="btn-luxury-outline">
-                        <i class="bi bi-save"></i> Save Collection
-                    </button>
-                    <a asp-action="Index" class="btn-luxury-outline text-secondary border-light">Cancel</a>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-dark">Save Category</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </div>
                 </div>
-            </form>
+            </div>
+
+            <div class="col-md-4">
+                <div class="mb-4">
+                    <h5 class="mb-3">Category Image</h5>
+                    <div class="alert alert-light border small text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Used for the "Our Collections" section on the home page.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Upload Image</label>
+                        <input type="file" name="file" class="form-control" accept="image/*" />
+                    </div>
+                    <div class="text-center bg-light rounded p-4 text-muted small">
+                        No image selected
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
