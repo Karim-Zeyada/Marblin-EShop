@@ -820,6 +820,8 @@ footer {
 .mobile-drawer-link {
     display: flex;
     align-items: center;
+    gap: 1rem;
+    /* Added gap for icon spacing */
     color: #FFFFFF !important;
     font-family: 'Inter', sans-serif;
     font-size: 1.1rem;

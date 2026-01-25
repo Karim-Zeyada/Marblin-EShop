@@ -74,60 +74,60 @@
                         </a>
                     </div>
                 </div>
-
-                <!-- 4. MOBILE OFFCANVAS (Inserted for Small Devices) -->
-                <div class="offcanvas offcanvas-start mobile-offcanvas d-xl-none" tabindex="-1" id="mobileOffcanvas" aria-labelledby="mobileOffcanvasLabel">
-
-                    <!-- Header -->
-                    <div class="offcanvas-header p-4 border-bottom border-white-10">
-                        <div class="d-flex align-items-center gap-2">
-                            <!-- Brand Logo Copy -->
-                            <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                <img src="~/images/logo.jpg" alt="Logo" class="img-fluid rounded-circle" />
-                            </div>
-                            <span class="font-playfair fw-bold fs-4 text-white">MARBLIN</span>
-                        </div>
-                        <button type="button" class="btn-close btn-close-white-mobile" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="offcanvas-body p-4">
-                        <nav class="d-flex flex-column">
-                            <a class="mobile-drawer-link" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house"></i> Home
-                            </a>
-                            <a class="mobile-drawer-link" asp-area="" asp-controller="Catalog" asp-action="Index">
-                                <i class="bi bi-bag"></i> Shop
-                            </a>
-                            <a class="mobile-drawer-link" asp-area="" asp-controller="CustomRequest" asp-action="Create">
-                                <i class="bi bi-palette"></i> Custom Request
-                            </a>
-                            <a class="mobile-drawer-link" asp-area="" asp-controller="Home" asp-action="About">
-                                <i class="bi bi-info-circle"></i> About
-                            </a>
-                            <a class="mobile-drawer-link" asp-area="" asp-controller="Home" asp-action="Contact">
-                                <i class="bi bi-envelope"></i> Contact
-                            </a>
-                            <a class="mobile-drawer-link" asp-area="" asp-controller="Order" asp-action="Track">
-                                <i class="bi bi-truck"></i> Track Order
-                            </a>
-                            <partial name="_MobileLoginPartial" />
-                        </nav>
-
-                        <!-- Mobile Footer -->
-                        <div class="mt-5 pt-4 border-top border-white-10">
-                            <p class="text-white small mb-3">Follow Us</p>
-                            <div class="d-flex gap-4">
-                                <a href="#" class="text-white fs-5"><i class="bi bi-instagram"></i></a>
-                                <a href="#" class="text-white fs-5"><i class="bi bi-facebook"></i></a>
-                                <a href="#" class="text-white fs-5"><i class="bi bi-twitter-x"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </nav>
     </header>
+
+    <!-- 4. MOBILE OFFCANVAS (Moved outside Header to avoid stacking context issues) -->
+    <div class="offcanvas offcanvas-start mobile-offcanvas d-xl-none bg-black" tabindex="-1" id="mobileOffcanvas" aria-labelledby="mobileOffcanvasLabel">
+
+        <!-- Header -->
+        <div class="offcanvas-header p-4 border-bottom border-white-10">
+            <div class="d-flex align-items-center gap-2">
+                <!-- Brand Logo Copy -->
+                <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                    <img src="~/images/logo.jpg" alt="Logo" class="img-fluid rounded-circle" />
+                </div>
+                <span class="font-playfair fw-bold fs-4 text-white">MARBLIN</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="offcanvas-body p-4">
+            <nav class="d-flex flex-column">
+                <a class="mobile-drawer-link" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-house"></i> Home
+                </a>
+                <a class="mobile-drawer-link" asp-area="" asp-controller="Catalog" asp-action="Index">
+                    <i class="bi bi-bag"></i> Shop
+                </a>
+                <a class="mobile-drawer-link" asp-area="" asp-controller="CustomRequest" asp-action="Create">
+                    <i class="bi bi-palette"></i> Custom Request
+                </a>
+                <a class="mobile-drawer-link" asp-area="" asp-controller="Home" asp-action="About">
+                    <i class="bi bi-info-circle"></i> About
+                </a>
+                <a class="mobile-drawer-link" asp-area="" asp-controller="Home" asp-action="Contact">
+                    <i class="bi bi-envelope"></i> Contact
+                </a>
+                <a class="mobile-drawer-link" asp-area="" asp-controller="Order" asp-action="Track">
+                    <i class="bi bi-truck"></i> Track Order
+                </a>
+                <partial name="_MobileLoginPartial" />
+            </nav>
+
+            <!-- Mobile Footer -->
+            <div class="mt-5 pt-4 border-top border-white-10">
+                <p class="text-white small mb-3">Follow Us</p>
+                <div class="d-flex gap-4">
+                    <a href="#" class="text-white fs-5"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-white fs-5"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white fs-5"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <main role="main" class="flex-grow-1"
           style="@(!isHomePage ? "padding-top: var(--navbar-height);" : "")">
