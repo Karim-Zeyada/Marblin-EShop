@@ -509,13 +509,33 @@ footer {
     opacity: 1;
 }
 
-/* Categories */
+/* Collections */
 .category-card .category-image {
-    transition: transform 0.7s ease;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .category-card:hover .category-image {
-    transform: scale(1.05);
+    transform: scale(1.1) !important;
+}
+
+.category-card .category-overlay {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%);
+    transition: background 0.5s ease;
+}
+
+.category-card:hover .category-overlay {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.category-card .btn-reveal {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-card:hover .btn-reveal {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
 }
 
 /* Home Page Specifics */
@@ -972,52 +992,97 @@ footer {
 }
 */
 
-/* Dark Arrows (Inverse) for Light Backgrounds - Lux Redesign (Glassy) */
+/* Dark Arrows (Inverse) for Light Backgrounds - Lux Redesign (Contrast) */
 .carousel-dark-arrows-inverse .carousel-control-prev,
 .carousel-dark-arrows-inverse .carousel-control-next {
-    width: 40px;
-    height: 40px;
-    opacity: 0.9;
+    width: 42px;
+    height: 42px;
+    opacity: 1;
     top: 50%;
     transform: translateY(-50%);
-    margin: 0 10px;
-    /* Glassy Look like Reference Picture 2 */
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    margin: 0;
+    /* Clean Solid Look for mobile */
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     border-radius: 50%;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 10;
 }
 
+@media (min-width: 992px) {
+
+    .carousel-dark-arrows-inverse .carousel-control-prev,
+    .carousel-dark-arrows-inverse .carousel-control-next {
+        width: 50px;
+        height: 50px;
+        /* LUXURY DARK THEME: Solid black circle for visibility on white bg */
+        background: #1a1a1a;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .carousel-dark-arrows-inverse .carousel-control-prev {
+        left: -60px;
+    }
+
+    .carousel-dark-arrows-inverse .carousel-control-next {
+        right: -60px;
+    }
+}
+
 .carousel-dark-arrows-inverse .carousel-control-prev:hover,
 .carousel-dark-arrows-inverse .carousel-control-next:hover {
-    background: rgba(255, 255, 255, 0.4);
-    border-color: rgba(255, 255, 255, 0.8);
     transform: translateY(-50%) scale(1.1);
+    background: #000;
+}
+
+@media (min-width: 992px) {
+
+    .carousel-dark-arrows-inverse .carousel-control-prev:hover,
+    .carousel-dark-arrows-inverse .carousel-control-next:hover {
+        background: var(--gold-accent, #c5a059);
+        /* Gold hover on desktop */
+        box-shadow: 0 15px 35px rgba(197, 160, 89, 0.3);
+    }
 }
 
 .carousel-dark-arrows-inverse .carousel-control-prev {
-    left: 0;
+    left: 10px;
 }
 
 .carousel-dark-arrows-inverse .carousel-control-next {
-    right: 0;
+    right: 10px;
 }
 
-/* Ensure icons are centered and WHITE like the reference */
+/* Ensure icons are centered and BOLD/WHITE for high contrast on black */
 .carousel-dark-arrows-inverse .carousel-control-prev-icon,
 .carousel-dark-arrows-inverse .carousel-control-next-icon {
     background: none;
-    font-size: 1rem;
-    color: #FFFFFF;
+    font-size: 1.1rem;
+    color: #333333;
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: color 0.3s ease;
+}
+
+@media (min-width: 992px) {
+
+    .carousel-dark-arrows-inverse .carousel-control-prev-icon,
+    .carousel-dark-arrows-inverse .carousel-control-next-icon {
+        font-size: 1.5rem;
+        color: #FFFFFF !important;
+        /* Pure white arrow on black circle */
+    }
+
+    .carousel-dark-arrows-inverse .carousel-control-prev:hover .carousel-control-prev-icon,
+    .carousel-dark-arrows-inverse .carousel-control-next:hover .carousel-control-next-icon {
+        color: #000000 !important;
+        /* Black arrow on gold background hover */
+    }
 }
 
 @media (max-width: 767.98px) {
@@ -1058,4 +1123,32 @@ footer {
 #signatureMobileCarousel .card,
 #collectionsMobileCarousel .card {
     height: 100%;
+}
+
+/* Mobile Filter Bar Enhancement */
+.mobile-filter-bar {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Ensure content isn't covered by fixed bottom bar on mobile */
+@media (max-width: 991.98px) {
+    body {
+        padding-bottom: 90px;
+    }
+}
+
+/* Desktop Filter Drawer */
+@media (min-width: 992px) {
+    #desktopFilterOffcanvas {
+        width: 400px;
+        /* Wider drawer for desktop */
+        z-index: 3050;
+        /* Above Navbar (3000) */
+    }
+}
+
+/* Ensure backdrop is also above navbar if needed, or just high enough */
+.offcanvas-backdrop {
+    z-index: 3040;
+    /* Above Navbar */
 }

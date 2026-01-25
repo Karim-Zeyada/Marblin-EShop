@@ -139,7 +139,7 @@
         </div>
 
         <!-- Desktop Carousel (3 Items Per Slide) -->
-        <div id="signatureDesktopCarousel" class="carousel slide d-none d-md-block carousel-dark-arrows-inverse" data-bs-ride="carousel">
+        <div id="signatureDesktopCarousel" class="carousel slide d-none d-md-block carousel-dark-arrows-inverse px-md-5 position-relative" data-bs-ride="carousel">
             <div class="carousel-inner">
                 @{
                     var sigList = Model.SignaturePieces.ToList();
@@ -186,15 +186,15 @@
             </div>
             @if(chunkCount > 1)
             {
-                <button class="carousel-control-prev" type="button" data-bs-target="#signatureDesktopCarousel" data-bs-slide="prev" style="width: 5%;">
+                <button class="carousel-control-prev" type="button" data-bs-target="#signatureDesktopCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true">
-                        <i class="bi bi-chevron-left text-dark fs-3"></i>
+                        <i class="bi bi-chevron-left fs-3"></i>
                     </span>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#signatureDesktopCarousel" data-bs-slide="next" style="width: 5%;">
+                <button class="carousel-control-next" type="button" data-bs-target="#signatureDesktopCarousel" data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true">
-                        <i class="bi bi-chevron-right text-dark fs-3"></i>
+                        <i class="bi bi-chevron-right fs-3"></i>
                     </span>
                     <span class="visually-hidden">Next</span>
                 </button>
@@ -267,7 +267,7 @@
                 <div class="separator-line mx-auto mt-3"></div>
             </div>
             <!-- Desktop Collections Carousel (3 Items Per Slide) -->
-            <div id="collectionsDesktopCarousel" class="carousel slide d-none d-md-block carousel-dark-arrows-inverse" data-bs-ride="carousel">
+            <div id="collectionsDesktopCarousel" class="carousel slide d-none d-md-block carousel-dark-arrows-inverse px-md-5 position-relative" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @{
                         var catList = Model.Categories.ToList();
@@ -304,15 +304,15 @@
                 </div>
                 @if(catChunkCount > 1)
                 {
-                    <button class="carousel-control-prev" type="button" data-bs-target="#collectionsDesktopCarousel" data-bs-slide="prev" style="width: 5%;">
+                    <button class="carousel-control-prev" type="button" data-bs-target="#collectionsDesktopCarousel" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true">
-                            <i class="bi bi-chevron-left text-dark fs-3"></i>
+                            <i class="bi bi-chevron-left fs-3"></i>
                         </span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#collectionsDesktopCarousel" data-bs-slide="next" style="width: 5%;">
+                    <button class="carousel-control-next" type="button" data-bs-target="#collectionsDesktopCarousel" data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true">
-                            <i class="bi bi-chevron-right text-dark fs-3"></i>
+                            <i class="bi bi-chevron-right fs-3"></i>
                         </span>
                         <span class="visually-hidden">Next</span>
                     </button>

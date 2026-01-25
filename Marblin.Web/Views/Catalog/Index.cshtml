@@ -14,59 +14,33 @@
         <div class="separator-line mx-auto mt-4"></div>
     </div>
 
-    <div class="row g-5">
-        <!-- Sidebar Filters -->
-        <div class="col-lg-3 mb-5">
-            <div class="filter-sidebar sticky-sidebar pt-2">
-                <h5 class="serif-font mb-4 pb-2 border-bottom">Filters</h5>
-                
-                <div class="mb-5">
-                    <h6 class="text-uppercase small fw-bold mb-3 letter-spacing-2 text-secondary">Categories</h6>
-                    <ul class="list-unstyled d-flex flex-column gap-2">
-                        <li>
-                            <a asp-action="Index" class="text-decoration-none transition-all @(ViewBag.CategoryId == null ? "text-dark fw-bold ps-2 border-start border-3 border-dark" : "text-muted hover-underline")">All Products</a>
-                        </li>
-                        @if (ViewBag.Categories is List<Marblin.Core.Entities.Category> categories)
-                        {
-                            foreach (var cat in categories)
-                            {
-                                <li>
-                                    <a asp-action="Index" asp-route-categoryId="@cat.Id" class="text-decoration-none transition-all @(ViewBag.CategoryId == cat.Id ? "text-dark fw-bold ps-2 border-start border-3 border-dark" : "text-muted hover-underline")">
-                                        @cat.Name
-                                    </a>
-                                </li>
-                            }
-                        }
-                    </ul>
-                </div>
-
-                <div class="mb-4">
-                    <h6 class="text-uppercase small fw-bold mb-3 letter-spacing-2 text-secondary">Sort By</h6>
-                    <form method="get" id="sortForm">
-                        @if (ViewBag.CategoryId != null)
-                        {
-                            <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
-                        }
-                        <select name="sort" class="form-select rounded-0 text-secondary small border-0 border-bottom bg-transparent px-0" onchange="this.form.submit()" style="box-shadow: none;">
-                            <option value="" class="text-dark">Featured</option>
-                            <option value="newest" selected="@(ViewBag.Sort == "newest")" class="text-dark">New Arrivals</option>
-                            <option value="price_asc" selected="@(ViewBag.Sort == "price_asc")" class="text-dark">Price: High to Low</option>
-                            <option value="price_desc" selected="@(ViewBag.Sort == "price_desc")" class="text-dark">Price: Low to High</option>
-                        </select>
-                    </form>
-                </div>
-            </div>
+    <!-- Top Toolbar (Desktop) -->
+    <div class="row mb-5 align-items-center d-none d-lg-flex">
+        <div class="col">
+            <span class="text-secondary letter-spacing-1 text-uppercase small">
+                Showing @Model.Count products
+            </span>
         </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-dark rounded-0 px-4 d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#desktopFilterOffcanvas">
+                <i class="bi bi-sliders"></i> FILTER & SORT
+            </button>
+        </div>
+    </div>
 
-        <!-- Product Grid -->
-        <div class="col-lg-9">
+    <div class="row g-5">
+        <!-- Sidebar Removed in favor of Drawer -->
+
+        <!-- Product Grid (Full Width) -->
+        <div class="col-12">
             @if (Model.Any())
             {
                 <div class="row g-4 mb-5">
                     @foreach (var product in Model)
                     {
                         var primaryImage = product.Images.FirstOrDefault(i => i.IsPrimary) ?? product.Images.FirstOrDefault();
-                        <div class="col-md-6 col-lg-4">
+                        // Change column size to show 4 per row on Desktop (col-lg-3)
+                        <div class="col-6 col-md-4 col-lg-3">
                             <div class="card product-card h-100 border-0 shadow-sm bg-white">
                                 <div class="position-relative overflow-hidden">
                                     <a asp-action="Details" asp-route-id="@product.Id" class="d-block">
@@ -161,6 +135,105 @@
                     <a asp-action="Index" class="btn btn-outline-dark rounded-0 px-5">View All Collections</a>
                 </div>
             }
+        </div>
+    </div>
+</div>
+
+<!-- Desktop Filter Drawer (Right Side) -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="desktopFilterOffcanvas" aria-labelledby="desktopFilterLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title serif-font" id="desktopFilterLabel">Filter & Sort</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mb-5">
+            <h6 class="text-uppercase small fw-bold mb-3 letter-spacing-2 text-secondary">Categories</h6>
+            <ul class="list-unstyled d-flex flex-column gap-2">
+                <li>
+                    <a asp-action="Index" class="text-decoration-none transition-all @(ViewBag.CategoryId == null ? "text-dark fw-bold ps-2 border-start border-3 border-dark" : "text-muted hover-underline")">All Products</a>
+                </li>
+                @if (ViewBag.Categories is List<Marblin.Core.Entities.Category> desktopCategories)
+                {
+                    foreach (var cat in desktopCategories)
+                    {
+                        <li>
+                            <a asp-action="Index" asp-route-categoryId="@cat.Id" class="text-decoration-none transition-all @(ViewBag.CategoryId == cat.Id ? "text-dark fw-bold ps-2 border-start border-3 border-dark" : "text-muted hover-underline")">
+                                @cat.Name
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <h6 class="text-uppercase small fw-bold mb-3 letter-spacing-2 text-secondary">Sort By</h6>
+            <form method="get" id="desktopSortForm">
+                @if (ViewBag.CategoryId != null)
+                {
+                    <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
+                }
+                <div class="d-flex flex-column gap-2">
+                     <button type="submit" name="sort" value="" class="btn btn-outline-dark text-start border-0 border-bottom rounded-0 @(string.IsNullOrEmpty(ViewBag.Sort) ? "fw-bold" : "")">Featured</button>
+                     <button type="submit" name="sort" value="newest" class="btn btn-outline-dark text-start border-0 border-bottom rounded-0 @(ViewBag.Sort == "newest" ? "fw-bold" : "")">New Arrivals</button>
+                     <button type="submit" name="sort" value="price_asc" class="btn btn-outline-dark text-start border-0 border-bottom rounded-0 @(ViewBag.Sort == "price_asc" ? "fw-bold" : "")">Price: High to Low</button>
+                     <button type="submit" name="sort" value="price_desc" class="btn btn-outline-dark text-start border-0 border-bottom rounded-0 @(ViewBag.Sort == "price_desc" ? "fw-bold" : "")">Price: Low to High</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="fixed-bottom d-lg-none bg-white border-top shadow-lg p-3 mobile-filter-bar" style="z-index: 1040;">
+    <div class="row g-2">
+        <div class="col-12">
+            <button class="btn btn-dark w-100 rounded-0 d-flex align-items-center justify-content-center gap-2 py-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+                <i class="bi bi-sliders"></i> FILTER & SORT
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-bottom h-75" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel" style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title serif-font" id="filterOffcanvasLabel">Filter & Sort</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mb-5">
+            <h6 class="text-uppercase small fw-bold mb-3 letter-spacing-2 text-secondary">Categories</h6>
+            <ul class="list-unstyled d-flex flex-column gap-2">
+                <li>
+                    <a asp-action="Index" class="text-decoration-none transition-all @(ViewBag.CategoryId == null ? "text-dark fw-bold ps-2 border-start border-3 border-dark" : "text-muted hover-underline")">All Products</a>
+                </li>
+                @if (ViewBag.Categories is List<Marblin.Core.Entities.Category> mobileCategories)
+                {
+                    foreach (var cat in mobileCategories)
+                    {
+                        <li>
+                            <a asp-action="Index" asp-route-categoryId="@cat.Id" class="text-decoration-none transition-all @(ViewBag.CategoryId == cat.Id ? "text-dark fw-bold ps-2 border-start border-3 border-dark" : "text-muted hover-underline")">
+                                @cat.Name
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <h6 class="text-uppercase small fw-bold mb-3 letter-spacing-2 text-secondary">Sort By</h6>
+            <form method="get" id="mobileSortForm">
+                @if (ViewBag.CategoryId != null)
+                {
+                    <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
+                }
+                <div class="d-flex flex-column gap-2">
+                     <button type="submit" name="sort" value="" class="btn btn-outline-dark text-start border-0 border-bottom rounded-0 @(string.IsNullOrEmpty(ViewBag.Sort) ? "fw-bold" : "")">Featured</button>
+                     <button type="submit" name="sort" value="newest" class="btn btn-outline-dark text-start border-0 border-bottom rounded-0 @(ViewBag.Sort == "newest" ? "fw-bold" : "")">New Arrivals</button>
+                     <button type="submit" name="sort" value="price_asc" class="btn btn-outline-dark text-start border-0 border-bottom rounded-0 @(ViewBag.Sort == "price_asc" ? "fw-bold" : "")">Price: High to Low</button>
+                     <button type="submit" name="sort" value="price_desc" class="btn btn-outline-dark text-start border-0 border-bottom rounded-0 @(ViewBag.Sort == "price_desc" ? "fw-bold" : "")">Price: Low to High</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
