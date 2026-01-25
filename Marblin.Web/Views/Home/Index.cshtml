@@ -4,29 +4,72 @@
 }
 
 <!-- Hero Section (Split Layout) -->
-<div class="row g-0 hero-split-layout position-relative">
-    <div class="col-lg-5 hero-text-side text-white d-flex flex-column justify-content-center">
-        <div class="animate-fade-in-up">
-            <h1 class="display-3 fw-bold mb-4 serif-font text-white letter-spacing-1">@Model.Settings.HeroHeadline</h1>
-            <p class="lead mb-5 fs-5 text-white-50 delay-100" style="max-width: 500px;">@Model.Settings.HeroSubheadline</p>
-            <div class="d-flex gap-3 delay-200">
-                 <a asp-controller="Catalog" asp-action="Index" class="btn btn-light btn-lg px-5 py-3 rounded-0 fw-bold">Shop Collection</a>
-                 <a asp-controller="CustomRequest" asp-action="Create" class="btn btn-outline-light btn-lg px-5 py-3 rounded-0" style="border-color: rgba(255,255,255,0.3);">Custom Design</a>
+<div class="hero-section-wrapper position-relative">
+    <!-- Desktop Hero (d-md-flex) -->
+    <div class="row g-0 hero-split-layout d-none d-md-flex">
+        <div class="col-lg-5 hero-text-side text-white d-flex flex-column justify-content-center">
+            <div class="animate-fade-in-up">
+                <h1 class="display-3 fw-bold mb-4 serif-font text-white letter-spacing-1">@Model.Settings.HeroHeadline</h1>
+                <p class="lead mb-5 fs-5 text-white-50 delay-100" style="max-width: 500px;">@Model.Settings.HeroSubheadline</p>
+                <div class="d-flex gap-3 delay-200">
+                     <a asp-controller="Catalog" asp-action="Index" class="btn btn-light btn-lg px-5 py-3 rounded-0 fw-bold">Shop Collection</a>
+                     <a asp-controller="CustomRequest" asp-action="Create" class="btn btn-outline-light btn-lg px-5 py-3 rounded-0" style="border-color: rgba(255,255,255,0.3);">Custom Design</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7 hero-image-side">
+            <div class="h-100 w-100 overflow-hidden position-relative">
+                @if (!string.IsNullOrEmpty(Model.Settings.HeroImageUrl))
+                {
+                    <img src="@Model.Settings.HeroImageUrl" alt="Luxury Marble" class="w-100 h-100 object-fit-cover" style="object-position: center;" />
+                }
+                else
+                {
+                    <img src="/images/hero-bg.jpg" alt="Luxury Marble" class="w-100 h-100 object-fit-cover" onerror="this.src='https://placehold.co/1920x1080/1a1a1a/FFF?text=Luxury+Marble'" />
+                }
+                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 50%);"></div>
             </div>
         </div>
     </div>
-    <div class="col-lg-7 hero-image-side">
-        <div class="h-100 w-100 overflow-hidden position-relative">
-            @if (!string.IsNullOrEmpty(Model.Settings.HeroImageUrl))
-            {
-                <img src="@Model.Settings.HeroImageUrl" alt="Luxury Marble" class="w-100 h-100 object-fit-cover" style="object-position: center;" />
-            }
-            else
-            {
-                <img src="/images/hero-bg.jpg" alt="Luxury Marble" class="w-100 h-100 object-fit-cover" onerror="this.src='https://placehold.co/1920x1080/1a1a1a/FFF?text=Luxury+Marble'" />
-            }
-            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 50%);"></div>
+
+    <!-- Mobile Hero Carousel (d-md-none) -->
+    <div id="heroMobileCarousel" class="carousel slide d-md-none hero-mobile-container carousel-dark-arrows" data-bs-ride="false" data-bs-interval="false">
+        <div class="carousel-inner h-100">
+            <!-- Slide 1: Main Text/Content (Dark Luxury) -->
+            <div class="carousel-item active h-100">
+                <div class="hero-mobile-text">
+                    <h1 class="serif-font">@Model.Settings.HeroHeadline</h1>
+                    <p class="px-4">@Model.Settings.HeroSubheadline</p>
+                    <div class="d-grid gap-3 w-75">
+                        <a asp-controller="Catalog" asp-action="Index" class="btn btn-outline-light hero-btn-mobile">Shop Collection</a>
+                        <a asp-controller="CustomRequest" asp-action="Create" class="btn btn-outline-light hero-btn-mobile">Bespoke Design</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2: Hero Image -->
+            <div class="carousel-item h-100">
+                <div class="hero-mobile-image">
+                    @if (!string.IsNullOrEmpty(Model.Settings.HeroImageUrl))
+                    {
+                        <img src="@Model.Settings.HeroImageUrl" alt="Luxury Marble" />
+                    }
+                    else
+                    {
+                        <img src="/images/hero-bg.jpg" alt="Luxury Marble" onerror="this.src='https://placehold.co/800x1200/1a1a1a/FFF?text=Luxury+Marble'" />
+                    }
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.3);"></div>
+                </div>
+            </div>
         </div>
+        <!-- Manual Navigation Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroMobileCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroMobileCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
 </div>
 
@@ -39,7 +82,7 @@
             {
                 <div class="col-md-4">
                     <div class="p-4 h-100 d-flex flex-column align-items-center justify-content-center">
-                        <i class="bi bi-gem fs-2 mb-3 text-secondary"></i>
+                        <i class="bi bi-gem fs-2 mb-3 text-gold"></i>
                         <h4 class="h6 text-uppercase letter-spacing-2 mb-0">@statement</h4>
                     </div>
                 </div>
@@ -58,7 +101,7 @@
             <div class="separator-line mx-auto"></div>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4 d-none d-md-flex">
             @foreach (var product in Model.SignaturePieces)
             {
                 var primaryImage = product.Images.FirstOrDefault(i => i.IsPrimary) ?? product.Images.FirstOrDefault();
@@ -89,6 +132,47 @@
                 </div>
             }
         </div>
+
+        <!-- Mobile Signature Carousel (d-md-none) -->
+        <div id="signatureMobileCarousel" class="carousel slide d-md-none carousel-dark-arrows" data-bs-ride="false" data-bs-interval="false">
+            <div class="carousel-inner">
+                @{ var firstSig = true; }
+                @foreach (var product in Model.SignaturePieces)
+                {
+                    var primaryImage = product.Images.FirstOrDefault(i => i.IsPrimary) ?? product.Images.FirstOrDefault();
+                    <div class="carousel-item @(firstSig ? "active" : "")">
+                        <div class="mobile-carousel-item">
+                            <div class="card product-card border-0 bg-white shadow-sm">
+                                <div class="position-relative overflow-hidden">
+                                     <a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="d-block">
+                                         @if (primaryImage != null)
+                                         {
+                                             <img src="@primaryImage.ImageUrl" class="card-img-top product-image" alt="@product.Name">
+                                         }
+                                     </a>
+                                     <div class="product-overlay d-flex align-items-center justify-content-center glass-effect border-0">
+                                         <a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="btn btn-dark rounded-0 px-4 py-3 shadow-lg">VIEW DETAILS</a>
+                                     </div>
+                                </div>
+                                <div class="card-body text-center mt-3">
+                                    <h5 class="serif-font mb-2">@product.Name</h5>
+                                    <p class="text-secondary mb-0 small uppercase">From @product.BasePrice.ToString("C0")</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    { firstSig = false; }
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#signatureMobileCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#signatureMobileCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
         <div class="text-center mt-5">
             <a asp-controller="Catalog" asp-action="Index" class="btn btn-outline-dark rounded-0 px-5">View All Products</a>
         </div>
@@ -104,7 +188,7 @@
                 <h2 class="display-5 serif-font">Our Collections</h2>
                 <div class="separator-line mx-auto mt-3"></div>
             </div>
-            <div class="row g-4 justify-content-center">
+            <div class="row g-4 justify-content-center d-none d-md-flex">
                 @foreach (var cat in Model.Categories)
                 {
                     <div class="col-md-6 col-lg-4">
@@ -124,6 +208,46 @@
                         </a>
                     </div>
                 }
+            </div>
+
+            <!-- Mobile Collections Carousel (Unified Design) -->
+            <div id="collectionsMobileCarousel" class="carousel slide d-md-none carousel-dark-arrows" data-bs-ride="false" data-bs-interval="false">
+                <div class="carousel-inner">
+                    @{ var firstCat = true; }
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <div class="carousel-item @(firstCat ? "active" : "")">
+                            <div class="mobile-carousel-item">
+                                <div class="card product-card border-0 bg-white shadow-sm">
+                                    <div class="position-relative overflow-hidden">
+                                        <a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@cat.Id" class="d-block">
+                                            @if (!string.IsNullOrEmpty(cat.ImageUrl))
+                                            {
+                                                <img src="@cat.ImageUrl" class="card-img-top product-image" alt="@cat.Name">
+                                            }
+                                        </a>
+                                        <div class="product-overlay d-flex align-items-center justify-content-center glass-effect border-0">
+                                            <a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@cat.Id" class="btn btn-dark rounded-0 px-4 py-3 shadow-lg">BROWSE</a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body text-center mt-3">
+                                        <h5 class="serif-font mb-2">@cat.Name</h5>
+                                        <p class="text-secondary mb-0 small uppercase">View Collection</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        { firstCat = false; }
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#collectionsMobileCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#collectionsMobileCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
         </div>
     </section>
