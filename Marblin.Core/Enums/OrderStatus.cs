@@ -5,7 +5,7 @@ namespace Marblin.Core.Enums
     /// </summary>
     public enum OrderStatus
     {
-        PendingDeposit,
+        PendingPayment,
         InProduction,
         AwaitingBalance,
         Shipped,

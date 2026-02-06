@@ -18,8 +18,8 @@
                     <input asp-for="CustomerName" class="form-control" required placeholder="Name" />
                 </div>
                 <div class="col-md-6">
-                    <label asp-for="Phone" class="form-label">Phone Number</label>
-                    <input asp-for="Phone" class="form-control" required placeholder="Phone" />
+                    <label asp-for="Phone" class="form-label">WhatsApp Number</label>
+                    <input asp-for="Phone" class="form-control" required placeholder="WhatsApp Number" />
                 </div>
                 <div class="col-12">
                      <label asp-for="Email" class="form-label">Email Address</label>
@@ -55,18 +55,13 @@
                     <label asp-for="BudgetRange" class="form-label">Budget Range</label>
                     <select asp-for="BudgetRange" class="form-select">
                         <option value="">-- Select Budget --</option>
-                        <option value="Under $1,000">Under $1,000</option>
-                        <option value="$1,000 - $5,000">$1,000 - $5,000</option>
-                        <option value="$5,000 - $10,000">$5,000 - $10,000</option>
-                        <option value="Above $10,000">Above $10,000</option>
+                        <option value="Under EGP 30,000">Under EGP 30,000</option>
+                        <option value="EGP 30,000 - EGP 150,000">EGP 30,000 - EGP 150,000</option>
+                        <option value="EGP 150,000 - EGP 300,000">EGP 150,000 - EGP 300,000</option>
+                        <option value="Above EGP 300,000">Above EGP 300,000</option>
                     </select>
                 </div>
                 
-                 <div class="col-md-12">
-                    <label asp-for="Timeline" class="form-label">Desired Timeline</label>
-                    <input asp-for="Timeline" class="form-control" placeholder="e.g. 4-6 weeks" />
-                </div>
-
                 <div class="col-12">
                     <label asp-for="Notes" class="form-label">Description & Details</label>
                     <textarea asp-for="Notes" class="form-control" rows="5" placeholder="Describe your vision..."></textarea>

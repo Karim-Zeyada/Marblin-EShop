@@ -29,10 +29,6 @@ namespace Marblin.Web.ViewModels
         public string Region { get; set; } = string.Empty;
 
         [Required]
-        [Display(Name = "Postal Code")]
-        public string PostalCode { get; set; } = string.Empty;
-
-        [Required]
         public string Country { get; set; } = "Egypt";
         
         public ShoppingCart? Cart { get; set; }

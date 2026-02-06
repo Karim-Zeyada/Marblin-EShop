@@ -21,7 +21,6 @@ namespace Marblin.Application.Services
                 AddressLine = model.AddressLine,
                 City = model.City,
                 Region = model.Region,
-                PostalCode = model.PostalCode,
                 Country = model.Country,
                 TotalAmount = cart.TotalAmount,
                 DiscountCode = cart.AppliedCouponCode,

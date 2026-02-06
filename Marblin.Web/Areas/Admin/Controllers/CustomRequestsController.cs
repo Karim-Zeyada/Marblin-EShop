@@ -19,13 +19,24 @@ namespace Marblin.Web.Areas.Admin.Controllers
         }
 
         // GET: Admin/CustomRequests
-        public async Task<IActionResult> Index(bool? reviewed)
+        public async Task<IActionResult> Index(bool? reviewed, int page = 1)
         {
+            const int pageSize = 15;
+            
             var spec = new CustomRequestWithImagesSpecification(reviewed);
-            var requests = await _unitOfWork.Repository<CustomRequest>().ListAsync(spec);
+            var allRequests = (await _unitOfWork.Repository<CustomRequest>().ListAsync(spec)).ToList();
+
+            var totalCount = allRequests.Count;
+            var paginatedRequests = allRequests
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+                
+            var paginatedList = new Marblin.Core.Common.PaginatedList<CustomRequest>(
+                paginatedRequests, totalCount, page, pageSize);
 
             ViewBag.Reviewed = reviewed;
-            return View(requests);
+            return View(paginatedList);
         }
 
         // GET: Admin/CustomRequests/Details/5

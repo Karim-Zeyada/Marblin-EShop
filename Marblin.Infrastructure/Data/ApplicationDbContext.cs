@@ -108,8 +108,9 @@ namespace Marblin.Infrastructure.Data
                 entity.HasIndex(e => e.Email);
                 entity.HasIndex(e => e.Status);
 
-                // Ignore computed property
+                // Ignore computed properties
                 entity.Ignore(e => e.RemainingBalance);
+                entity.Ignore(e => e.AmountDue);
             });
 
             // ========== ORDER ITEM ==========
@@ -181,6 +182,7 @@ namespace Marblin.Infrastructure.Data
                 entity.Property(e => e.ProcessSteps).HasMaxLength(2000);
                 entity.Property(e => e.InstapayAccount).HasMaxLength(100);
                 entity.Property(e => e.VodafoneCashNumber).HasMaxLength(50);
+                entity.Property(e => e.CairoGizaShippingCost).HasPrecision(18, 2);
             });
 
             // ========== COUPON ==========

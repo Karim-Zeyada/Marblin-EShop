@@ -27,15 +27,15 @@ namespace Marblin.Web.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products
-        public async Task<IActionResult> Index(string? search, int? categoryId, ProductAvailability? availability)
+        public async Task<IActionResult> Index(string? search, int? categoryId, ProductAvailability? availability, int page = 1)
         {
             // Use Repository for query encapsulation
-            var products = await _productRepository.GetProductsAsync(search, categoryId, availability);
+            var products = await _productRepository.GetProductsAsync(search, categoryId, availability, pageIndex: page, pageSize: 20);
 
             ViewBag.Categories = await _unitOfWork.Repository<Category>().FindAsync(c => c.IsActive);
             ViewBag.Search = search;
             ViewBag.CategoryId = categoryId;
-            ViewBag.Availability = availability;
+           ViewBag.Availability = availability;
 
             return View(products);
         }

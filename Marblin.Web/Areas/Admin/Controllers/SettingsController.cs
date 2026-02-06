@@ -85,6 +85,7 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 settings.ProcessSteps = model.ProcessSteps;
                 settings.InstapayAccount = model.InstapayAccount;
                 settings.VodafoneCashNumber = model.VodafoneCashNumber;
+                settings.CairoGizaShippingCost = model.CairoGizaShippingCost;
                 settings.UpdatedAt = DateTime.UtcNow;
 
                 if (heroImage != null)

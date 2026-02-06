@@ -44,8 +44,16 @@
             else
             {
                 <div class="text-center mb-5">
-                    <h5 class="mb-3 serif-font h4">Deposit Due: <span class="text-primary">@Model.DepositAmount.ToString("C0")</span></h5>
-                    <p class="text-secondary small">Please transfer the deposit amount to one of the following accounts:</p>
+                    @if (Model.PaymentMethod == Marblin.Core.Enums.PaymentMethod.FullPaymentUpfront)
+                    {
+                        <h5 class="mb-3 serif-font h4">Total Due: <span class="text-success">@Model.TotalAmount.ToString("C0")</span></h5>
+                        <p class="text-secondary small">Please transfer the full amount to one of the following accounts:</p>
+                    }
+                    else
+                    {
+                        <h5 class="mb-3 serif-font h4">Deposit Due: <span class="text-primary">@Model.DepositAmount.ToString("C0")</span></h5>
+                        <p class="text-secondary small">Please transfer the deposit amount to one of the following accounts:</p>
+                    }
                     
                     <div class="row g-3 justify-content-center mt-4">
                         @if (!string.IsNullOrEmpty(settings?.InstapayAccount))
@@ -73,8 +81,8 @@
 
                 <div class="separator-line mx-auto mb-5"></div>
 
-                <h6 class="mb-4 text-center text-uppercase small letter-spacing-2 fw-bold text-secondary">Submit Payment Proof</h6>
-                <form asp-action="UploadPaymentProof" method="post" enctype="multipart/form-data" class="col-md-10 mx-auto">
+                <h6 class="mb-4 text-center text-uppercase letter-spacing-2 fw-bold text-secondary serif-font" style="font-size: 0.85rem;">Submit Payment Proof</h6>
+                <form asp-action="UploadPaymentProof" method="post" enctype="multipart/form-data" class="col-md-11 mx-auto">
                     <input type="hidden" name="orderId" value="@Model.Id" />
                     
                     @if (TempData["Error"] != null)
@@ -86,30 +94,28 @@
                         <div class="alert alert-success small rounded-0 text-center mb-4">@TempData["Success"]</div>
                     }
 
-                    <ul class="nav nav-tabs mb-3 justify-content-center border-bottom-0 gap-2" id="paymentTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active text-dark rounded-0 px-4 border shadow-none bg-light" id="receipt-tab" data-bs-toggle="tab" data-bs-target="#receipt" type="button" role="tab">Upload Receipt</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link text-dark rounded-0 px-4 border shadow-none bg-light" id="transaction-tab" data-bs-toggle="tab" data-bs-target="#transaction" type="button" role="tab">Transaction ID</button>
-                        </li>
-                    </ul>
-                    <div class="tab-content border p-4 bg-white shadow-sm" id="paymentTabContent">
-                        <div class="tab-pane fade show active" id="receipt" role="tabpanel">
-                            <div class="mb-2">
-                                <label class="form-label small text-secondary text-uppercase letter-spacing-1 fw-bold">Upload screenshot/photo of transfer</label>
-                                <input type="file" name="receiptImage" class="form-control rounded-0 p-3" accept="image/*" />
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="payment-option-card p-4 border text-center transition-all h-100">
+                                <label class="d-block mb-3 text-uppercase small letter-spacing-1 fw-bold text-secondary serif-font">Upload Receipt</label>
+                                <div class="file-input-wrapper position-relative">
+                                    <input type="file" name="receiptImage" class="form-control rounded-0 border-0 bg-transparent text-center p-0" accept="image/*" id="receiptInput" />
+                                    <div class="custom-file-label d-flex flex-column align-items-center justify-content-center p-3" id="fileLabel">
+                                        <i class="bi bi-cloud-upload fs-3 mb-2 text-muted opacity-50"></i>
+                                        <span class="small text-muted">Tap to Choose File</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="transaction" role="tabpanel">
-                            <div class="mb-2">
-                                <label class="form-label small text-secondary text-uppercase letter-spacing-1 fw-bold">Enter Transaction ID / Reference Number</label>
-                                <input type="text" name="transactionId" class="form-control rounded-0 p-3" placeholder="e.g. 1234567890" />
+                        <div class="col-md-6">
+                            <div class="payment-option-card p-4 border text-center transition-all h-100">
+                                <label class="d-block mb-3 text-uppercase small letter-spacing-1 fw-bold text-secondary serif-font">Transaction ID</label>
+                                <input type="text" name="transactionId" class="form-control rounded-0 border-0 bg-transparent text-center p-3 fs-6" placeholder="Transaction ID" style="background-color: #f8f9fa !important;" />
                             </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-dark w-100 mt-4 py-3 rounded-0 text-uppercase letter-spacing-2 shadow-hover transition-all">Submit Proof</button>
+                    <button type="submit" class="btn btn-dark w-100 mt-5 py-3 rounded-0 text-uppercase letter-spacing-2 shadow-hover transition-all fw-bold">Submit Proof</button>
                 </form>
             }
         </div>
@@ -122,10 +128,36 @@
 </div>
 
 <style>
-    .nav-link.active {
-        background-color: #fff !important;
-        border-bottom-color: #fff !important;
-        font-weight: 600;
-        box-shadow: 0 -2px 5px rgba(0,0,0,0.05) !important;
+    .payment-option-card {
+        background-color: #f8f9fa;
+        border-color: #eee !important;
+    }
+    .payment-option-card:focus-within {
+        border-color: #333 !important;
+        background-color: #fff;
+    }
+    .file-input-wrapper input[type="file"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+    .custom-file-label {
+        background-color: #f8f9fa;
+        min-height: 58px;
+        transition: all 0.3s ease;
+    }
+    .file-input-wrapper:hover .custom-file-label {
+        background-color: #e9ecef;
     }
 </style>
+
+<script>
+    document.getElementById('receiptInput').addEventListener('change', function(e) {
+        var fileName = e.target.files[0] ? e.target.files[0].name : "Tap to Choose File";
+        var fileLabel = document.getElementById('fileLabel');
+        fileLabel.innerHTML = '<i class="bi bi-file-earmark-check fs-3 mb-2 text-success"></i><span class="small text-dark fw-bold">' + fileName + '</span>';
+    });
+</script>

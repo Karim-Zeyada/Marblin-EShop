@@ -52,7 +52,7 @@
             <div class="row text-center g-3">
                 <div class="col-6 col-sm-3">
                     <div class="h2 admin-font-serif mb-1 text-dark">@Model.PendingDepositCount</div>
-                    <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">Pending Deposit</div>
+                    <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">Pending Payment</div>
                 </div>
                 <div class="col-6 col-sm-3">
                     <div class="h2 admin-font-serif mb-1 text-dark">@Model.InProductionCount</div>
@@ -157,6 +157,7 @@
                         <th>Order ID</th>
                         <th>Customer</th>
                         <th>Amount</th>
+                        <th>Payment Method</th>
                         <th>Status</th>
                         <th>Timestamp</th>
                     </tr>
@@ -172,6 +173,16 @@
                             </td>
                             <td class="text-dark">@order.CustomerName</td>
                             <td class="admin-font-serif font-playfair text-dark">@order.TotalAmount.ToString("C2")</td>
+                            <td>
+                                @if (order.PaymentMethod == Marblin.Core.Enums.PaymentMethod.FullPaymentUpfront)
+                                {
+                                    <span class="badge bg-success">Full Payment</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-primary">COD</span>
+                                }
+                            </td>
                             <td>
                                 <span class="badge-luxury">@order.Status</span>
                             </td>

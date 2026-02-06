@@ -21,11 +21,23 @@ namespace Marblin.Web.Areas.Admin.Controllers
         }
 
         // GET: Admin/Categories
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
+            const int pageSize = 15;
+            
             var spec = new CategoryWithProductsSpecification();
-            var categories = await _unitOfWork.Repository<Category>().ListAsync(spec);
-            return View(categories);
+            var allCategories = (await _unitOfWork.Repository<Category>().ListAsync(spec)).ToList();
+            
+            var totalCount = allCategories.Count;
+            var paginatedCategories = allCategories
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+                
+            var paginatedList = new Marblin.Core.Common.PaginatedList<Category>(
+                paginatedCategories, totalCount, page, pageSize);
+            
+            return View(paginatedList);
         }
 
         // GET: Admin/Categories/Create

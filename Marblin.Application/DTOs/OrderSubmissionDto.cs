@@ -27,9 +27,6 @@ namespace Marblin.Application.DTOs
         public string Region { get; set; } = string.Empty;
 
         [Required]
-        public string PostalCode { get; set; } = string.Empty;
-
-        [Required]
         public string Country { get; set; } = "Egypt";
     }
 }

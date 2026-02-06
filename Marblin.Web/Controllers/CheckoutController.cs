@@ -66,6 +66,27 @@ namespace Marblin.Web.Controllers
 
             _cartService.ClearCart();
 
+            // NEW FLOW: Redirect to payment method selection instead of directly to confirmation
+            return RedirectToAction(nameof(SelectPaymentMethod), new { id = order.OrderNumber });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SelectPaymentMethod(string id)
+        {
+            var order = await _orderService.GetOrderByNumberAsync(id);
+            if (order == null) return NotFound();
+
+            return View(order);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmPaymentMethod(int orderId, int paymentMethod)
+        {
+            var method = (PaymentMethod)paymentMethod;
+            var order = await _orderService.SetPaymentMethodAsync(orderId, method);
+            
+            if (order == null) return NotFound();
+
             return RedirectToAction(nameof(Confirmation), new { id = order.OrderNumber });
         }
 

@@ -48,8 +48,21 @@ namespace Marblin.Core.Entities
         public string? DiscountCode { get; set; }
         public decimal DiscountAmount { get; set; }
         
+        // Payment Method
+        /// <summary>
+        /// Payment method chosen by customer: COD (deposit only) or Full Payment upfront.
+        /// </summary>
+        public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.CashOnDelivery;
+        
+        /// <summary>
+        /// Amount due based on payment method: DepositAmount for COD, TotalAmount for Full Payment.
+        /// </summary>
+        public decimal AmountDue => PaymentMethod == PaymentMethod.FullPaymentUpfront 
+            ? TotalAmount 
+            : DepositAmount;
+        
         // Status & Workflow
-        public OrderStatus Status { get; private set; } = OrderStatus.PendingDeposit;
+        public OrderStatus Status { get; private set; } = OrderStatus.PendingPayment;
         
         // Payment Proof
         public PaymentProofType PaymentProofType { get; private set; } = PaymentProofType.None;
@@ -64,13 +77,15 @@ namespace Marblin.Core.Entities
         public DateTime? InProductionAt { get; set; }
         public DateTime? AwaitingBalanceAt { get; set; }
         public DateTime? ShippedAt { get; set; }
+        public DateTime? CancelledAt { get; set; }
+        public string? CancellationReason { get; set; }
         
         public void VerifyDeposit()
         {
             IsDepositVerified = true;
             DepositVerifiedAt = DateTime.UtcNow;
             
-            if (Status == OrderStatus.PendingDeposit)
+            if (Status == OrderStatus.PendingPayment)
             {
                 Status = OrderStatus.InProduction;
                 InProductionAt = DateTime.UtcNow;

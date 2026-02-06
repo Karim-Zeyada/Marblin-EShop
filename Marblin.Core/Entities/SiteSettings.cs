@@ -40,6 +40,13 @@ namespace Marblin.Core.Entities
         public string? InstapayAccount { get; set; }
         public string? VodafoneCashNumber { get; set; }
         
+        // Shipping Configuration
+        /// <summary>
+        /// Fixed shipping cost for Cairo and Giza deliveries.
+        /// Shipping for other cities will be calculated separately.
+        /// </summary>
+        public decimal CairoGizaShippingCost { get; set; } = 0m;
+        
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

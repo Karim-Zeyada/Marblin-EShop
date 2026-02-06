@@ -151,3 +151,58 @@
         </div>
     }
 </div>
+
+@* Pagination Controls *@
+@if (Model is Marblin.Core.Common.PaginatedList<Marblin.Core.Entities.Product> paginatedProducts && paginatedProducts.TotalPages > 1)
+{
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="text-secondary small">
+            Showing page @paginatedProducts.PageIndex of @paginatedProducts.TotalPages (@paginatedProducts.TotalCount total products)
+        </div>
+        <nav aria-label="Product pagination">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item @(!paginatedProducts.HasPreviousPage ? "disabled" : "")">
+                    <a class="page-link" href="?page=@(paginatedProducts.PageIndex - 1)&search=@ViewBag.Search&categoryId=@ViewBag.CategoryId&availability=@ViewBag.Availability">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                </li>
+
+                @{
+                    int startPage = Math.Max(1, paginatedProducts.PageIndex - 2);
+                    int endPage = Math.Min(paginatedProducts.TotalPages, paginatedProducts.PageIndex + 2);
+                }
+
+                @if (startPage > 1)
+                {
+                    <li class="page-item"><a class="page-link" href="?page=1&search=@ViewBag.Search&categoryId=@ViewBag.CategoryId&availability=@ViewBag.Availability">1</a></li>
+                    @if (startPage > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == paginatedProducts.PageIndex ? "active" : "")">
+                        <a class="page-link" href="?page=@i&search=@ViewBag.Search&categoryId=@ViewBag.CategoryId&availability=@ViewBag.Availability">@i</a>
+                    </li>
+                }
+
+                @if (endPage < paginatedProducts.TotalPages)
+                {
+                    @if (endPage < paginatedProducts.TotalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                    <li class="page-item"><a class="page-link" href="?page=@paginatedProducts.TotalPages&search=@ViewBag.Search&categoryId=@ViewBag.CategoryId&availability=@ViewBag.Availability">@paginatedProducts.TotalPages</a></li>
+                }
+
+                <li class="page-item @(!paginatedProducts.HasNextPage ? "disabled" : "")">
+                    <a class="page-link" href="?page=@(paginatedProducts.PageIndex + 1)&search=@ViewBag.Search&categoryId=@ViewBag.CategoryId&availability=@ViewBag.Availability">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}

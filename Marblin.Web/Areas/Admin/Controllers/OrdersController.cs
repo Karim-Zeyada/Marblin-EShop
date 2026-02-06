@@ -23,13 +23,19 @@ namespace Marblin.Web.Areas.Admin.Controllers
         }
 
         // GET: Admin/Orders
-        public async Task<IActionResult> Index(OrderStatus? status, string? search)
+        public async Task<IActionResult> Index(OrderStatus? status, string? search, int page = 1)
         {
-            // Use Repository specific method for complex filtering
-            var orders = await _orderRepository.GetOrdersAsync(status, search);
+            const int pageSize = 10;
+            
+            // Use Repository specific method for complex filtering with pagination
+            var (orders, totalCount) = await _orderRepository.GetOrdersPagedAsync(status, search, page, pageSize);
 
             ViewBag.Status = status;
             ViewBag.Search = search;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            ViewBag.TotalCount = totalCount;
+            
             return View(orders);
         }
 
@@ -73,6 +79,24 @@ namespace Marblin.Web.Areas.Admin.Controllers
             await _orderService.VerifyBalanceAsync(id);
 
             TempData["Success"] = "Balance verified!";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        // POST: Admin/Orders/Cancel/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelOrder(int id, string? reason)
+        {
+            try
+            {
+                await _orderService.CancelOrderAsync(id, reason ?? "Customer request");
+                TempData["Success"] = "Order cancelled successfully!";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+            
             return RedirectToAction(nameof(Details), new { id });
         }
     }

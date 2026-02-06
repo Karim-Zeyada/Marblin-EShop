@@ -53,6 +53,42 @@ namespace Marblin.Infrastructure.Data.Repositories
             return await query.ToListAsync();
         }
 
+        public async Task<(IEnumerable<Order> Orders, int TotalCount)> GetOrdersPagedAsync(
+            OrderStatus? status, string? search, int page = 1, int pageSize = 10, bool descending = true)
+        {
+            var query = _context.Set<Order>()
+                .Include(o => o.OrderItems)
+                .AsQueryable();
+
+            if (status.HasValue)
+            {
+                query = query.Where(o => o.Status == status.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(o => o.OrderNumber.Contains(search) || o.Email.Contains(search) || o.CustomerName.Contains(search));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            if (descending)
+            {
+                query = query.OrderByDescending(o => o.CreatedAt);
+            }
+            else
+            {
+                query = query.OrderBy(o => o.CreatedAt);
+            }
+
+            var orders = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (orders, totalCount);
+        }
+
         public async Task<Marblin.Core.Models.OrderFinancials> GetDailyFinancialsAsync(DateTime date)
         {
             var dayOrders = _context.Set<Order>().Where(o => o.CreatedAt.Date == date.Date);

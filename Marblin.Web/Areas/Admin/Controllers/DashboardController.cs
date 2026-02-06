@@ -39,7 +39,7 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 TodayRevenue = financials.Revenue,
                 TodayDeposits = financials.Deposits,
 
-                PendingDepositCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.PendingDeposit),
+                PendingDepositCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.PendingPayment),
                 InProductionCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.InProduction),
                 AwaitingBalanceCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.AwaitingBalance),
                 ShippedCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.Shipped),

@@ -54,26 +54,7 @@ namespace Marblin.Application.Services
                 
                 _logger.LogInformation("Order {OrderNumber} created successfully.", order.OrderNumber);
                 
-                // [FLOW 1] Send Confirmation Email
-                try
-                {
-                    var baseUrl = _configuration["EmailSettings:BaseUrl"] ?? "https://marblin.com";
-                    var proofUrl = $"{baseUrl}/Checkout/Confirmation/{order.OrderNumber}";
-                    
-                    await _emailService.SendOrderConfirmationEmailAsync(
-                        order.Email, 
-                        order.CustomerName, 
-                        order.OrderNumber, 
-                        order.TotalAmount, 
-                        order.DepositAmount,
-                        settings?.InstapayAccount ?? "N/A",
-                        settings?.VodafoneCashNumber ?? "N/A",
-                        proofUrl);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to send order confirmation email for {OrderNumber}", order.OrderNumber);
-                }
+                // Email will be sent after payment method is selected in SetPaymentMethodAsync
 
                 return order;
             }
@@ -112,7 +93,10 @@ namespace Marblin.Application.Services
                             order.DepositAmount, // Assuming deposit is verified if moving to this stage
                             order.RemainingBalance,
                             settings?.InstapayAccount ?? "N/A",
-                            settings?.VodafoneCashNumber ?? "N/A");
+                            settings?.VodafoneCashNumber ?? "N/A",
+                            order.PaymentMethod,
+                            order.City,
+                            settings?.CairoGizaShippingCost ?? 0m);
                     }
                     else if (newStatus == OrderStatus.Shipped)
                     {
@@ -147,7 +131,8 @@ namespace Marblin.Application.Services
                         order.CustomerName,
                         order.OrderNumber,
                         order.TotalAmount,
-                        order.RemainingBalance);
+                        order.RemainingBalance,
+                        order.PaymentMethod);
                 }
                 catch (Exception ex)
                 {
@@ -223,7 +208,7 @@ namespace Marblin.Application.Services
         {
             try
             {
-                await _emailService.SendPaymentProofReceivedEmailAsync(order.Email, order.CustomerName, order.OrderNumber);
+                await _emailService.SendPaymentProofReceivedEmailAsync(order.Email, order.CustomerName, order.OrderNumber, order.PaymentMethod);
             }
             catch (Exception ex)
             {
@@ -245,6 +230,49 @@ namespace Marblin.Application.Services
             }
         }
 
+        public async Task<Order?> SetPaymentMethodAsync(int orderId, PaymentMethod paymentMethod)
+        {
+            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
+            if (order == null) return null;
+
+            order.PaymentMethod = paymentMethod;
+            await _unitOfWork.SaveChangesAsync();
+            
+            _logger.LogInformation("Payment method set to {PaymentMethod} for Order {OrderNumber}", 
+                paymentMethod, order.OrderNumber);
+            
+            // [FLOW 1] Send Confirmation Email AFTER payment method is selected
+            try
+            {
+                var spec = new SiteSettingsSpecification();
+                var settings = await _unitOfWork.Repository<SiteSettings>().GetEntityWithSpec(spec);
+                
+                var baseUrl = _configuration["EmailSettings:BaseUrl"] ?? "https://marblin.com";
+                var proofUrl = $"{baseUrl}/Checkout/Confirmation/{order.OrderNumber}";
+                
+                await _emailService.SendOrderConfirmationEmailAsync(
+                    order.Email, 
+                    order.CustomerName, 
+                    order.OrderNumber, 
+                    order.TotalAmount, 
+                    order.DepositAmount,
+                    settings?.InstapayAccount ?? "N/A",
+                    settings?.VodafoneCashNumber ?? "N/A",
+                    proofUrl,
+                    order.PaymentMethod,
+                    order.City,
+                    settings?.CairoGizaShippingCost ?? 0m);
+                    
+                _logger.LogInformation("Order confirmation email sent for {OrderNumber}", order.OrderNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send order confirmation email for {OrderNumber}", order.OrderNumber);
+            }
+            
+            return order;
+        }
+
         public async Task<SiteSettings?> GetSiteSettingsAsync()
         {
             var spec = new SiteSettingsSpecification();
@@ -254,6 +282,57 @@ namespace Marblin.Application.Services
         public async Task<Order?> GetOrderByIdAsync(int id)
         {
             return await _unitOfWork.Repository<Order>().GetByIdAsync(id);
+        }
+
+        public async Task<Order?> CancelOrderAsync(int orderId, string reason)
+        {
+            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
+            if (order == null) return null;
+            
+            // Validate 2-day window
+            var daysSinceCreation = (DateTime.UtcNow - order.CreatedAt).TotalDays;
+            if (daysSinceCreation > 2)
+            {
+                throw new InvalidOperationException("Orders can only be cancelled within 2 days of placement.");
+            }
+            
+            // Validate current status
+            if (order.Status == OrderStatus.Shipped)
+            {
+                throw new InvalidOperationException("Cannot cancel shipped orders.");
+            }
+            
+            if (order.Status == OrderStatus.Cancelled)
+            {
+                throw new InvalidOperationException("Order is already cancelled.");
+            }
+            
+            _logger.LogInformation("Cancelling order {OrderNumber}. Reason: {Reason}", order.OrderNumber, reason);
+            
+            // Update order status
+            order.UpdateStatus(OrderStatus.Cancelled);
+            order.CancelledAt = DateTime.UtcNow;
+            order.CancellationReason = reason;
+            
+            await _unitOfWork.SaveChangesAsync();
+            
+            // Send cancellation email
+            try
+            {
+                await _emailService.SendOrderCancelledEmailAsync(
+                    order.Email,
+                    order.CustomerName,
+                    order.OrderNumber,
+                    reason);
+                    
+                _logger.LogInformation("Cancellation email sent for order {OrderNumber}", order.OrderNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send cancellation email for {OrderNumber}", order.OrderNumber);
+            }
+            
+            return order;
         }
     }
 }

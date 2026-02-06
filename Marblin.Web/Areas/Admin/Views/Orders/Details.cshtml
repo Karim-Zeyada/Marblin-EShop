@@ -13,6 +13,11 @@
     <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
 }
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Error"]</div>
+}
+
 <div class="row">
     <div class="col-md-8">
         <!-- Order Items -->
@@ -49,50 +54,125 @@
             </table>
         </div>
 
+        <!-- Payment Method -->
+        <div class="stat-card mb-4">
+            <h5 class="mb-3">Payment Method</h5>
+            <p>
+                @if (Model.PaymentMethod == Marblin.Core.Enums.PaymentMethod.FullPaymentUpfront)
+                {
+                    <span class="badge bg-success fs-6">Full Payment Upfront</span>
+                    <br/>
+                    <small class="text-muted mt-2 d-block">Customer chose to pay the entire order amount upfront.</small>
+                }
+                else
+                {
+                    <span class="badge bg-primary fs-6">Cash on Delivery</span>
+                    <br/>
+                    <small class="text-muted mt-2 d-block">Customer chose to pay deposit now, remaining balance on delivery.</small>
+                }
+            </p>
+            <hr />
+            <p>
+                <strong>Amount Due:</strong> 
+                @if (Model.PaymentMethod == Marblin.Core.Enums.PaymentMethod.FullPaymentUpfront)
+                {
+                    <span class="text-success">@Model.TotalAmount.ToString("C2")</span>
+                }
+                else
+                {
+                    <span class="text-primary">@Model.DepositAmount.ToString("C2")</span>
+                }
+            </p>
+        </div>
+
         <!-- Payment -->
         <div class="stat-card mb-4">
             <h5 class="mb-3">Payment</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Deposit (@Model.DepositPercentage%):</strong> @Model.DepositAmount.ToString("C2")</p>
-                    <p><strong>Remaining:</strong> @Model.RemainingBalance.ToString("C2")</p>
-                    <p>
-                        <strong>Status:</strong>
-                        @if (Model.IsDepositVerified)
-                        {
-                            <span class="badge bg-success">Verified on @Model.DepositVerifiedAt?.ToString("MMM d, yyyy")</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-warning text-dark">Pending Verification</span>
-                        }
-                    </p>
-                </div>
-                <div class="col-md-6">
-                    @if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.TransactionId)
-                    {
-                        <p><strong>Transaction ID:</strong> <code>@Model.TransactionId</code></p>
-                    }
-                    else if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.ReceiptImage)
-                    {
-                        <p><strong>Receipt:</strong></p>
-                        <a href="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" target="_blank">
-                            <img src="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" style="max-width: 200px; border-radius: 4px;" />
-                        </a>
-                    }
-                </div>
-            </div>
-            @if (!Model.IsDepositVerified)
+            
+            @if (Model.PaymentMethod == Marblin.Core.Enums.PaymentMethod.FullPaymentUpfront)
             {
-                <form asp-action="VerifyDeposit" asp-route-id="@Model.Id" method="post" class="mt-3">
-                    <button type="submit" class="btn btn-success" onclick="return confirm('Mark deposit as verified?');">✓ Verify Deposit</button>
-                </form>
+                <!-- Full Payment Display -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Full Payment Amount:</strong> @Model.TotalAmount.ToString("C2")</p>
+                        <p>
+                            <strong>Status:</strong>
+                            @if (Model.IsDepositVerified)
+                            {
+                                <span class="badge bg-success">Verified on @Model.DepositVerifiedAt?.ToString("MMM d, yyyy")</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pending Verification</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        @if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.TransactionId)
+                        {
+                            <p><strong>Transaction ID:</strong> <code>@Model.TransactionId</code></p>
+                        }
+                        else if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.ReceiptImage)
+                        {
+                            <p><strong>Receipt:</strong></p>
+                            <a href="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" target="_blank">
+                                <img src="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" style="max-width: 200px; border-radius: 4px;" />
+                            </a>
+                        }
+                    </div>
+                </div>
+                @if (!Model.IsDepositVerified)
+                {
+                    <form asp-action="VerifyDeposit" asp-route-id="@Model.Id" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-success" onclick="return confirm('Mark full payment as verified?');">✓ Verify Payment</button>
+                    </form>
+                }
             }
-            else if (!Model.IsBalanceVerified && (Model.Status == Marblin.Core.Enums.OrderStatus.AwaitingBalance || Model.Status == Marblin.Core.Enums.OrderStatus.Shipped))
+            else
             {
-                <form asp-action="VerifyBalance" asp-route-id="@Model.Id" method="post" class="mt-3">
-                    <button type="submit" class="btn btn-primary" onclick="return confirm('Mark balance as verified?');">✓ Verify Balance</button>
-                </form>
+                <!-- COD Display (Deposit + Balance) -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Deposit (@Model.DepositPercentage%):</strong> @Model.DepositAmount.ToString("C2")</p>
+                        <p><strong>Remaining:</strong> @Model.RemainingBalance.ToString("C2")</p>
+                        <p>
+                            <strong>Status:</strong>
+                            @if (Model.IsDepositVerified)
+                            {
+                                <span class="badge bg-success">Verified on @Model.DepositVerifiedAt?.ToString("MMM d, yyyy")</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pending Verification</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        @if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.TransactionId)
+                        {
+                            <p><strong>Transaction ID:</strong> <code>@Model.TransactionId</code></p>
+                        }
+                        else if (Model.PaymentProofType == Marblin.Core.Enums.PaymentProofType.ReceiptImage)
+                        {
+                            <p><strong>Receipt:</strong></p>
+                            <a href="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" target="_blank">
+                                <img src="@Url.Action("GetFile", "Receipts", new { fileName = Model.ReceiptImageUrl, type = "receipt" })" style="max-width: 200px; border-radius: 4px;" />
+                            </a>
+                        }
+                    </div>
+                </div>
+                @if (!Model.IsDepositVerified)
+                {
+                    <form asp-action="VerifyDeposit" asp-route-id="@Model.Id" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-success" onclick="return confirm('Mark deposit as verified?');">✓ Verify Deposit</button>
+                    </form>
+                }
+                else if (!Model.IsBalanceVerified && (Model.Status == Marblin.Core.Enums.OrderStatus.AwaitingBalance || Model.Status == Marblin.Core.Enums.OrderStatus.Shipped))
+                {
+                    <form asp-action="VerifyBalance" asp-route-id="@Model.Id" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-primary" onclick="return confirm('Mark balance as verified?');">✓ Verify Balance</button>
+                    </form>
+                }
             }
         </div>
     </div>
@@ -120,7 +200,7 @@
             <div class="mb-3">
                 @{
                     var statuses = new[] {
-                        (Marblin.Core.Enums.OrderStatus.PendingDeposit, "Pending", Model.CreatedAt),
+                        (Marblin.Core.Enums.OrderStatus.PendingPayment, "Pending", Model.CreatedAt),
                         (Marblin.Core.Enums.OrderStatus.InProduction, "Production", Model.InProductionAt),
                         (Marblin.Core.Enums.OrderStatus.AwaitingBalance, "Awaiting", Model.AwaitingBalanceAt),
                         (Marblin.Core.Enums.OrderStatus.Shipped, "Shipped", Model.ShippedAt)
@@ -136,7 +216,7 @@
                         </div>
                         <div class="ms-2">
                             <strong style="color: @(isCurrent ? "#c9a962" : "#333");">@label</strong>
-                            @if (date.HasValue || status == Marblin.Core.Enums.OrderStatus.PendingDeposit)
+                            @if (date.HasValue || status == Marblin.Core.Enums.OrderStatus.PendingPayment)
                             {
                                 <small class="text-muted d-block">@((date ?? Model.CreatedAt).ToString("MMM d, h:mm tt"))</small>
                             }
@@ -162,6 +242,74 @@
                     </div>
                 </form>
             }
+                
+                @{
+                    var daysSinceCreation = (DateTime.UtcNow - Model.CreatedAt).TotalDays;
+                    var canCancel = daysSinceCreation <= 2 && 
+                                    Model.Status != Marblin.Core.Enums.OrderStatus.Cancelled &&
+                                    Model.Status != Marblin.Core.Enums.OrderStatus.Shipped;
+                }
+
+                @if (canCancel)
+                {
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                            <i class="bi bi-x-circle"></i> Cancel Order
+                        </button>
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-clock"></i> Can be cancelled until @Model.CreatedAt.AddDays(2).ToString("MMM d, yyyy h:mm tt")
+                        </small>
+                    </div>
+                }
+                else if (Model.Status == Marblin.Core.Enums.OrderStatus.Cancelled)
+                {
+                    <div class="alert alert-danger mt-3">
+                        <h6 class="alert-heading"><i class="bi bi-x-circle"></i> Order Cancelled</h6>
+                        <p class="mb-1"><strong>Cancelled on:</strong> @Model.CancelledAt?.ToString("MMM d, yyyy h:mm tt")</p>
+                        @if (!string.IsNullOrEmpty(Model.CancellationReason))
+                        {
+                            <p class="mb-0"><strong>Reason:</strong> @Model.CancellationReason</p>
+                        }
+                    </div>
+                }
+                else if (daysSinceCreation > 2 && Model.Status != Marblin.Core.Enums.OrderStatus.Shipped)
+                {
+                    <div class="alert alert-secondary mt-3">
+                        <small><i class="bi bi-info-circle"></i> Cancellation period (2 days) has expired</small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Order Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="CancelOrder" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> This action cannot be undone.
+                    </div>
+                    <p>Are you sure you want to cancel order <strong>@Model.OrderNumber</strong>?</p>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Cancellation Reason</label>
+                        <textarea name="reason" id="reason" class="form-control" rows="3" 
+                                  placeholder="e.g., Customer request via WhatsApp" required></textarea>
+                        <div class="form-text">Please provide a reason for cancellation</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

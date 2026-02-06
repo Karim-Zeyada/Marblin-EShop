@@ -16,7 +16,7 @@
             
             @{
                 var statuses = new[] {
-                    (Marblin.Core.Enums.OrderStatus.PendingDeposit, "Deposit", "bi-wallet2"),
+                    (Marblin.Core.Enums.OrderStatus.PendingPayment, "Deposit", "bi-wallet2"),
                     (Marblin.Core.Enums.OrderStatus.InProduction, "Production", "bi-hammer"),
                     (Marblin.Core.Enums.OrderStatus.AwaitingBalance, "Balance", "bi-credit-card"),
                     (Marblin.Core.Enums.OrderStatus.Shipped, "Shipped", "bi-truck")
@@ -79,7 +79,7 @@
                         <div>
                             @switch (Model.Status)
                             {
-                                case Marblin.Core.Enums.OrderStatus.PendingDeposit:
+                                case Marblin.Core.Enums.OrderStatus.PendingPayment:
                                     <h5 class="serif-font">Deposit Required</h5>
                                     <p class="mb-0 text-muted">To begin production, please pay the deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>.</p>
                                     @if (!Model.IsDepositVerified)

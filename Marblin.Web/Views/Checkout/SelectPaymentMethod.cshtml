@@ -1,0 +1,103 @@
+@model Marblin.Core.Entities.Order
+@{
+    ViewData["Title"] = "Select Payment Method";
+}
+
+<div class="container my-5 text-center payment-method-selection-container">
+    <div class="mb-5">
+        <h1 class="serif-font mb-3 display-6">Select Payment Method</h1>
+        <p class="lead text-secondary">Choose how you'd like to pay for your order <strong>#@Model.OrderNumber</strong></p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Cash on Delivery Option -->
+        <div class="col-md-5">
+            <div class="card h-100 border-2 payment-method-card shadow-sm hover-shadow transition-all">
+                <div class="card-body p-5 text-center">
+                    <div class="payment-icon mb-4">
+                        <i class="bi bi-cash-coin fs-1 text-primary"></i>
+                    </div>
+                    <h3 class="serif-font mb-3 h4">Cash on Delivery</h3>
+                    <p class="text-muted small mb-4">Pay deposit now, remaining balance on delivery</p>
+                    
+                    <div class="mb-4">
+                        <div class="text-secondary small text-uppercase letter-spacing-1 mb-2">Deposit Due Now</div>
+                        <div class="display-6 serif-font text-dark fw-bold">@Model.DepositAmount.ToString("C0")</div>
+                        <div class="small text-muted mt-2">(@Model.DepositPercentage% of total)</div>
+                    </div>
+                    
+                    <div class="alert alert-light border-0 mb-4">
+                        <small class="text-muted">Remaining balance: <strong class="text-dark">@Model.RemainingBalance.ToString("C0")</strong> payable on delivery</small>
+                    </div>
+                    
+                    <form asp-action="ConfirmPaymentMethod" method="post">
+                        <input type="hidden" name="orderId" value="@Model.Id" />
+                        <input type="hidden" name="paymentMethod" value="0" />
+                        <button type="submit" class="btn btn-dark w-100 py-3 rounded-0 text-uppercase letter-spacing-2 fw-bold">
+                            Select COD
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pay Full Amount Option -->
+        <div class="col-md-5">
+            <div class="card h-100 border-2 payment-method-card shadow-sm hover-shadow transition-all border-primary">
+                <div class="card-body p-5 text-center">
+                    <div class="payment-icon mb-4">
+                        <i class="bi bi-credit-card fs-1 text-success"></i>
+                    </div>
+                    <h3 class="serif-font mb-3 h4">Pay Full Amount</h3>
+                    <p class="text-muted small mb-4">Pay the entire order amount now</p>
+                    
+                    <div class="mb-4">
+                        <div class="text-secondary small text-uppercase letter-spacing-1 mb-2">Total Due Now</div>
+                        <div class="display-6 serif-font text-success fw-bold">@Model.TotalAmount.ToString("C0")</div>
+                        <div class="small text-muted mt-2">(Complete payment)</div>
+                    </div>
+                    
+                    <div class="alert alert-success bg-success bg-opacity-10 border-success mb-4">
+                        <small class="text-success"><i class="bi bi-check-circle-fill me-1"></i> No balance due on delivery</small>
+                    </div>
+                    
+                    <form asp-action="ConfirmPaymentMethod" method="post">
+                        <input type="hidden" name="orderId" value="@Model.Id" />
+                        <input type="hidden" name="paymentMethod" value="1" />
+                        <button type="submit" class="btn btn-success w-100 py-3 rounded-0 text-uppercase letter-spacing-2 fw-bold">
+                            Pay Full Amount
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <p class="small text-muted">You can upload your payment proof on the next page</p>
+    </div>
+</div>
+
+<style>
+    .payment-method-card {
+        transition: all 0.3s ease;
+        border-color: #dee2e6 !important;
+    }
+    
+    .payment-method-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+    }
+    
+    .hover-shadow {
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+    
+    .payment-icon i {
+        opacity: 0.8;
+    }
+</style>

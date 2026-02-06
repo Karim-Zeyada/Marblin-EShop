@@ -52,6 +52,7 @@
                         <th class="ps-4">Reference</th>
                         <th>Client Details</th>
                         <th>Value</th>
+                        <th>Payment Method</th>
                         <th>Deposit Status</th>
                         <th>Aesthetic State</th>
                         <th>Registry Date</th>
@@ -72,6 +73,16 @@
                                 <div class="text-secondary small">@o.Email</div>
                             </td>
                             <td class="admin-font-serif font-playfair text-dark">@o.TotalAmount.ToString("C2")</td>
+                            <td>
+                                @if (o.PaymentMethod == Marblin.Core.Enums.PaymentMethod.FullPaymentUpfront)
+                                {
+                                    <span class="badge bg-success">Full Payment</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-primary">COD</span>
+                                }
+                            </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="text-secondary small">@o.DepositAmount.ToString("C2")</span>
@@ -108,3 +119,67 @@
         </div>
     }
 </div>
+
+@* Pagination Controls *@
+@if (ViewBag.TotalPages > 1)
+{
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="text-secondary small">
+            Showing page @ViewBag.CurrentPage of @ViewBag.TotalPages (@ViewBag.TotalCount total orders)
+        </div>
+        <nav aria-label="Order pagination">
+            <ul class="pagination pagination-sm mb-0">
+                @* Previous Button *@
+                <li class="page-item @((int)ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="?page=@((int)ViewBag.CurrentPage - 1)&status=@ViewBag.Status&search=@ViewBag.Search">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                </li>
+
+                @* Page Numbers *@
+                @{
+                    int currentPage = ViewBag.CurrentPage;
+                    int totalPages = ViewBag.TotalPages;
+                    int startPage = Math.Max(1, currentPage - 2);
+                    int endPage = Math.Min(totalPages, currentPage + 2);
+                }
+
+                @if (startPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1&status=@ViewBag.Status&search=@ViewBag.Search">1</a>
+                    </li>
+                    @if (startPage > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="?page=@i&status=@ViewBag.Status&search=@ViewBag.Search">@i</a>
+                    </li>
+                }
+
+                @if (endPage < totalPages)
+                {
+                    @if (endPage < totalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@totalPages&status=@ViewBag.Status&search=@ViewBag.Search">@totalPages</a>
+                    </li>
+                }
+
+                @* Next Button *@
+                <li class="page-item @((int)ViewBag.CurrentPage >= (int)ViewBag.TotalPages ? "disabled" : "")">
+                    <a class="page-link" href="?page=@((int)ViewBag.CurrentPage + 1)&status=@ViewBag.Status&search=@ViewBag.Search">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}

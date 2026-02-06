@@ -53,9 +53,19 @@ namespace Marblin.Application.Interfaces
         Task VerifyBalanceAsync(int orderId);
 
         /// <summary>
+        /// Sets the payment method for an order.
+        /// </summary>
+        Task<Order?> SetPaymentMethodAsync(int orderId, PaymentMethod paymentMethod);
+
+        /// <summary>
         /// Retrieves the current site settings.
         /// </summary>
         Task<SiteSettings?> GetSiteSettingsAsync();
+
+        /// <summary>
+        /// Cancels an order.
+        /// </summary>
+        Task<Order?> CancelOrderAsync(int orderId, string reason);
 
         /// <summary>
         /// Retrieves an order by its ID.
