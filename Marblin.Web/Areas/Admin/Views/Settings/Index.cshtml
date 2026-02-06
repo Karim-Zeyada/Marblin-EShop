@@ -138,3 +138,50 @@
         </div>
     </div>
 </form>
+
+<!-- Security Settings (Separate Form) -->
+<div class="row g-5 mt-1">
+    <div class="col-12 col-xl-6">
+        <div class="admin-luxury-card">
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Security</h5>
+
+            @if (TempData["PasswordSuccess"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mb-4">
+                    <i class="bi bi-check-circle me-2"></i>@TempData["PasswordSuccess"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["PasswordError"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mb-4">
+                    <i class="bi bi-exclamation-triangle me-2"></i>@TempData["PasswordError"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <form asp-action="ChangePassword" method="post">
+                <div class="mb-4">
+                    <label for="CurrentPassword" class="form-label-luxury">Current Password</label>
+                    <input type="password" id="CurrentPassword" name="CurrentPassword" class="form-control form-luxury" required />
+                </div>
+
+                <div class="mb-4">
+                    <label for="NewPassword" class="form-label-luxury">New Password</label>
+                    <input type="password" id="NewPassword" name="NewPassword" class="form-control form-luxury" minlength="6" required />
+                    <div class="text-muted small mt-2" style="font-size: 0.7rem; font-weight: 600;">MINIMUM 6 CHARACTERS</div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="ConfirmPassword" class="form-label-luxury">Confirm New Password</label>
+                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control form-luxury" required />
+                </div>
+
+                <button type="submit" class="btn-luxury-outline">
+                    <i class="bi bi-shield-lock"></i> Change Password
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

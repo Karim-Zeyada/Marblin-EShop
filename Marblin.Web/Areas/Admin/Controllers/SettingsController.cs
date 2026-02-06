@@ -5,6 +5,8 @@ using Marblin.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Marblin.Web.Areas.Admin.Models;
 
 namespace Marblin.Web.Areas.Admin.Controllers
 {
@@ -15,11 +17,16 @@ namespace Marblin.Web.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileService _fileService;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public SettingsController(IUnitOfWork unitOfWork, IFileService fileService)
+        public SettingsController(IUnitOfWork unitOfWork, IFileService fileService, 
+            UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         // GET: Admin/Settings
@@ -110,6 +117,50 @@ namespace Marblin.Web.Areas.Admin.Controllers
 
             await _unitOfWork.SaveChangesAsync();
             TempData["Success"] = "Settings saved!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Admin/Settings/ChangePassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var modelErrors = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                TempData["PasswordError"] = $"Validation failed: {modelErrors}";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                TempData["PasswordError"] = "User not found. Please ensure you are logged in.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Verify current password first
+            var isCurrentPasswordValid = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+            if (!isCurrentPasswordValid)
+            {
+                TempData["PasswordError"] = "Current password is incorrect.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Change the password
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            
+            if (changePasswordResult.Succeeded)
+            {
+                await _signInManager.RefreshSignInAsync(user);
+                TempData["PasswordSuccess"] = $"Password changed successfully for {user.Email}!";
+            }
+            else
+            {
+                var errors = string.Join("; ", changePasswordResult.Errors.Select(e => e.Description));
+                TempData["PasswordError"] = $"Password change failed: {errors}";
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }
