@@ -3,9 +3,11 @@
     ViewData["Title"] = "Settings";
 }
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
-    <h1 class="h2 admin-font-serif mb-0 text-dark">Site Configuration</h1>
-    <span class="text-secondary small text-uppercase ls-1">Global Parameters</span>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-3">
+    <div>
+        <h1 class="h2 admin-font-serif mb-1 text-dark">Site Configuration</h1>
+        <p class="text-secondary small mb-0"><i class="bi bi-gear-fill me-2"></i>Global Parameters</p>
+    </div>
 </div>
 
 @if (TempData["Success"] != null)
@@ -16,172 +18,258 @@
     </div>
 }
 
-<form asp-action="Index" method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="Id" />
-
-    <div class="row g-5">
-        <!-- Fiscal & Payment Settings -->
-        <div class="col-12 col-xl-5">
-            <div class="admin-luxury-card h-100">
-                <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Fiscal Parameters</h5>
-
-                <div class="mb-5">
-                    <label asp-for="DepositPercentage" class="form-label-luxury">Acquisition Deposit (%)</label>
-                    <div class="input-group" style="max-width: 250px;">
-                        <input asp-for="DepositPercentage" class="form-control form-luxury" type="number" step="1" min="0" max="100" />
-                        <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">%</span>
-                    </div>
-                    <div class="text-muted small mt-2" style="font-size: 0.7rem; font-weight: 600;">CLIENTS WILL COMMIT THIS VALUATION PERCENTAGE AT CHECKOUT</div>
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="InstapayAccount" class="form-label-luxury">Instapay Account</label>
-                    <input asp-for="InstapayAccount" class="form-control form-luxury" placeholder="Enter handle or number" />
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="VodafoneCashNumber" class="form-label-luxury">Vodafone Cash Registry</label>
-                    <input asp-for="VodafoneCashNumber" class="form-control form-luxury" placeholder="Enter linked number" />
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="CairoGizaShippingCost" class="form-label-luxury">Cairo & Giza Shipping Cost</label>
-                    <div class="input-group" style="max-width: 250px;">
-                        <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">EGP</span>
-                        <input asp-for="CairoGizaShippingCost" class="form-control form-luxury" type="number" step="0.01" min="0" placeholder="0.00" />
-                    </div>
-                    <div class="text-muted small mt-2" style="font-size: 0.7rem; font-weight: 600;">STANDARD SHIPPING FEE FOR CAIRO AND GIZA GOVERNORATES</div>
-                </div>
-
-                <div class="pt-5 mt-auto border-top border-light">
-                    <button type="submit" class="btn-luxury-outline w-100 justify-content-center py-3">
-                        <i class="bi bi-shield-check"></i> Commit Global Settings
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Visual & Content Curation -->
-        <div class="col-12 col-xl-7">
-            <div class="admin-luxury-card mb-4">
-                <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Hero Exhibition</h5>
-                <div class="row g-4 mb-4">
-                    <div class="col-12 col-md-6">
-                        <label asp-for="HeroHeadline" class="form-label-luxury">Primary Headline</label>
-                        <input asp-for="HeroHeadline" class="form-control form-luxury" />
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label asp-for="HeroSubheadline" class="form-label-luxury">Secondary Statement</label>
-                        <input asp-for="HeroSubheadline" class="form-control form-luxury" />
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label-luxury mb-3">Hero Visual Exhibit</label>
-                    @if (!string.IsNullOrEmpty(Model.HeroImageUrl))
-                    {
-                        <div class="mb-3 border border-light p-1 bg-light" style="max-width: 300px;">
-                            <img src="@Model.HeroImageUrl" alt="Current Hero" class="img-fluid" />
-                        </div>
-                    }
-                    <input type="file" name="heroImage" class="form-control form-luxury pb-2" accept="image/*" />
-                    <div class="text-muted small mt-2" style="font-size: 0.7rem; font-weight: 600;">OPTIMIZED FOR 1920X1080 LANDSCAPE RATIO</div>
-                </div>
-            </div>
-
-            <div class="admin-luxury-card mb-4">
-                <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Special Edition Feature</h5>
-                <div class="row g-4 mb-4">
-                    <div class="col-12">
-                        <label asp-for="FeatureHeadline" class="form-label-luxury">Feature Headline</label>
-                        <input asp-for="FeatureHeadline" class="form-control form-luxury" />
-                    </div>
-                    <div class="col-12">
-                        <label asp-for="FeatureBody" class="form-label-luxury">Feature Narrative</label>
-                        <textarea asp-for="FeatureBody" class="form-control form-luxury" rows="3"></textarea>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label-luxury mb-3">Feature Visual</label>
-                    @if (!string.IsNullOrEmpty(Model.FeatureImageUrl))
-                    {
-                        <div class="mb-3 border border-light p-1 bg-light" style="max-width: 300px;">
-                            <img src="@Model.FeatureImageUrl" alt="Current Feature" class="img-fluid" />
-                        </div>
-                    }
-                    <input type="file" name="featureImage" class="form-control form-luxury pb-2" accept="image/*" />
-                </div>
-                <div class="row g-4">
-                    <div class="col-12 col-md-6">
-                        <label asp-for="FeatureButtonText" class="form-label-luxury">Call to Action Label</label>
-                        <input asp-for="FeatureButtonText" class="form-control form-luxury" placeholder="Leave blank to omit button" />
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label asp-for="FeatureButtonUrl" class="form-label-luxury">Action Destination (URL)</label>
-                        <input asp-for="FeatureButtonUrl" class="form-control form-luxury" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="admin-luxury-card mb-0">
-                <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Artisan Philosophies</h5>
-                <div class="row g-4">
-                    <div class="col-12 col-md-6">
-                        <label asp-for="ValueStatements" class="form-label-luxury">Curation Statements</label>
-                        <textarea asp-for="ValueStatements" class="form-control form-luxury" rows="5" placeholder="Document one philosophy per line..."></textarea>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label asp-for="ProcessSteps" class="form-label-luxury">Artisan Workflow Steps</label>
-                        <textarea asp-for="ProcessSteps" class="form-control form-luxury" rows="5" placeholder="Document one workflow stage per line..."></textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
+@if (TempData["PasswordSuccess"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4">
+        <i class="bi bi-check-circle me-2"></i>@TempData["PasswordSuccess"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
-</form>
+}
 
-<!-- Security Settings (Separate Form) -->
-<div class="row g-5 mt-1">
-    <div class="col-12 col-xl-6">
-        <div class="admin-luxury-card">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Security</h5>
+@if (TempData["PasswordError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4">
+        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["PasswordError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
-            @if (TempData["PasswordSuccess"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mb-4">
-                    <i class="bi bi-check-circle me-2"></i>@TempData["PasswordSuccess"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<!-- Tabbed Navigation -->
+<ul class="nav nav-tabs mb-4 border-bottom" role="tablist" style="gap: 0;">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active px-4 py-3" id="fiscal-tab" data-bs-toggle="tab" data-bs-target="#fiscal-content" type="button" role="tab" style="border-radius: 0; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #000;">
+            <i class="bi bi-cash-coin me-2" style="color: #000; font-size: 1.1rem;"></i>Fiscal
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link px-4 py-3" id="content-tab" data-bs-toggle="tab" data-bs-target="#content-pane" type="button" role="tab" style="border-radius: 0; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6c757d;">
+            <i class="bi bi-palette me-2" style="color: #6c757d; font-size: 1.1rem;"></i>Content
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link px-4 py-3" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-pane" type="button" role="tab" style="border-radius: 0; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6c757d;">
+            <i class="bi bi-shield-lock me-2" style="color: #6c757d; font-size: 1.1rem;"></i>Security
+        </button>
+    </li>
+</ul>
+
+<style>
+    /* Tab styling for better icon visibility */
+    .nav-tabs .nav-link {
+        border: 1px solid transparent;
+        color: #6c757d !important;
+    }
+    .nav-tabs .nav-link.active {
+        color: #000 !important;
+        background-color: #fff;
+        border-color: #dee2e6 #dee2e6 #fff;
+    }
+    .nav-tabs .nav-link.active i {
+        color: #000 !important;
+    }
+    .nav-tabs .nav-link:hover {
+        border-color: #e9ecef #e9ecef #dee2e6;
+        color: #000 !important;
+    }
+    .nav-tabs .nav-link:hover i {
+        color: #000 !important;
+    }
+</style>
+
+<!-- Tab Content -->
+<div class="tab-content">
+    <!-- Fiscal Tab -->
+    <div class="tab-pane fade show active" id="fiscal-content" role="tabpanel" aria-labelledby="fiscal-tab">
+        <form asp-action="Index" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                    <div class="admin-luxury-card">
+                        <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1"><i class="bi bi-percent me-2" style="color: #495057;"></i>Deposit Settings</h5>
+                        
+                        <div class="mb-4">
+                            <label asp-for="DepositPercentage" class="form-label-luxury">Acquisition Deposit (%)</label>
+                            <div class="input-group" style="max-width: 250px;">
+                                <input asp-for="DepositPercentage" class="form-control form-luxury" type="number" step="1" min="0" max="100" />
+                                <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">%</span>
+                            </div>
+                            <div class="text-muted small mt-2" style="font-size: 0.7rem; font-weight: 600;">CLIENT DEPOSIT PERCENTAGE AT CHECKOUT</div>
+                        </div>
+                    </div>
                 </div>
-            }
 
-            @if (TempData["PasswordError"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show mb-4">
-                    <i class="bi bi-exclamation-triangle me-2"></i>@TempData["PasswordError"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
+                <div class="col-12 col-lg-6">
+                    <div class="admin-luxury-card">
+                        <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1"><i class="bi bi-credit-card me-2" style="color: #495057;"></i>Payment Methods</h5>
+                        
+                        <div class="mb-4">
+                            <label asp-for="InstapayAccount" class="form-label-luxury">Instapay Account</label>
+                            <input asp-for="InstapayAccount" class="form-control form-luxury" placeholder="Enter handle or number" />
+                        </div>
 
-            <form asp-action="ChangePassword" method="post">
-                <div class="mb-4">
-                    <label for="CurrentPassword" class="form-label-luxury">Current Password</label>
-                    <input type="password" id="CurrentPassword" name="CurrentPassword" class="form-control form-luxury" required />
-                </div>
-
-                <div class="mb-4">
-                    <label for="NewPassword" class="form-label-luxury">New Password</label>
-                    <input type="password" id="NewPassword" name="NewPassword" class="form-control form-luxury" minlength="6" required />
-                    <div class="text-muted small mt-2" style="font-size: 0.7rem; font-weight: 600;">MINIMUM 6 CHARACTERS</div>
+                        <div class="mb-0">
+                            <label asp-for="VodafoneCashNumber" class="form-label-luxury">Vodafone Cash Registry</label>
+                            <input asp-for="VodafoneCashNumber" class="form-control form-luxury" placeholder="Enter linked number" />
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mb-4">
-                    <label for="ConfirmPassword" class="form-label-luxury">Confirm New Password</label>
-                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control form-luxury" required />
+                <div class="col-12 col-lg-6">
+                    <div class="admin-luxury-card">
+                        <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1"><i class="bi bi-truck me-2" style="color: #495057;"></i>Shipping Costs</h5>
+                        
+                        <div class="mb-0">
+                            <label asp-for="CairoGizaShippingCost" class="form-label-luxury">Cairo & Giza Shipping Cost</label>
+                            <div class="input-group" style="max-width: 250px;">
+                                <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">EGP</span>
+                                <input asp-for="CairoGizaShippingCost" class="form-control form-luxury" type="number" step="0.01" min="0" placeholder="0.00" />
+                            </div>
+                            <div class="text-muted small mt-2" style="font-size: 0.7rem; font-weight: 600;">STANDARD FEE FOR CAIRO & GIZA</div>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <button type="submit" class="btn-luxury-outline">
-                    <i class="bi bi-shield-lock"></i> Change Password
+            <div class="mt-4">
+                <button type="submit" class="btn-luxury-outline px-5 py-3">
+                    <i class="bi bi-shield-check"></i> Save Fiscal Settings
                 </button>
-            </form>
+            </div>
+        </form>
+    </div>
+
+    <!-- Content Tab -->
+    <div class="tab-pane fade" id="content-pane" role="tabpanel" aria-labelledby="content-tab">
+        <form asp-action="Index" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+            
+            <div class="row g-4">
+                <!-- Hero Section -->
+                <div class="col-12">
+                    <div class="admin-luxury-card">
+                        <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1"><i class="bi bi-image me-2" style="color: #495057;"></i>Hero Section</h5>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-6">
+                                <label asp-for="HeroHeadline" class="form-label-luxury">Primary Headline</label>
+                                <input asp-for="HeroHeadline" class="form-control form-luxury" />
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label asp-for="HeroSubheadline" class="form-label-luxury">Secondary Statement</label>
+                                <input asp-for="HeroSubheadline" class="form-control form-luxury" />
+                            </div>
+                        </div>
+
+                        <div class="mb-0">
+                            <label class="form-label-luxury mb-3">Hero Image</label>
+                            @if (!string.IsNullOrEmpty(Model.HeroImageUrl))
+                            {
+                                <div class="mb-3 position-relative" style="max-width: 400px;">
+                                    <img src="@Model.HeroImageUrl" alt="Hero" class="img-fluid rounded border border-dark-10" />
+                                </div>
+                            }
+                            <input type="file" name="heroImage" class="form-control form-luxury" accept="image/*" />
+                            <div class="text-muted small mt-2" style="font-size: 0.7rem;">JPG, JPEG, or PNG • MAX 5MB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Section -->
+                <div class="col-12">
+                    <div class="admin-luxury-card">
+                        <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1"><i class="bi bi-stars me-2" style="color: #495057;"></i>Feature Section</h5>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label asp-for="FeatureHeadline" class="form-label-luxury">Feature Headline</label>
+                                <input asp-for="FeatureHeadline" class="form-control form-luxury" />
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="FeatureBody" class="form-label-luxury">Feature Description</label>
+                                <textarea asp-for="FeatureBody" class="form-control form-luxury" rows="3"></textarea>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label asp-for="FeatureButtonText" class="form-label-luxury">Button Text</label>
+                                <input asp-for="FeatureButtonText" class="form-control form-luxury" />
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label asp-for="FeatureButtonUrl" class="form-label-luxury">Button URL</label>
+                                <input asp-for="FeatureButtonUrl" class="form-control form-luxury" />
+                            </div>
+                        </div>
+
+                        <div class="mb-0">
+                            <label class="form-label-luxury mb-3">Feature Image</label>
+                            @if (!string.IsNullOrEmpty(Model.FeatureImageUrl))
+                            {
+                                <div class="mb-3 position-relative" style="max-width: 400px;">
+                                    <img src="@Model.FeatureImageUrl" alt="Feature" class="img-fluid rounded border border-dark-10" />
+                                </div>
+                            }
+                            <input type="file" name="featureImage" class="form-control form-luxury" accept="image/*" />
+                            <div class="text-muted small mt-2" style="font-size: 0.7rem;">JPG, JPEG, or PNG • MAX 5MB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Philosophies -->
+                <div class="col-12">
+                    <div class="admin-luxury-card">
+                        <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1"><i class="bi bi-chat-quote me-2" style="color: #495057;"></i>Artisan Philosophies</h5>
+                        
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label asp-for="ValueStatements" class="form-label-luxury">Value Statements</label>
+                                <textarea asp-for="ValueStatements" class="form-control form-luxury" rows="5" placeholder="One per line..."></textarea>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label asp-for="ProcessSteps" class="form-label-luxury">Process Steps</label>
+                                <textarea asp-for="ProcessSteps" class="form-control form-luxury" rows="5" placeholder="One per line..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn-luxury-outline px-5 py-3">
+                    <i class="bi bi-shield-check"></i> Save Content Settings
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Security Tab -->
+    <div class="tab-pane fade" id="security-pane" role="tabpanel" aria-labelledby="security-tab">
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <div class="admin-luxury-card">
+                    <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1"><i class="bi bi-key me-2" style="color: #495057;"></i>Change Password</h5>
+
+                    <form asp-action="ChangePassword" method="post">
+                        <div class="mb-4">
+                            <label for="CurrentPassword" class="form-label-luxury">Current Password</label>
+                            <input type="password" id="CurrentPassword" name="CurrentPassword" class="form-control form-luxury" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="NewPassword" class="form-label-luxury">New Password</label>
+                            <input type="password" id="NewPassword" name="NewPassword" class="form-control form-luxury" minlength="6" required />
+                            <div class="text-muted small mt-2" style="font-size: 0.7rem; font-weight: 600;">MINIMUM 6 CHARACTERS</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="ConfirmPassword" class="form-label-luxury">Confirm New Password</label>
+                            <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control form-luxury" required />
+                        </div>
+
+                        <button type="submit" class="btn-luxury-outline px-5 py-3">
+                            <i class="bi bi-shield-lock"></i> Change Password
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
