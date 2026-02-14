@@ -1,0 +1,216 @@
+/* =========================================
+   BASE: Variables, Reset, Typography, Utilities, Animations
+   ========================================= */
+
+:root {
+    /* Colors */
+    --primary-color: #000000;
+    /* Pure Black */
+    --secondary-color: #333333;
+    /* Dark Grey */
+    --accent-color: #EEEEEE;
+    /* Luxury Gold */
+    --silver-accent: #E5E5E5;
+    /* Silver for borders/dividers */
+    --body-bg: #FFFFFF;
+    /* Pure White */
+    --surface-bg: #FFFFFF;
+    /* Pure white for cards */
+    --surface-glass: rgba(255, 255, 255, 0.85);
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-muted: #666666;
+    --border-color: var(--silver-accent);
+    /* Typography */
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Inter', sans-serif;
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 4rem;
+    /* Borders */
+    --border-radius-sm: 0px;
+    /* Sharp luxury corners */
+    --border-radius-md: 0px;
+    --border-width: 1px;
+    /* Navbar */
+    --navbar-height: 90px;
+    /* Shadows */
+    --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background-color: var(--body-bg);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+}
+
+html,
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.logo-img {
+    height: 48px;
+    width: auto;
+    mix-blend-mode: screen;
+    filter: contrast(1.1) brightness(1.2);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.serif-font {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    color: var(--primary-color);
+    letter-spacing: -0.02em;
+}
+
+a {
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+    color: var(--secondary-color);
+}
+
+/* Utilities */
+.letter-spacing-1 {
+    letter-spacing: 0.1em;
+}
+
+.letter-spacing-2 {
+    letter-spacing: 0.2em;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.separator-line {
+    width: 60px;
+    height: 2px;
+    background-color: var(--accent-color);
+    margin: var(--spacing-md) 0;
+    display: inline-block;
+}
+
+.bi {
+    color: var(--accent-color);
+}
+
+.text-gold {
+    color: var(--accent-color) !important;
+}
+
+.border-gold {
+    border-color: var(--accent-color) !important;
+}
+
+/* Glassmorphism */
+.glass-effect {
+    background: var(--surface-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+    background: rgba(17, 17, 17, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes zoomEffect {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+.zoom-effect {
+    animation: zoomEffect 10s linear infinite alternate;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+/* Sticky Footer (viewport fill) */
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+main {
+    flex: 1 0 auto !important;
+}
+
+footer {
+    flex-shrink: 0;
+}

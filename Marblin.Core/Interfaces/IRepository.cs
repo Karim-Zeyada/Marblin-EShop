@@ -16,6 +16,7 @@ namespace Marblin.Core.Interfaces
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
         void Add(T entity);
+        void Update(T entity);
         void Remove(T entity);
         
 

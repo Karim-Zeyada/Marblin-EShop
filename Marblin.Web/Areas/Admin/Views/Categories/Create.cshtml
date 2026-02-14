@@ -1,66 +1,101 @@
 @model Marblin.Core.Entities.Category
-@{ ViewData["Title"] = Model.Id == 0 ? "Create Category" : "Edit Category"; }
+@{
+    ViewData["Title"] = "Create Collection";
+}
 
-<div class="admin-header">
-    <h1>@ViewData["Title"]</h1>
-    <a asp-action="Index" class="btn btn-outline-dark">← Back</a>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">Create Collection</h1>
+    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
+        <i class="bi bi-arrow-left"></i> Back to Collections
+    </a>
 </div>
 
-<div class="stat-card">
-    <form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post" enctype="multipart/form-data">
-        <input type="hidden" asp-for="Id" />
-        
-        <div class="row">
-            <div class="col-md-8">
+<div class="row g-4">
+    <div class="col-12 col-xl-8">
+        <div class="admin-luxury-card">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="badge-luxury w-100 mb-4 py-3 border-danger text-danger" role="alert"></div>
+
+                <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Collection Details</h5>
+
                 <div class="mb-4">
-                    <h5 class="mb-3">Category Details</h5>
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name" class="form-control" required />
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label"></label>
-                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                    </div>
+                    <label asp-for="Name" class="form-label-luxury">Collection Name</label>
+                    <input asp-for="Name" class="form-control form-luxury" placeholder="e.g., Midnight Marble" required />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="SortOrder" class="form-label">Display Order</label>
-                            <input asp-for="SortOrder" class="form-control" type="number" />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-check mt-4">
-                                <input asp-for="IsActive" class="form-check-input" />
-                                <label asp-for="IsActive" class="form-check-label">Active</label>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label-luxury">Description</label>
+                    <textarea asp-for="Description" class="form-control form-luxury" rows="4" placeholder="Describe this collection..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
 
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-dark">Save Category</button>
-                        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+                <div class="row g-4 mb-5">
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="SortOrder" class="form-label-luxury">Display Order</label>
+                        <input asp-for="SortOrder" class="form-control form-luxury" type="number" min="0" />
+                    </div>
+                    <div class="col-12 col-sm-6 d-flex align-items-end">
+                        <div class="form-check pb-2">
+                            <input asp-for="IsActive" class="form-check-input border-dark" />
+                            <label asp-for="IsActive" class="form-check-label text-secondary small ls-1 fw-bold">PUBLIC VISIBILITY</label>
+                        </div>
                     </div>
                 </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <button type="submit" class="btn-luxury-outline">
+                        <i class="bi bi-check2"></i> Create Collection
+                    </button>
+                    <a asp-action="Index" class="btn-luxury-outline text-secondary border-light">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="admin-luxury-card">
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Collection Image</h5>
+            <div class="badge-luxury w-100 mb-4 py-2 border-dark-10 text-secondary" style="font-size: 0.75rem;">
+                <i class="bi bi-info-circle me-1"></i>
+                Used for the "Our Collections" section on the home page.
             </div>
 
-            <div class="col-md-4">
-                <div class="mb-4">
-                    <h5 class="mb-3">Category Image</h5>
-                    <div class="alert alert-light border small text-muted">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Used for the "Our Collections" section on the home page.
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Upload Image</label>
-                        <input type="file" name="file" class="form-control" accept="image/*" />
-                    </div>
-                    <div class="text-center bg-light rounded p-4 text-muted small">
-                        No image selected
-                    </div>
+            <div class="mb-4">
+                <label class="form-label-luxury">Upload Image</label>
+                <input type="file" name="file" class="form-control form-luxury pb-2" accept="image/*" id="imageInput" />
+            </div>
+
+            <div id="imagePreviewContainer" class="bg-light border border-dark-10 d-flex align-items-center justify-content-center" style="aspect-ratio: 1; width: 100%;">
+                <div id="noImageText" class="text-center py-5">
+                    <i class="bi bi-image text-muted d-block mb-2" style="font-size: 2rem;"></i>
+                    <span class="text-muted small">No image selected</span>
                 </div>
+                <img id="imagePreview" src="#" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
             </div>
         </div>
-    </form>
+    </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            const noText = document.getElementById('noImageText');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    noText.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+                noText.style.display = 'block';
+            }
+        });
+    </script>
+}

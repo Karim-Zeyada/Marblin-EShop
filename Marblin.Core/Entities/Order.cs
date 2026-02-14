@@ -80,16 +80,28 @@ namespace Marblin.Core.Entities
         public DateTime? CancelledAt { get; set; }
         public string? CancellationReason { get; set; }
         
+        // Valid state transitions map
+        private static readonly Dictionary<OrderStatus, OrderStatus[]> _validTransitions = new()
+        {
+            { OrderStatus.PendingPayment, new[] { OrderStatus.InProduction, OrderStatus.Cancelled } },
+            { OrderStatus.InProduction, new[] { OrderStatus.AwaitingBalance, OrderStatus.Shipped, OrderStatus.Cancelled } },
+            { OrderStatus.AwaitingBalance, new[] { OrderStatus.Shipped, OrderStatus.Cancelled } },
+            { OrderStatus.Shipped, Array.Empty<OrderStatus>() },
+            { OrderStatus.Cancelled, Array.Empty<OrderStatus>() }
+        };
+
         public void VerifyDeposit()
         {
+            if (Status != OrderStatus.PendingPayment)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot verify deposit: order is '{Status}', expected '{OrderStatus.PendingPayment}'.");
+            }
+
             IsDepositVerified = true;
             DepositVerifiedAt = DateTime.UtcNow;
-            
-            if (Status == OrderStatus.PendingPayment)
-            {
-                Status = OrderStatus.InProduction;
-                InProductionAt = DateTime.UtcNow;
-            }
+            Status = OrderStatus.InProduction;
+            InProductionAt = DateTime.UtcNow;
         }
 
         public void SetPaymentProof(string proof, PaymentProofType type)
@@ -97,7 +109,7 @@ namespace Marblin.Core.Entities
              if (type == PaymentProofType.ReceiptImage)
              {
                  ReceiptImageUrl = proof;
-                 TransactionId = null; // Clear mutually exclusive field if needed, or keep both? logic implies one.
+                 TransactionId = null;
              }
              else if (type == PaymentProofType.TransactionId)
              {
@@ -111,6 +123,25 @@ namespace Marblin.Core.Entities
 
         public void UpdateStatus(OrderStatus newStatus)
         {
+            if (!_validTransitions.TryGetValue(Status, out var allowed) || !allowed.Contains(newStatus))
+            {
+                throw new InvalidOperationException(
+                    $"Cannot transition from '{Status}' to '{newStatus}'.");
+            }
+
+            // Payment verification guards
+            if (newStatus == OrderStatus.InProduction && !IsDepositVerified)
+            {
+                throw new InvalidOperationException(
+                    "Cannot move to 'InProduction': payment has not been verified yet.");
+            }
+
+            if (newStatus == OrderStatus.Shipped && PaymentMethod == PaymentMethod.CashOnDelivery && !IsBalanceVerified)
+            {
+                throw new InvalidOperationException(
+                    "Cannot mark as 'Shipped': balance payment has not been verified yet.");
+            }
+
             Status = newStatus;
         }
 
@@ -145,16 +176,16 @@ namespace Marblin.Core.Entities
 
         public void VerifyBalance()
         {
+            if (Status != OrderStatus.AwaitingBalance)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot verify balance: order is '{Status}', expected '{OrderStatus.AwaitingBalance}'.");
+            }
+
             IsBalanceVerified = true;
             BalanceVerifiedAt = DateTime.UtcNow;
-            
-            if (Status == OrderStatus.AwaitingBalance)
-            {
-                // Assuming next step is generic 'Processing' or kept as Shipped manually later?
-                // For now, let's just mark verified. Admins usually move to Shipped.
-                // Or we could have an optional status 'ReadyToShip'.
-                // Keeping status as is, or maybe just purely tracking the verification flag.
-            }
+            Status = OrderStatus.Shipped;
+            ShippedAt = DateTime.UtcNow;
         }
     }
 }

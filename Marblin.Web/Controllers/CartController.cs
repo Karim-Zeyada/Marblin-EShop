@@ -41,7 +41,9 @@ namespace Marblin.Web.Controllers
 
             if (variantId.HasValue && variant == null) return NotFound();
 
-            var price = variant?.GetFinalPrice(product.BasePrice) ?? product.BasePrice;
+            var isOnSale = product.IsOnSale();
+            var activePrice = product.GetActivePrice();
+            var price = variant?.GetFinalPrice(activePrice, isOnSale) ?? activePrice;
             var imageUrl = product.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl 
                          ?? product.Images.FirstOrDefault()?.ImageUrl;
             

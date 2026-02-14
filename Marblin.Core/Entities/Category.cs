@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Marblin.Core.Entities
 {
     /// <summary>
@@ -7,6 +9,7 @@ namespace Marblin.Core.Entities
     {
         public int Id { get; set; }
         
+        [Required]
         public string Name { get; set; } = string.Empty;
         
         public string? Description { get; set; }
@@ -16,6 +19,7 @@ namespace Marblin.Core.Entities
         /// <summary>
         /// Display order in navigation/listings.
         /// </summary>
+        [Range(0, int.MaxValue, ErrorMessage = "Sort order cannot be negative")]
         public int SortOrder { get; set; }
         
         public bool IsActive { get; set; } = true;

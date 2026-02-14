@@ -1,81 +1,137 @@
 @model Marblin.Core.Entities.Category
-@{ ViewData["Title"] = "Edit Category"; }
+@{
+    ViewData["Title"] = "Edit Collection";
+}
 
-<div class="admin-header">
-    <h1>Edit Category</h1>
-    <a asp-action="Index" class="btn btn-outline-dark">← Back</a>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">Edit Collection</h1>
+    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
+        <i class="bi bi-arrow-left"></i> Back to Collections
+    </a>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show"><button type="button" class="btn-close" data-bs-dismiss="alert"></button>@TempData["Success"]</div>
+    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
+        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert badge-luxury w-100 mb-4 py-3 border-danger text-danger d-flex justify-content-between align-items-center" role="alert">
+        <span><i class="bi bi-exclamation-triangle me-2"></i> @TempData["Error"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 }
 
-<div class="stat-card">
-    <form asp-action="Edit" method="post" enctype="multipart/form-data">
-        <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="ImageUrl" />
-        
-        <div class="row">
-            <div class="col-md-8">
+<div class="row g-4">
+    <div class="col-12 col-xl-8">
+        <div class="admin-luxury-card">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data" id="editForm">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ImageUrl" />
+                <div asp-validation-summary="ModelOnly" class="badge-luxury w-100 mb-4 py-3 border-danger text-danger" role="alert"></div>
+
+                <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Collection Details</h5>
+
                 <div class="mb-4">
-                    <h5 class="mb-3">Category Details</h5>
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name" class="form-control" required />
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label"></label>
-                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                    </div>
+                    <label asp-for="Name" class="form-label-luxury">Collection Name</label>
+                    <input asp-for="Name" class="form-control form-luxury" required />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="SortOrder" class="form-label">Display Order</label>
-                            <input asp-for="SortOrder" class="form-control" type="number" />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-check mt-4">
-                                <input asp-for="IsActive" class="form-check-input" />
-                                <label asp-for="IsActive" class="form-check-label">Active</label>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label-luxury">Description</label>
+                    <textarea asp-for="Description" class="form-control form-luxury" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
 
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-dark">Save Changes</button>
-                        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+                <div class="row g-4 mb-5">
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="SortOrder" class="form-label-luxury">Display Order</label>
+                        <input asp-for="SortOrder" class="form-control form-luxury" type="number" min="0" />
+                    </div>
+                    <div class="col-12 col-sm-6 d-flex align-items-end">
+                        <div class="form-check pb-2">
+                            <input asp-for="IsActive" class="form-check-input border-dark" />
+                            <label asp-for="IsActive" class="form-check-label text-secondary small ls-1 fw-bold">PUBLIC VISIBILITY</label>
+                        </div>
                     </div>
                 </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <button type="submit" class="btn-luxury-outline">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                    <a asp-action="Index" class="btn-luxury-outline text-secondary border-light">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="admin-luxury-card sticky-top" style="top: 100px;">
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Collection Image</h5>
+
+            <!-- Current Image -->
+            <div class="mb-4">
+                <label class="form-label-luxury">Current Image</label>
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="bg-light border border-dark-10 mb-3" style="aspect-ratio: 1; width: 100%; overflow: hidden;">
+                        <img src="@Model.ImageUrl" alt="@Model.Name" style="width: 100%; height: 100%; object-fit: cover;" />
+                    </div>
+                }
+                else
+                {
+                    <div class="bg-light border border-dark-10 d-flex align-items-center justify-content-center mb-3" style="aspect-ratio: 1; width: 100%;">
+                        <div class="text-center py-5">
+                            <i class="bi bi-image text-muted d-block mb-2" style="font-size: 2rem;"></i>
+                            <span class="text-muted small">No image uploaded</span>
+                        </div>
+                    </div>
+                }
             </div>
 
-            <div class="col-md-4">
-                <div class="mb-4">
-                    <h5 class="mb-3">Category Image</h5>
-                    <div class="mb-3">
-                        <label class="form-label">Current Image</label>
-                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
-                        {
-                            <div class="mb-2 position-relative">
-                                <img src="@Model.ImageUrl" alt="Current Image" class="w-100 rounded border" style="object-fit: cover; aspect-ratio: 1;" />
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="text-center bg-light rounded p-5 text-muted small mb-3">
-                                No image uploaded
-                            </div>
-                        }
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Upload New Image</label>
-                        <input type="file" name="file" class="form-control" accept="image/*" />
-                        <div class="form-text small">Replaces the current image if one exists.</div>
+            <!-- Upload New Image -->
+            <div class="bg-light p-4 border border-light">
+                <h6 class="small text-uppercase ls-1 mb-4 text-dark fw-bold">
+                    <i class="bi bi-upload me-1"></i> Upload New Image
+                </h6>
+                <div class="mb-3">
+                    <input type="file" name="file" form="editForm" class="form-control form-luxury pb-2" accept="image/*" id="imageInput" />
+                    <div class="text-muted small mt-1" style="font-size: 0.7rem;">Replaces the current image if one exists.</div>
+                </div>
+
+                <div id="newImagePreviewContainer" style="display: none;">
+                    <label class="form-label-luxury">New Image Preview</label>
+                    <div class="bg-light border border-dark-10" style="aspect-ratio: 1; width: 100%; overflow: hidden;">
+                        <img id="newImagePreview" src="#" alt="New Preview" style="width: 100%; height: 100%; object-fit: cover;" />
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const previewContainer = document.getElementById('newImagePreviewContainer');
+            const preview = document.getElementById('newImagePreview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+    </script>
+}

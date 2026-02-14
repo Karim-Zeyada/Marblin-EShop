@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Marblin.Core.Entities
 {
     /// <summary>
@@ -25,8 +27,16 @@ namespace Marblin.Core.Entities
         public decimal PriceAdjustment { get; set; }
         
         /// <summary>
+        /// Optional sale price for this specific variant.
+        /// Only active when the parent product's sale window is active.
+        /// </summary>
+        [Range(0.01, double.MaxValue, ErrorMessage = "Sale price must be greater than 0")]
+        public decimal? SalePrice { get; set; }
+        
+        /// <summary>
         /// Current stock quantity.
         /// </summary>
+        [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
         public int Stock { get; set; }
         
         /// <summary>
@@ -41,7 +51,21 @@ namespace Marblin.Core.Entities
         
         /// <summary>
         /// Calculated final price (BasePrice + PriceAdjustment).
+        /// Does not account for product-level sales.
         /// </summary>
         public decimal GetFinalPrice(decimal basePrice) => basePrice + PriceAdjustment;
+        
+        /// <summary>
+        /// Sale-aware final price. When the product is on sale:
+        /// - If this variant has its own SalePrice, returns that directly.
+        /// - Otherwise, uses the product's active price + PriceAdjustment.
+        /// </summary>
+        public decimal GetFinalPrice(decimal basePrice, bool isProductOnSale)
+        {
+            if (isProductOnSale && SalePrice.HasValue)
+                return SalePrice.Value;
+            
+            return basePrice + PriceAdjustment;
+        }
     }
 }

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Marblin.Core.Entities
 {
     /// <summary>
@@ -8,14 +10,23 @@ namespace Marblin.Core.Entities
         public int Id { get; set; }
         
         // Customer Information
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100)]
         public string CustomerName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email")]
         public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Phone is required")]
+        [Phone]
         public string Phone { get; set; } = string.Empty;
         
         // Request Details
         /// <summary>
         /// Product category (e.g., Table, Countertop, Furniture, Other).
         /// </summary>
+        [Required(ErrorMessage = "Category is required")]
         public string Category { get; set; } = string.Empty;
         
         /// <summary>
@@ -41,6 +52,8 @@ namespace Marblin.Core.Entities
         /// <summary>
         /// Additional notes/description (required).
         /// </summary>
+        [Required(ErrorMessage = "Please describe your request")]
+        [StringLength(2000)]
         public string Notes { get; set; } = string.Empty;
         
         // Admin Tracking

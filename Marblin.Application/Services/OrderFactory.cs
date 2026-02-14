@@ -10,7 +10,7 @@ namespace Marblin.Application.Services
         public Order CreateOrder(OrderSubmissionDto model, ShoppingCart cart, decimal depositPercentage)
         {
             var depositAmount = (cart.TotalAmount * depositPercentage) / 100m;
-            var orderNumber = $"M-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 4).ToUpper()}";
+            var orderNumber = $"M-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 4).ToUpper()}";
 
             var order = new Order
             {

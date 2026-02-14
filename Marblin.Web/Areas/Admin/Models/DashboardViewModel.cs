@@ -17,6 +17,7 @@ namespace Marblin.Web.Areas.Admin.Models
         public int InProductionCount { get; set; }
         public int AwaitingBalanceCount { get; set; }
         public int ShippedCount { get; set; }
+        public int CancelledCount { get; set; }
 
         public int TotalActiveOrders => PendingDepositCount + InProductionCount + AwaitingBalanceCount;
 
@@ -28,7 +29,9 @@ namespace Marblin.Web.Areas.Admin.Models
 
         // Products
         public int TotalProducts { get; set; }
+        public int TotalOrders { get; set; }
         public int LowStockCount { get; set; }
+        public int OutOfStockCount { get; set; }
 
         // Analytics
         public List<string> ChartLabels { get; set; } = new();

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Marblin.Core.Entities
 {
     /// <summary>
@@ -24,11 +26,13 @@ namespace Marblin.Core.Entities
         public string? VariantDescription { get; set; }
         public string? ImageUrl { get; set; }
         
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
         public int Quantity { get; set; }
         
         /// <summary>
         /// Unit price at time of purchase.
         /// </summary>
+        [Range(0, double.MaxValue, ErrorMessage = "Unit price cannot be negative")]
         public decimal UnitPrice { get; set; }
         
         /// <summary>

@@ -102,7 +102,10 @@ h6 {
     .admin-main-viewport {
         margin-left: 0;
         width: 100%;
+        min-height: 100vh;
         background-color: var(--admin-surface);
+        display: flex;
+        flex-direction: column;
     }
 }
 
@@ -117,10 +120,10 @@ h6 {
     z-index: 10000 !important;
 }
 
-    .admin-offcanvas .offcanvas-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1.5rem 2rem;
-    }
+.admin-offcanvas .offcanvas-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem 2rem;
+}
 
 /* ==========================================================================
    COMPONENTS
@@ -136,9 +139,9 @@ h6 {
     transition: var(--transition-base);
 }
 
-    .admin-luxury-card:hover {
-        border-color: rgba(0, 0, 0, 0.15);
-    }
+.admin-luxury-card:hover {
+    border-color: rgba(0, 0, 0, 0.15);
+}
 
 /* Brand Logo (Sidebar) */
 .admin-brand {
@@ -153,15 +156,14 @@ h6 {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-    .admin-brand span {
-        color: rgba(255, 255, 255, 0.5);
-        font-weight: 400;
-    }
+.admin-brand span {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+}
 
 /* Content Container */
 .admin-content-container {
     padding: 3rem 4rem;
-    flex: 1;
 }
 
 @media (max-width: 768px) {
@@ -183,26 +185,26 @@ h6 {
     color: var(--admin-text) !important;
 }
 
-    .table thead th {
-        font-family: var(--font-sans);
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: #888 !important;
-        font-weight: 700;
-        padding: 1.5rem 1rem;
-        border-bottom: 2px solid #F0F0F0 !important;
-        background: #FAFAFA !important;
-    }
+.table thead th {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #888 !important;
+    font-weight: 700;
+    padding: 1.5rem 1rem;
+    border-bottom: 2px solid #F0F0F0 !important;
+    background: #FAFAFA !important;
+}
 
-    .table tbody td {
-        padding: 1.25rem 1rem;
-        vertical-align: middle;
-        font-size: 0.92rem;
-        border-bottom: 1px solid #F0F0F0 !important;
-        background: transparent !important;
-        color: #222 !important;
-    }
+.table tbody td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+    font-size: 0.92rem;
+    border-bottom: 1px solid #F0F0F0 !important;
+    background: transparent !important;
+    color: #222 !important;
+}
 
 /* Buttons */
 .btn-luxury-outline {
@@ -222,10 +224,10 @@ h6 {
     font-weight: 600;
 }
 
-    .btn-luxury-outline:hover {
-        background: #000000;
-        color: #FFFFFF !important;
-    }
+.btn-luxury-outline:hover {
+    background: #000000;
+    color: #FFFFFF !important;
+}
 
 .btn-luxury-sm {
     padding: 0.5rem 1.2rem;
@@ -245,22 +247,22 @@ h6 {
     transition: var(--transition-base);
 }
 
-    .admin-link i {
-        font-size: 1.15rem;
-        width: 20px;
-        text-align: center;
-    }
+.admin-link i {
+    font-size: 1.15rem;
+    width: 20px;
+    text-align: center;
+}
 
-    .admin-link:hover,
-    .admin-link.active {
-        color: #fff;
-        background-color: rgba(255, 255, 255, 0.08);
-    }
+.admin-link:hover,
+.admin-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.08);
+}
 
-    .admin-link.active {
-        border-left-color: #fff;
-        font-weight: 600;
-    }
+.admin-link.active {
+    border-left-color: #fff;
+    font-weight: 600;
+}
 
 /* Sidebar Specific labels */
 .admin-sidebar-content {
@@ -276,10 +278,10 @@ h6 {
     /* Firefox */
 }
 
-    .admin-nav-list::-webkit-scrollbar {
-        display: none;
-        /* Chrome/Safari */
-    }
+.admin-nav-list::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
 
 .admin-sidebar-footer {
     padding-top: 1rem;
@@ -302,9 +304,9 @@ h6 {
     border-right: 1px solid var(--admin-border);
 }
 
-    .stat-item:last-child {
-        border-right: none;
-    }
+.stat-item:last-child {
+    border-right: none;
+}
 
 .stat-value {
     font-size: 2.5rem;
@@ -332,10 +334,10 @@ h6 {
     margin-bottom: 1.5rem;
 }
 
-    .form-luxury:focus {
-        border-bottom-color: #000 !important;
-        box-shadow: none !important;
-    }
+.form-luxury:focus {
+    border-bottom-color: #000 !important;
+    box-shadow: none !important;
+}
 
 .form-label-luxury {
     font-size: 0.75rem;
@@ -360,11 +362,11 @@ h6 {
     color: #333;
 }
 
-    .badge-luxury.active {
-        background: #E8F5E9;
-        color: #2E7D32;
-        border-color: #C8E6C9;
-    }
+.badge-luxury.active {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border-color: #C8E6C9;
+}
 
 /* Logout Button (remains luxury on black) */
 .btn-luxury-logout {
@@ -384,7 +386,7 @@ h6 {
     gap: 10px;
 }
 
-    .btn-luxury-logout:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.6);
-    }
+.btn-luxury-logout:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.6);
+}

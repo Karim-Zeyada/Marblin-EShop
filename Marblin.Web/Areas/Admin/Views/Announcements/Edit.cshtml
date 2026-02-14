@@ -1,0 +1,99 @@
+@model Marblin.Core.Entities.Announcement
+@{
+    ViewData["Title"] = "Edit Announcement";
+}
+
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">Edit Announcement</h1>
+    <a asp-action="Index" class="btn-luxury-outline btn-luxury-sm">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="admin-luxury-card">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="CreatedAt" />
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-8">
+                        <label asp-for="Title" class="form-label-luxury">Title</label>
+                        <input asp-for="Title" class="form-control form-luxury" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Style" class="form-label-luxury">Style</label>
+                        <select asp-for="Style" class="form-select form-luxury">
+                            <option value="info">Info (Blue)</option>
+                            <option value="sale">Sale (Gold/Green)</option>
+                            <option value="warning">Warning (Yellow)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Message" class="form-label-luxury">Message</label>
+                    <textarea asp-for="Message" class="form-control form-luxury" rows="2"></textarea>
+                    <span asp-validation-for="Message" class="text-danger small"></span>
+                </div>
+
+                <div class="bg-light p-4 border border-light mb-4">
+                    <div class="row g-4">
+                        <div class="col-sm-6">
+                            <label asp-for="StartDate" class="form-label-luxury">Start Date</label>
+                            <input asp-for="StartDate" type="datetime-local" class="form-control form-luxury bg-white" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="EndDate" class="form-label-luxury">End Date</label>
+                            <input asp-for="EndDate" type="datetime-local" class="form-control form-luxury bg-white" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-4 mb-5 align-items-center">
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input border-dark" />
+                        <label asp-for="IsActive" class="form-check-label text-dark fw-bold small ls-1">ACTIVE</label>
+                    </div>
+                    <div class="vr mx-2 text-secondary opacity-25"></div>
+                    <div class="form-check">
+                        <input asp-for="ShowOnHomepage" class="form-check-input border-dark" />
+                        <label asp-for="ShowOnHomepage" class="form-check-label text-secondary small ls-1">HOMEPAGE</label>
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="ShowOnCatalog" class="form-check-input border-dark" />
+                        <label asp-for="ShowOnCatalog" class="form-check-label text-secondary small ls-1">CATALOG</label>
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="ShowOnCheckout" class="form-check-input border-dark" />
+                        <label asp-for="ShowOnCheckout" class="form-check-label text-secondary small ls-1">CHECKOUT</label>
+                    </div>
+                </div>
+
+                <details class="mb-5">
+                    <summary class="text-secondary small ls-1 cursor-pointer hover-dark user-select-none">
+                        <i class="bi bi-gear me-1"></i> Advanced Settings
+                    </summary>
+                    <div class="mt-4 ps-3 border-start">
+                        <div class="mb-3" style="max-width: 200px;">
+                            <label asp-for="Priority" class="form-label-luxury">Priority</label>
+                            <input asp-for="Priority" type="number" class="form-control form-luxury" min="0" />
+                            <div class="form-text small">Lower numbers appear first (Default: 0)</div>
+                        </div>
+                    </div>
+                </details>
+
+                <button type="submit" class="btn-luxury-outline w-100">
+                    <i class="bi bi-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,78 @@
+@using Marblin.Core.Entities
+@using Marblin.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
+
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+    string pageName = "Other";
+    if (controller == "Home" && action == "Index")
+    {
+        pageName = "Homepage";
+    }
+    else if (controller == "Catalog")
+    {
+        pageName = "Catalog";
+    }
+    else if (controller == "Checkout" || controller == "Cart") // Assuming Cart is relevant or part of Checkout flow
+    {
+        pageName = "Checkout";
+    }
+
+    var spec = new Marblin.Core.Specifications.ActiveAnnouncementsSpecification(pageName);
+    var announcements = await UnitOfWork.Repository<Announcement>().ListAsync(spec);
+    var activeAnnouncement = announcements.FirstOrDefault();
+}
+
+@if (activeAnnouncement != null)
+{
+    var styleClass = activeAnnouncement.Style switch
+    {
+        "sale" => "bg-gold text-dark",
+        "warning" => "bg-warning text-dark",
+        "info" => "bg-primary text-white",
+        _ => "bg-dark text-white"
+    };
+
+    <div id="announcement-banner" class="announcement-banner @styleClass fade show" role="alert" data-id="@activeAnnouncement.Id">
+        <div class="container-fluid py-2 position-relative overflow-hidden" style="height: 40px;">
+            <div class="marquee-container d-flex align-items-center h-100">
+                <div class="marquee-content d-flex align-items-center">
+                    <span class="fw-bold me-2 text-uppercase letter-spacing-2 text-nowrap">@activeAnnouncement.Title</span>
+                    <span class="mx-3 text-white-50">|</span>
+                    <span class="me-5 text-nowrap letter-spacing-1">@activeAnnouncement.Message</span>
+                    
+                    <!-- Duplicate for seamless loop -->
+                    <span class="fw-bold me-2 text-uppercase letter-spacing-2 ms-5 text-nowrap">@activeAnnouncement.Title</span>
+                    <span class="mx-3 text-white-50">|</span>
+                    <span class="me-5 text-nowrap letter-spacing-1">@activeAnnouncement.Message</span>
+
+                    <!-- Triplicate for wide screens -->
+                    <span class="fw-bold me-2 text-uppercase letter-spacing-2 ms-5 text-nowrap">@activeAnnouncement.Title</span>
+                    <span class="mx-3 text-white-50">|</span>
+                    <span class="me-5 text-nowrap letter-spacing-1">@activeAnnouncement.Message</span>
+                </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white position-absolute top-50 end-0 translate-middle-y me-3 small" style="z-index: 10;" aria-label="Close" onclick="dismissBanner(@activeAnnouncement.Id)"></button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var banner = document.getElementById('announcement-banner');
+            var bannerId = banner.getAttribute('data-id');
+            var dismissed = sessionStorage.getItem('dismissed_banner_' + bannerId);
+            
+            if (dismissed) {
+                banner.style.display = 'none';
+            }
+        });
+
+        function dismissBanner(id) {
+            var banner = document.getElementById('announcement-banner');
+            banner.style.display = 'none';
+            sessionStorage.setItem('dismissed_banner_' + id, 'true');
+        }
+    </script>
+}

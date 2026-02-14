@@ -1,0 +1,114 @@
+@model IEnumerable<Marblin.Core.Entities.Announcement>
+@{
+    ViewData["Title"] = "Announcements";
+}
+
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
+    <h1 class="h2 admin-font-serif mb-0 text-dark">Announcements</h1>
+    <a asp-action="Create" class="btn-luxury-outline btn-luxury-sm">
+        <i class="bi bi-plus-lg"></i> New Announcement
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert badge-luxury w-100 mb-4 py-3 border-dark-10 text-dark d-flex justify-content-between align-items-center" role="alert">
+        <span><i class="bi bi-check2-circle me-2 text-success"></i> @TempData["Success"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="admin-luxury-card text-center py-5">
+        <i class="bi bi-megaphone fs-1 text-muted mb-3 d-block"></i>
+        <h5 class="text-muted">No Announcements Yet</h5>
+        <p class="text-secondary small mb-4">Create your first announcement to display promotions on your storefront.</p>
+        <a asp-action="Create" class="btn-luxury-outline">Create Announcement</a>
+    </div>
+}
+else
+{
+    <div class="admin-luxury-card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Style</th>
+                        <th>Pages</th>
+                        <th>Date Range</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var isLive = item.IsCurrentlyActive();
+                        <tr>
+                            <td class="fw-bold text-dark">@item.Title</td>
+                            <td>
+                                @if (item.Style == "sale")
+                                {
+                                    <span class="badge bg-success rounded-0">SALE</span>
+                                }
+                                else if (item.Style == "warning")
+                                {
+                                    <span class="badge bg-warning text-dark rounded-0">WARNING</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-info rounded-0">INFO</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.ShowOnHomepage) { <span class="badge bg-secondary rounded-0 me-1">Home</span> }
+                                @if (item.ShowOnCatalog) { <span class="badge bg-secondary rounded-0 me-1">Catalog</span> }
+                                @if (item.ShowOnCheckout) { <span class="badge bg-secondary rounded-0">Checkout</span> }
+                            </td>
+                            <td class="small text-secondary">
+                                @item.StartDate.ToString("MMM dd") - @item.EndDate.ToString("MMM dd, yyyy")
+                            </td>
+                            <td>
+                                @if (!item.IsActive)
+                                {
+                                    <span class="badge bg-secondary rounded-0">Inactive</span>
+                                }
+                                else if (isLive)
+                                {
+                                    <span class="badge bg-success rounded-0"><i class="bi bi-broadcast"></i> Live</span>
+                                }
+                                else if (item.StartDate > DateTime.UtcNow)
+                                {
+                                    <span class="badge bg-warning text-dark rounded-0">Scheduled</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger rounded-0">Expired</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <form asp-action="ToggleActive" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-link p-0 text-muted me-2" title="@(item.IsActive ? "Deactivate" : "Activate")">
+                                        <i class="bi @(item.IsActive ? "bi-pause-circle" : "bi-play-circle")"></i>
+                                    </button>
+                                </form>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-link p-0 text-muted me-2" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="Delete" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-link p-0 text-danger" onclick="return confirm('Delete this announcement?');" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

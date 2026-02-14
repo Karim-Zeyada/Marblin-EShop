@@ -54,7 +54,21 @@
         <!-- Product Details -->
         <div class="col-md-5">
             <h1 class="display-5 serif-font mb-3">@Model.Name</h1>
-            <p class="h3 mb-4 fw-light" id="priceDisplay">@Model.BasePrice.ToString("C0")</p>
+            
+            <div id="priceContainer" class="mb-4">
+                @if (Model.IsOnSale())
+                {
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="h3 mb-0 fw-bold text-sale" id="priceDisplay">@Model.SalePrice?.ToString("C0")</span>
+                        <span class="h5 mb-0 text-muted text-decoration-line-through original-price-display">@Model.BasePrice.ToString("C0")</span>
+                        <span class="badge badge-sale position-static ms-2">SAVE @Model.GetDiscountPercentage()%</span>
+                    </div>
+                }
+                else
+                {
+                    <p class="h3 mb-0 fw-light" id="priceDisplay">@Model.BasePrice.ToString("C0")</p>
+                }
+            </div>
 
             <div class="mb-5">
                 <p class="text-muted text-justify">@Model.Description</p>
@@ -75,12 +89,14 @@
                     {
                         <div class="mb-4">
                             <label class="form-label fw-bold small text-uppercase letter-spacing-1">Material / Size</label>
+                            @{ var isOnSale = Model.IsOnSale(); var activePrice = Model.GetActivePrice(); }
                             <select name="variantId" id="variantSelect" class="form-select rounded-0" onchange="updatePrice()" required>
-                                <option value="" data-price="@Model.BasePrice">Select Option</option>
+                                <option value="" data-price="@activePrice">Select Option</option>
                                 @foreach (var v in Model.Variants.Where(v => v.Stock > 0 || Model.Availability == Marblin.Core.Enums.ProductAvailability.MadeToOrder))
                                 {
-                                    <option value="@v.Id" data-price="@v.GetFinalPrice(Model.BasePrice)">
-                                        @v.Material - @v.Size (@v.GetFinalPrice(Model.BasePrice).ToString("C0"))
+                                    var variantPrice = v.GetFinalPrice(activePrice, isOnSale);
+                                    <option value="@v.Id" data-price="@variantPrice">
+                                        @v.Material - @v.Size (@variantPrice.ToString("C0"))
                                     </option>
                                 }
                             </select>
@@ -152,7 +168,17 @@
                             </a>
                             <div class="card-body text-center px-0">
                                 <h6 class="card-title serif-font"><a asp-action="Details" asp-route-id="@prod.Id" class="text-decoration-none text-dark">@prod.Name</a></h6>
-                                <p class="text-muted small">@prod.BasePrice.ToString("C0")</p>
+                                @if (prod.IsOnSale())
+                                {
+                                    <div class="d-flex justify-content-center gap-2 small">
+                                        <span class="text-muted text-decoration-line-through">@prod.BasePrice.ToString("C0")</span>
+                                        <span class="text-sale fw-bold">@prod.SalePrice?.ToString("C0")</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-muted small">@prod.BasePrice.ToString("C0")</p>
+                                }
                             </div>
                         </div>
                     </div>
@@ -171,13 +197,19 @@
         function updatePrice() {
             var select = document.getElementById('variantSelect');
             var btn = document.getElementById('addToCartBtn');
+            var priceDisplay = document.getElementById('priceDisplay');
             
             if (select.value) {
                 var price = parseFloat(select.options[select.selectedIndex].getAttribute('data-price'));
-                document.getElementById('priceDisplay').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(price);
+                
+                // Note: Currently variant logic just takes the calculation from server. 
+                // If we want sale applied to variants, we'd need that calculated in the option data attributes.
+                // For now this updates the main displayed price.
+                
+                priceDisplay.innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(price);
                 btn.disabled = false;
             } else {
-                // Reset to base price or disable
+                // Reset/Disable
                 btn.disabled = true;
             }
         }

@@ -3,100 +3,164 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-5 gap-3">
-    <h1 class="h2 admin-font-serif mb-0 text-dark">Dashboard</h1>
-    <span class="text-secondary small text-uppercase ls-1">@DateTime.Now.ToString("dddd, MMMM d, yyyy")</span>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 mb-md-5 gap-3">
+    <div>
+        <h1 class="h2 admin-font-serif mb-1 text-dark">Dashboard</h1>
+        <p class="text-secondary small mb-0"><i class="bi bi-speedometer2 me-2"></i>@DateTime.Now.ToString("dddd, MMMM d, yyyy")</p>
+    </div>
 </div>
 
 <!-- Stats Row -->
-<div class="row g-4 mb-5">
+<div class="row g-3 g-md-4 mb-4 mb-md-5">
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="admin-luxury-card p-0 h-100">
-            <div class="stat-item border-0">
-                <span class="stat-value">@Model.TodayOrdersCount</span>
-                <span class="stat-label">Orders Today</span>
+        <a asp-controller="Orders" asp-action="Index" class="text-decoration-none">
+            <div class="admin-luxury-card p-0 h-100 stat-card">
+                <div class="stat-item border-0 position-relative">
+                    <i class="bi bi-cart-check stat-icon" style="color: #495057;"></i>
+                    <span class="stat-value">@Model.TodayOrdersCount</span>
+                    <span class="stat-label">Orders Today</span>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="admin-luxury-card p-0 h-100">
-            <div class="stat-item border-0">
+        <div class="admin-luxury-card p-0 h-100 stat-card">
+            <div class="stat-item border-0 position-relative">
+                <i class="bi bi-currency-dollar stat-icon" style="color: #DAA520;"></i>
                 <span class="stat-value text-dark">@Model.TodayRevenue.ToString("C0")</span>
                 <span class="stat-label">Revenue Today</span>
             </div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="admin-luxury-card p-0 h-100">
-            <div class="stat-item border-0">
+        <div class="admin-luxury-card p-0 h-100 stat-card">
+            <div class="stat-item border-0 position-relative">
+                <i class="bi bi-wallet2 stat-icon" style="color: #6c757d;"></i>
                 <span class="stat-value text-secondary">@Model.TodayDeposits.ToString("C0")</span>
                 <span class="stat-label">Deposits Collected</span>
             </div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="admin-luxury-card p-0 h-100">
-            <div class="stat-item border-0">
-                <span class="stat-value">@Model.TotalActiveOrders</span>
-                <span class="stat-label">Active Orders</span>
+        <a asp-controller="Orders" asp-action="Index" class="text-decoration-none">
+            <div class="admin-luxury-card p-0 h-100 stat-card">
+                <div class="stat-item border-0 position-relative">
+                    <i class="bi bi-hourglass-split stat-icon" style="color: #000;"></i>
+                    <span class="stat-value">@Model.TotalActiveOrders</span>
+                    <span class="stat-label">Active Orders</span>
+                    <span class="stat-sub-label">@Model.TotalOrders total</span>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 
 <!-- Orders by Status & Alerts -->
-<div class="row g-4 mb-5">
+<div class="row g-3 g-md-4 mb-4 mb-md-5">
     <div class="col-12 col-lg-8">
         <div class="admin-luxury-card h-100">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Order Status Overview</h5>
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">
+                <i class="bi bi-bar-chart-line me-2" style="color: #495057;"></i>Order Status Overview
+            </h5>
             <div class="row text-center g-3">
-                <div class="col-6 col-sm-3">
-                    <div class="h2 admin-font-serif mb-1 text-dark">@Model.PendingDepositCount</div>
-                    <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">Pending Payment</div>
+                <div class="col-6 col-sm">
+                    <a asp-controller="Orders" asp-action="Index" asp-route-status="PendingPayment" class="text-decoration-none d-block">
+                        <div class="status-stat-box">
+                            <i class="bi bi-clock-history mb-2" style="font-size: 1.5rem; color: #b8860b;"></i>
+                            <div class="h2 admin-font-serif mb-1 text-dark">@Model.PendingDepositCount</div>
+                            <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">Pending Payment</div>
+                        </div>
+                    </a>
                 </div>
-                <div class="col-6 col-sm-3">
-                    <div class="h2 admin-font-serif mb-1 text-dark">@Model.InProductionCount</div>
-                    <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">In Production</div>
+                <div class="col-6 col-sm">
+                    <a asp-controller="Orders" asp-action="Index" asp-route-status="InProduction" class="text-decoration-none d-block">
+                        <div class="status-stat-box">
+                            <i class="bi bi-gear-fill mb-2" style="font-size: 1.5rem; color: #000;"></i>
+                            <div class="h2 admin-font-serif mb-1 text-dark">@Model.InProductionCount</div>
+                            <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">In Production</div>
+                        </div>
+                    </a>
                 </div>
-                <div class="col-6 col-sm-3">
-                    <div class="h2 admin-font-serif mb-1 text-dark">@Model.AwaitingBalanceCount</div>
-                    <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">Awaiting Balance</div>
+                <div class="col-6 col-sm">
+                    <a asp-controller="Orders" asp-action="Index" asp-route-status="AwaitingBalance" class="text-decoration-none d-block">
+                        <div class="status-stat-box">
+                            <i class="bi bi-cash-stack mb-2" style="font-size: 1.5rem; color: #DAA520;"></i>
+                            <div class="h2 admin-font-serif mb-1 text-dark">@Model.AwaitingBalanceCount</div>
+                            <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">Awaiting Balance</div>
+                        </div>
+                    </a>
                 </div>
-                <div class="col-6 col-sm-3">
-                    <div class="h2 admin-font-serif mb-1 text-dark">@Model.ShippedCount</div>
-                    <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">Shipped</div>
+                <div class="col-6 col-sm">
+                    <a asp-controller="Orders" asp-action="Index" asp-route-status="Shipped" class="text-decoration-none d-block">
+                        <div class="status-stat-box">
+                            <i class="bi bi-truck mb-2" style="font-size: 1.5rem; color: #198754;"></i>
+                            <div class="h2 admin-font-serif mb-1 text-dark">@Model.ShippedCount</div>
+                            <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">Shipped</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-sm">
+                    <a asp-controller="Orders" asp-action="Index" asp-route-status="Cancelled" class="text-decoration-none d-block">
+                        <div class="status-stat-box">
+                            <i class="bi bi-x-circle mb-2" style="font-size: 1.5rem; color: #dc3545;"></i>
+                            <div class="h2 admin-font-serif mb-1 text-dark">@Model.CancelledCount</div>
+                            <div class="small text-secondary text-uppercase ls-1" style="font-size: 0.65rem;">Cancelled</div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-12 col-lg-4">
         <div class="admin-luxury-card h-100">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">System Alerts</h5>
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">
+                <i class="bi bi-bell me-2" style="color: #495057;"></i>System Alerts
+            </h5>
             <div class="d-flex flex-column gap-3">
+                @if (Model.PendingDepositCount > 0)
+                {
+                    <div class="d-flex align-items-center gap-3 p-3 bg-light border border-dark-10">
+                        <i class="bi bi-clock-history fs-4" style="color: #b8860b;"></i>
+                        <div>
+                            <div class="fw-bold small text-dark">@Model.PendingDepositCount Orders Awaiting Payment</div>
+                            <a asp-action="Index" asp-controller="Orders" asp-route-status="PendingPayment" class="small text-secondary text-decoration-none hover-dark">Review payments &rarr;</a>
+                        </div>
+                    </div>
+                }
                 @if (Model.UnreviewedRequestsCount > 0)
                 {
                     <div class="d-flex align-items-center gap-3 p-3 bg-light border border-dark-10">
-                        <i class="bi bi-exclamation-circle text-warning fs-4"></i>
+                        <i class="bi bi-exclamation-circle fs-4" style="color: #DAA520;"></i>
                         <div>
                             <div class="fw-bold small text-dark">@Model.UnreviewedRequestsCount New Requests</div>
                             <a asp-action="Index" asp-controller="CustomRequests" class="small text-secondary text-decoration-none hover-dark">Review dashboard &rarr;</a>
                         </div>
                     </div>
                 }
+                @if (Model.OutOfStockCount > 0)
+                {
+                    <div class="d-flex align-items-center gap-3 p-3 bg-light border border-dark-10">
+                        <i class="bi bi-exclamation-triangle fs-4" style="color: #dc3545;"></i>
+                        <div>
+                            <div class="fw-bold small text-dark">@Model.OutOfStockCount Variants Out of Stock</div>
+                            <a asp-action="Index" asp-controller="Products" class="small text-secondary text-decoration-none hover-dark">Manage inventory &rarr;</a>
+                        </div>
+                    </div>
+                }
                 @if (Model.LowStockCount > 0)
                 {
                     <div class="d-flex align-items-center gap-3 p-3 bg-light border border-dark-10">
-                        <i class="bi bi-box-seam text-danger fs-4"></i>
+                        <i class="bi bi-box-seam fs-4" style="color: #495057;"></i>
                         <div>
                             <div class="fw-bold small text-dark">@Model.LowStockCount Products Low Stock</div>
                             <a asp-action="Index" asp-controller="Products" class="small text-secondary text-decoration-none hover-dark">Manage inventory &rarr;</a>
                         </div>
                     </div>
                 }
-                @if (Model.UnreviewedRequestsCount == 0 && Model.LowStockCount == 0)
+                @if (Model.PendingDepositCount == 0 && Model.UnreviewedRequestsCount == 0 && Model.LowStockCount == 0 && Model.OutOfStockCount == 0)
                 {
                     <div class="text-center py-4">
-                        <i class="bi bi-check2-circle text-success fs-1 mb-2 opacity-50"></i>
+                        <i class="bi bi-check2-circle fs-1 mb-2" style="color: #6c757d; opacity: 0.5;"></i>
                         <p class="small text-secondary mb-0">No immediate actions required.</p>
                     </div>
                 }
@@ -106,10 +170,12 @@
 </div>
 
 <!-- Analytics & Top Products -->
-<div class="row g-4 mb-5">
+<div class="row g-3 g-md-4 mb-4 mb-md-5">
     <div class="col-12 col-lg-8">
         <div class="admin-luxury-card">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Revenue Performance</h5>
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">
+                <i class="bi bi-graph-up me-2" style="color: #495057;"></i>Revenue Performance
+            </h5>
             <div style="height: 300px; width: 100%;">
                 <canvas id="revenueChart"></canvas>
             </div>
@@ -117,18 +183,28 @@
     </div>
     <div class="col-12 col-lg-4">
         <div class="admin-luxury-card h-100">
-            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">Top Selling</h5>
+            <h5 class="admin-font-serif mb-4 text-secondary small text-uppercase ls-1">
+                <i class="bi bi-trophy me-2" style="color: #DAA520;"></i>Top Selling
+            </h5>
             @if (Model.TopSellingProducts.Any())
             {
-                <div class="d-flex flex-column gap-4">
-                    @foreach (var prod in Model.TopSellingProducts)
+                <div class="d-flex flex-column gap-3">
+                    @for (int i = 0; i < Model.TopSellingProducts.Count; i++)
                     {
-                        <div class="d-flex justify-content-between align-items-center pb-3 border-bottom border-light">
-                            <div>
-                                <span class="d-block mb-1 text-dark fw-bold">@prod.ProductName</span>
-                                <span class="badge-luxury">@prod.UnitsSold Units</span>
+                        var prod = Model.TopSellingProducts[i];
+                        var rankColor = i == 0 ? "#DAA520" : i == 1 ? "#C0C0C0" : i == 2 ? "#CD7F32" : "#495057";
+                        var rankIcon = i == 0 ? "trophy-fill" : i == 1 ? "award-fill" : i == 2 ? "award" : "circle-fill";
+                        <div class="top-product-item d-flex align-items-center gap-3 p-3 border border-light">
+                            <div class="rank-badge-enhanced" style="background-color: @rankColor;">
+                                <i class="bi bi-@rankIcon"></i>
                             </div>
-                            <span class="admin-font-serif text-dark font-playfair">@prod.Revenue.ToString("C0")</span>
+                            <div class="flex-grow-1">
+                                <span class="d-block mb-2 text-dark fw-bold" style="font-size: 0.95rem;">@prod.ProductName</span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge-luxury" style="font-size: 0.65rem;">@prod.UnitsSold Units</span>
+                                </div>
+                            </div>
+                            <span class="admin-font-serif text-dark font-playfair fw-bold" style="font-size: 1.1rem;">@prod.Revenue.ToString("C0")</span>
                         </div>
                     }
                 </div>
@@ -144,7 +220,9 @@
 <!-- Recent Orders -->
 <div class="admin-luxury-card">
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-3">
-        <h5 class="admin-font-serif mb-0 text-secondary small text-uppercase ls-1">Recent Activity</h5>
+        <h5 class="admin-font-serif mb-0 text-secondary small text-uppercase ls-1">
+            <i class="bi bi-clock-history me-2" style="color: #495057;"></i>Recent Activity
+        </h5>
         <a asp-action="Index" asp-controller="Orders" class="btn-luxury-outline btn-luxury-sm">View All Orders</a>
     </div>
 
@@ -165,6 +243,15 @@
                 <tbody>
                     @foreach (var order in Model.RecentOrders)
                     {
+                        var statusClass = order.Status switch
+                        {
+                            Marblin.Core.Enums.OrderStatus.PendingPayment => "status-badge-pending",
+                            Marblin.Core.Enums.OrderStatus.InProduction => "status-badge-production",
+                            Marblin.Core.Enums.OrderStatus.AwaitingBalance => "status-badge-balance",
+                            Marblin.Core.Enums.OrderStatus.Shipped => "status-badge-shipped",
+                            Marblin.Core.Enums.OrderStatus.Cancelled => "status-badge-cancelled",
+                            _ => "badge-luxury"
+                        };
                         <tr>
                             <td class="fw-bold ls-1">
                                 <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.Id" class="text-dark text-decoration-none hover-dark">
@@ -176,15 +263,15 @@
                             <td>
                                 @if (order.PaymentMethod == Marblin.Core.Enums.PaymentMethod.FullPaymentUpfront)
                                 {
-                                    <span class="badge bg-success">Full Payment</span>
+                                    <span class="badge bg-dark">Full Payment</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-primary">COD</span>
+                                    <span class="badge" style="background-color: #6c757d;">COD</span>
                                 }
                             </td>
                             <td>
-                                <span class="badge-luxury">@order.Status</span>
+                                <span class="@statusClass">@order.Status</span>
                             </td>
                             <td class="text-secondary small">@order.CreatedAt.ToString("MMM d, h:mm tt")</td>
                         </tr>
@@ -200,6 +287,126 @@
         }
     </div>
 </div>
+
+<style>
+    /* Stat Cards */
+    .stat-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08) !important;
+    }
+    .stat-icon {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        font-size: 2rem;
+        opacity: 0.15;
+    }
+    .stat-sub-label {
+        display: block;
+        font-size: 0.7rem;
+        color: #adb5bd;
+        margin-top: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Status Stat Box */
+    .status-stat-box {
+        padding: 1rem 0.5rem;
+        transition: transform 0.2s ease, background 0.2s ease;
+        border-radius: 4px;
+    }
+    .status-stat-box:hover {
+        transform: scale(1.05);
+        background: #f8f9fa;
+    }
+    
+    /* Rank Badge Enhanced */
+    .rank-badge-enhanced {
+        width: 40px;
+        height: 40px;
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1rem;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Top Product Item */
+    .top-product-item {
+        background: #fff;
+        transition: all 0.2s ease;
+        border-radius: 0;
+    }
+    .top-product-item:hover {
+        background: #f8f9fa;
+        border-color: #000 !important;
+        transform: translateX(4px);
+    }
+
+    /* Status Badges */
+    .status-badge-pending {
+        display: inline-block;
+        padding: 0.25em 0.65em;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #856404;
+        background-color: #fff3cd;
+        border: 1px solid #ffc107;
+    }
+    .status-badge-production {
+        display: inline-block;
+        padding: 0.25em 0.65em;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #fff;
+        background-color: #212529;
+        border: 1px solid #000;
+    }
+    .status-badge-balance {
+        display: inline-block;
+        padding: 0.25em 0.65em;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #7c6200;
+        background-color: #fef4d6;
+        border: 1px solid #DAA520;
+    }
+    .status-badge-shipped {
+        display: inline-block;
+        padding: 0.25em 0.65em;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #0f5132;
+        background-color: #d1e7dd;
+        border: 1px solid #198754;
+    }
+    .status-badge-cancelled {
+        display: inline-block;
+        padding: 0.25em 0.65em;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #842029;
+        background-color: #f8d7da;
+        border: 1px solid #dc3545;
+    }
+</style>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -220,9 +427,10 @@
                         fill: true,
                         pointBackgroundColor: '#000000',
                         pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBackgroundColor: '#DAA520',
                         pointHoverBorderColor: '#000000',
-                        pointRadius: 4
+                        pointRadius: 4,
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {

@@ -15,14 +15,12 @@ namespace Marblin.Web.Areas.Admin.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IWebHostEnvironment _environment;
         private readonly IFileService _fileService;
 
-        public ProductsController(IProductRepository productRepository, IUnitOfWork unitOfWork, IWebHostEnvironment environment, IFileService fileService)
+        public ProductsController(IProductRepository productRepository, IUnitOfWork unitOfWork, IFileService fileService)
         {
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
-            _environment = environment;
             _fileService = fileService;
         }
 
@@ -99,6 +97,11 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 IsSignaturePiece = product.IsSignaturePiece,
                 Availability = product.Availability,
                 IsActive = product.IsActive,
+                // Sale Pricing
+                SalePrice = product.SalePrice,
+                SaleStartDate = product.SaleStartDate,
+                SaleEndDate = product.SaleEndDate,
+                IsFeaturedSale = product.IsFeaturedSale,
                 Variants = product.Variants.ToList(),
                 Images = product.Images.ToList()
             };
@@ -120,8 +123,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 // Need to reload variants/images if validation fails. 
                 // Could call GetProductWithDetailsAsync again but we just need lists.
                 // For simplicity, re-fetching whole product details or just sub-lists:
-                model.Variants = (List<ProductVariant>)await _unitOfWork.Repository<ProductVariant>().FindAsync(v => v.ProductId == id);
-                model.Images = (List<ProductImage>)await _unitOfWork.Repository<ProductImage>().FindAsync(i => i.ProductId == id);
+                model.Variants = (await _unitOfWork.Repository<ProductVariant>().FindAsync(v => v.ProductId == id)).ToList();
+                model.Images = (await _unitOfWork.Repository<ProductImage>().FindAsync(i => i.ProductId == id)).ToList();
                 return View(model);
             }
 
@@ -136,6 +139,11 @@ namespace Marblin.Web.Areas.Admin.Controllers
             product.IsSignaturePiece = model.IsSignaturePiece;
             product.Availability = model.Availability;
             product.IsActive = model.IsActive;
+            // Sale Pricing
+            product.SalePrice = model.SalePrice;
+            product.SaleStartDate = model.SaleStartDate;
+            product.SaleEndDate = model.SaleEndDate;
+            product.IsFeaturedSale = model.IsFeaturedSale;
             product.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.SaveChangesAsync();
@@ -155,7 +163,6 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 return NotFound();
 
             // 1. Nullify FK references in OrderItems to avoid constraint violation
-            //    (OrderItem.ProductId and OrderItem.VariantId are nullable for this reason)
             var orderItems = await _unitOfWork.Repository<OrderItem>()
                 .FindAsync(oi => oi.ProductId == id);
             foreach (var item in orderItems)
@@ -164,10 +171,11 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 item.VariantId = null;
             }
 
-            // 2. Delete associated images and their files
+            // 2. Delete associated images and their files (continue on individual failure)
             foreach (var image in product.Images)
             {
-                _fileService.DeleteFile(image.ImageUrl);
+                try { _fileService.DeleteFile(image.ImageUrl); }
+                catch (Exception) { /* File may already be gone; proceed with DB cleanup */ }
             }
 
             // 3. Remove product (variants and images cascade-delete automatically)
@@ -182,14 +190,31 @@ namespace Marblin.Web.Areas.Admin.Controllers
         // POST: Admin/Products/AddVariant
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddVariant(int productId, string material, string size, decimal priceAdjustment, int stock, string? sku)
+        public async Task<IActionResult> AddVariant(int productId, string material, string size, decimal priceAdjustment, int stock, string? sku, decimal? salePrice)
         {
+            // Verify product exists
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product == null) return NotFound();
+
+            if (stock < 0)
+            {
+                TempData["Error"] = "Stock cannot be negative.";
+                return RedirectToAction(nameof(Edit), new { id = productId });
+            }
+
+            if (string.IsNullOrWhiteSpace(material) || string.IsNullOrWhiteSpace(size))
+            {
+                TempData["Error"] = "Material and size are required.";
+                return RedirectToAction(nameof(Edit), new { id = productId });
+            }
+
             var variant = new ProductVariant
             {
                 ProductId = productId,
                 Material = material,
                 Size = size,
                 PriceAdjustment = priceAdjustment,
+                SalePrice = salePrice,
                 Stock = stock,
                 SKU = sku,
                 IsActive = true
@@ -208,12 +233,12 @@ namespace Marblin.Web.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteVariant(int id, int productId)
         {
             var variant = await _unitOfWork.Repository<ProductVariant>().GetByIdAsync(id);
-            if (variant != null)
-            {
-                _unitOfWork.Repository<ProductVariant>().Remove(variant);
-                await _unitOfWork.SaveChangesAsync();
-                TempData["Success"] = "Variant deleted!";
-            }
+            if (variant == null || variant.ProductId != productId)
+                return NotFound();
+
+            _unitOfWork.Repository<ProductVariant>().Remove(variant);
+            await _unitOfWork.SaveChangesAsync();
+            TempData["Success"] = "Variant deleted!";
             return RedirectToAction(nameof(Edit), new { id = productId });
         }
 
@@ -222,6 +247,10 @@ namespace Marblin.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadImage(int productId, IFormFile image, string? altText, bool isPrimary)
         {
+            // Verify product exists
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product == null) return NotFound();
+
             if (image == null || image.Length == 0)
             {
                 TempData["Error"] = "Please select an image.";
@@ -264,14 +293,15 @@ namespace Marblin.Web.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteImage(int id, int productId)
         {
             var image = await _unitOfWork.Repository<ProductImage>().GetByIdAsync(id);
-            if (image != null)
-            {
-                _fileService.DeleteFile(image.ImageUrl);
+            if (image == null || image.ProductId != productId)
+                return NotFound();
 
-                _unitOfWork.Repository<ProductImage>().Remove(image);
-                await _unitOfWork.SaveChangesAsync();
-                TempData["Success"] = "Image deleted!";
-            }
+            try { _fileService.DeleteFile(image.ImageUrl); }
+            catch (Exception) { /* File may already be gone */ }
+
+            _unitOfWork.Repository<ProductImage>().Remove(image);
+            await _unitOfWork.SaveChangesAsync();
+            TempData["Success"] = "Image deleted!";
             return RedirectToAction(nameof(Edit), new { id = productId });
         }
 

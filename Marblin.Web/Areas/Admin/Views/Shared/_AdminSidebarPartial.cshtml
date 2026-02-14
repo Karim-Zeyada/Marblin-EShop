@@ -28,6 +28,10 @@
             <i class="bi bi-ticket-perforated"></i> Coupons
         </a>
 
+        <a asp-area="Admin" asp-controller="Announcements" asp-action="Index" class="admin-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Announcements" ? "active" : "")">
+            <i class="bi bi-megaphone"></i> Announcements
+        </a>
+
         <a asp-area="Admin" asp-controller="CustomRequests" asp-action="Index" class="admin-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CustomRequests" ? "active" : "")">
             <i class="bi bi-palette"></i> Custom Requests
         </a>

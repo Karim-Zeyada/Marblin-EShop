@@ -22,6 +22,7 @@ namespace Marblin.Infrastructure.Data
         public DbSet<CustomRequestImage> CustomRequestImages => Set<CustomRequestImage>();
         public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
         public DbSet<Coupon> Coupons => Set<Coupon>();
+        public DbSet<Announcement> Announcements => Set<Announcement>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -44,6 +45,7 @@ namespace Marblin.Infrastructure.Data
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Description).HasMaxLength(2000);
                 entity.Property(e => e.BasePrice).HasPrecision(18, 2);
+                entity.Property(e => e.SalePrice).HasPrecision(18, 2);
                 
                 entity.HasOne(e => e.Category)
                     .WithMany(c => c.Products)
@@ -52,6 +54,7 @@ namespace Marblin.Infrastructure.Data
 
                 entity.HasIndex(e => e.IsSignaturePiece);
                 entity.HasIndex(e => e.Availability);
+                entity.HasIndex(e => e.IsFeaturedSale);
             });
 
             // ========== PRODUCT VARIANT ==========
@@ -193,6 +196,18 @@ namespace Marblin.Infrastructure.Data
                 entity.HasIndex(e => e.Code).IsUnique();
                 entity.Property(e => e.DiscountPercentage).HasPrecision(5, 2);
                 entity.Property(e => e.DiscountAmount).HasPrecision(18, 2);
+            });
+
+            // ========== ANNOUNCEMENT ==========
+            builder.Entity<Announcement>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Message).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.Style).IsRequired().HasMaxLength(20);
+                entity.HasIndex(e => e.IsActive);
+                entity.HasIndex(e => e.StartDate);
+                entity.HasIndex(e => e.EndDate);
             });
         }
     }

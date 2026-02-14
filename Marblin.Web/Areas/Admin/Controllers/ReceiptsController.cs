@@ -25,13 +25,13 @@ namespace Marblin.Web.Areas.Admin.Controllers
             try
             {
                 FileCategory category;
-                if (type == "document")
+                if (Enum.TryParse<FileCategory>(type, true, out var parsed))
                 {
-                    category = FileCategory.PrivateDocument;
+                    category = parsed;
                 }
                 else
                 {
-                    // Default to receipt
+                    // Default to receipt for backward compatibility
                     category = FileCategory.ReceiptImage;
                 }
 

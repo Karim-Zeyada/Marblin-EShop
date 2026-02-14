@@ -54,6 +54,19 @@ namespace Marblin.Application.Services
                 
                 _logger.LogInformation("Order {OrderNumber} created successfully.", order.OrderNumber);
                 
+                // Increment coupon usage if one was applied :)
+                if (!string.IsNullOrEmpty(cart.AppliedCouponCode))
+                {
+                    var couponSpec = new CouponByCodeSpecification(cart.AppliedCouponCode);
+                    var coupon = await _unitOfWork.Repository<Coupon>().GetEntityWithSpec(couponSpec);
+                    if (coupon != null)
+                    {
+                        coupon.TimesUsed++;
+                        await _unitOfWork.SaveChangesAsync();
+                        _logger.LogInformation("Coupon {CouponCode} usage incremented to {TimesUsed}.", coupon.Code, coupon.TimesUsed);
+                    }
+                }
+                
                 // Email will be sent after payment method is selected in SetPaymentMethodAsync
 
                 return order;
@@ -67,77 +80,75 @@ namespace Marblin.Application.Services
 
         public async Task UpdateOrderStatusAsync(int orderId, OrderStatus newStatus)
         {
-            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
-            if (order != null)
-            {
-                var oldStatus = order.Status;
-                order.UpdateStatus(newStatus);
-                await _unitOfWork.SaveChangesAsync();
-                
-                _logger.LogInformation("Order {OrderId} status changed from {OldStatus} to {NewStatus}", orderId, oldStatus, newStatus);
+            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId)
+                ?? throw new KeyNotFoundException($"Order with ID {orderId} not found.");
 
-                // Handle specific status notification logic
-                try
+            var oldStatus = order.Status;
+            order.UpdateStatus(newStatus);
+            await _unitOfWork.SaveChangesAsync();
+            
+            _logger.LogInformation("Order {OrderId} status changed from {OldStatus} to {NewStatus}", orderId, oldStatus, newStatus);
+
+            // Handle specific status notification logic
+            try
+            {
+                if (newStatus == OrderStatus.AwaitingBalance)
                 {
-                    if (newStatus == OrderStatus.AwaitingBalance)
-                    {
-                        // [FLOW 4] Awaiting Balance
-                        var spec = new SiteSettingsSpecification();
-                        var settings = await _unitOfWork.Repository<SiteSettings>().GetEntityWithSpec(spec);
-                        
-                        await _emailService.SendAwaitingBalanceEmailAsync(
-                            order.Email,
-                            order.CustomerName,
-                            order.OrderNumber,
-                            order.TotalAmount,
-                            order.DepositAmount, // Assuming deposit is verified if moving to this stage
-                            order.RemainingBalance,
-                            settings?.InstapayAccount ?? "N/A",
-                            settings?.VodafoneCashNumber ?? "N/A",
-                            order.PaymentMethod,
-                            order.City,
-                            settings?.CairoGizaShippingCost ?? 0m);
-                    }
-                    else if (newStatus == OrderStatus.Shipped)
-                    {
-                        // [FLOW 5] Shipped
-                        await _emailService.SendOrderShippedEmailAsync(
-                            order.Email,
-                            order.CustomerName,
-                            order.OrderNumber);
-                    }
+                    // [FLOW 4] Awaiting Balance
+                    var spec = new SiteSettingsSpecification();
+                    var settings = await _unitOfWork.Repository<SiteSettings>().GetEntityWithSpec(spec);
+                    
+                    await _emailService.SendAwaitingBalanceEmailAsync(
+                        order.Email,
+                        order.CustomerName,
+                        order.OrderNumber,
+                        order.TotalAmount,
+                        order.DepositAmount,
+                        order.RemainingBalance,
+                        settings?.InstapayAccount ?? "N/A",
+                        settings?.VodafoneCashNumber ?? "N/A",
+                        order.PaymentMethod,
+                        order.City,
+                        settings?.CairoGizaShippingCost ?? 0m);
                 }
-                catch (Exception ex)
+                else if (newStatus == OrderStatus.Shipped)
                 {
-                    _logger.LogError(ex, "Failed to send status update email for {OrderNumber} status {Status}", order.OrderNumber, newStatus);
+                    // [FLOW 5] Shipped
+                    await _emailService.SendOrderShippedEmailAsync(
+                        order.Email,
+                        order.CustomerName,
+                        order.OrderNumber);
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send status update email for {OrderNumber} status {Status}", order.OrderNumber, newStatus);
             }
         }
 
         public async Task VerifyDepositAsync(int orderId)
         {
-            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
-            if (order != null)
+            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId)
+                ?? throw new KeyNotFoundException($"Order with ID {orderId} not found.");
+
+            _logger.LogInformation("Verifying deposit for Order {OrderNumber}.", order.OrderNumber);
+            order.VerifyDeposit();
+            await _unitOfWork.SaveChangesAsync();
+            
+            // [FLOW 3] Deposit Verified -> Production
+            try
             {
-                _logger.LogInformation("Verifying deposit for Order {OrderNumber}.", order.OrderNumber);
-                order.VerifyDeposit();
-                await _unitOfWork.SaveChangesAsync();
-                
-                // [FLOW 3] Deposit Verified -> Production
-                try
-                {
-                    await _emailService.SendDepositVerifiedEmailAsync(
-                        order.Email,
-                        order.CustomerName,
-                        order.OrderNumber,
-                        order.TotalAmount,
-                        order.RemainingBalance,
-                        order.PaymentMethod);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to send deposit verification email for {OrderNumber}", order.OrderNumber);
-                }
+                await _emailService.SendDepositVerifiedEmailAsync(
+                    order.Email,
+                    order.CustomerName,
+                    order.OrderNumber,
+                    order.TotalAmount,
+                    order.RemainingBalance,
+                    order.PaymentMethod);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send deposit verification email for {OrderNumber}", order.OrderNumber);
             }
         }
         
@@ -218,15 +229,27 @@ namespace Marblin.Application.Services
 
         public async Task VerifyBalanceAsync(int orderId)
         {
-            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
-            if (order != null)
-            {
-                order.VerifyBalance();
-                await _unitOfWork.SaveChangesAsync();
-                _logger.LogInformation("Balance verified for Order {OrderId}", orderId);
+            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId)
+                ?? throw new KeyNotFoundException($"Order with ID {orderId} not found.");
 
-                // No specific flow requested for Balance verify yet, but could move to Processing/Shipped.
-                // Shipped is a separate manual update in user requirement Flow 5.
+            order.VerifyBalance();
+            await _unitOfWork.SaveChangesAsync();
+            _logger.LogInformation("Balance verified for Order {OrderId}. Status: {Status}", orderId, order.Status);
+
+            // [FLOW 5] Balance verified -> Shipped: send notification
+            if (order.Status == OrderStatus.Shipped)
+            {
+                try
+                {
+                    await _emailService.SendOrderShippedEmailAsync(
+                        order.Email,
+                        order.CustomerName,
+                        order.OrderNumber);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send shipped email for {OrderNumber}", order.OrderNumber);
+                }
             }
         }
 
@@ -289,12 +312,8 @@ namespace Marblin.Application.Services
             var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
             if (order == null) return null;
             
-            // Validate 2-day window
-            var daysSinceCreation = (DateTime.UtcNow - order.CreatedAt).TotalDays;
-            if (daysSinceCreation > 2)
-            {
-                throw new InvalidOperationException("Orders can only be cancelled within 2 days of placement.");
-            }
+            // Note: 2-day cancellation window is enforced on the customer side only.
+            // Admins can cancel orders at any time.
             
             // Validate current status
             if (order.Status == OrderStatus.Shipped)

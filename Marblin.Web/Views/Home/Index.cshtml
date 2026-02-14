@@ -169,13 +169,34 @@
                                                     </div>
                                                 }
                                             </a>
+                                            
+                                            @if (product.IsOnSale())
+                                            {
+                                                <span class="badge badge-sale shadow-sm">SALE @product.GetDiscountPercentage()% OFF</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-dark text-white rounded-0 position-absolute top-0 start-0 m-3 px-3 py-2 small letter-spacing-1 shadow-sm">SIGNATURE</span>
+                                            }
+
                                             <div class="product-overlay d-flex align-items-center justify-content-center glass-effect border-0">
                                                 <a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="btn btn-dark rounded-0 px-4 py-3 shadow-lg">VIEW DETAILS</a>
                                             </div>
                                         </div>
                                         <div class="card-body text-center mt-3 pb-4">
                                             <h5 class="card-title serif-font mb-2"><a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none text-dark hover-underline">@product.Name</a></h5>
-                                            <p class="text-secondary mb-0 small text-uppercase letter-spacing-1">From @product.BasePrice.ToString("C0")</p>
+                                            
+                                            @if (product.IsOnSale())
+                                            {
+                                                <div class="price-container justify-content-center">
+                                                    <span class="original-price small">@product.BasePrice.ToString("C0")</span>
+                                                    <span class="sale-price small">@product.SalePrice?.ToString("C0")</span>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-secondary mb-0 small text-uppercase letter-spacing-1">From @product.BasePrice.ToString("C0")</p>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -224,13 +245,34 @@
                                              </div>
                                          }
                                      </a>
+                                     
+                                     @if (product.IsOnSale())
+                                     {
+                                         <span class="badge badge-sale shadow-sm">SALE @product.GetDiscountPercentage()% OFF</span>
+                                     }
+                                     else
+                                     {
+                                         <span class="badge bg-dark text-white rounded-0 position-absolute top-0 start-0 m-3 px-3 py-2 small letter-spacing-1 shadow-sm">SIGNATURE</span>
+                                     }
+
                                      <div class="product-overlay d-flex align-items-center justify-content-center glass-effect border-0">
                                          <a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="btn btn-dark rounded-0 px-4 py-3 shadow-lg">VIEW DETAILS</a>
                                      </div>
                                 </div>
                                 <div class="card-body text-center mt-3">
                                     <h5 class="serif-font mb-2">@product.Name</h5>
-                                    <p class="text-secondary mb-0 small uppercase">From @product.BasePrice.ToString("C0")</p>
+                                    
+                                    @if (product.IsOnSale())
+                                    {
+                                        <div class="price-container justify-content-center">
+                                            <span class="original-price small">@product.BasePrice.ToString("C0")</span>
+                                            <span class="sale-price small">@product.SalePrice?.ToString("C0")</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-secondary mb-0 small uppercase">From @product.BasePrice.ToString("C0")</p>
+                                    }
                                 </div>
                             </div>
                         </div>

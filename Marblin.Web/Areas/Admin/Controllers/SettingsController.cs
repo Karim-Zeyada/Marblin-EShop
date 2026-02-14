@@ -3,10 +3,10 @@ using Marblin.Core.Specifications;
 using Marblin.Core.Interfaces;
 using Marblin.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Marblin.Web.Areas.Admin.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Marblin.Web.Areas.Admin.Controllers
 {
@@ -19,14 +19,17 @@ namespace Marblin.Web.Areas.Admin.Controllers
         private readonly IFileService _fileService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly ILogger<SettingsController> _logger;
 
         public SettingsController(IUnitOfWork unitOfWork, IFileService fileService, 
-            UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+            UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
+            ILogger<SettingsController> logger)
         {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         // GET: Admin/Settings
@@ -99,7 +102,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 {
                     if (!string.IsNullOrEmpty(settings.HeroImageUrl))
                     {
-                        try { _fileService.DeleteFile(settings.HeroImageUrl); } catch { /* Ignore */ }
+                        try { _fileService.DeleteFile(settings.HeroImageUrl); } 
+                    catch (Exception ex) { _logger.LogWarning(ex, "Failed to delete old hero image: {Path}", settings.HeroImageUrl); }
                     }
                     using var stream = heroImage.OpenReadStream();
                     settings.HeroImageUrl = await _fileService.SaveFileAsync(stream, heroImage.FileName, FileCategory.SiteAsset);
@@ -108,7 +112,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 {
                     if (!string.IsNullOrEmpty(settings.FeatureImageUrl))
                     {
-                        try { _fileService.DeleteFile(settings.FeatureImageUrl); } catch { /* Ignore */ }
+                        try { _fileService.DeleteFile(settings.FeatureImageUrl); } 
+                    catch (Exception ex) { _logger.LogWarning(ex, "Failed to delete old feature image: {Path}", settings.FeatureImageUrl); }
                     }
                     using var stream = featureImage.OpenReadStream();
                     settings.FeatureImageUrl = await _fileService.SaveFileAsync(stream, featureImage.FileName, FileCategory.SiteAsset);

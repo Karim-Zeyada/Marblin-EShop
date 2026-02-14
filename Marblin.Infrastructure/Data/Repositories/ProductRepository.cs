@@ -12,7 +12,7 @@ namespace Marblin.Infrastructure.Data.Repositories
         {
         }
 
-        public async Task<PaginatedList<Product>> GetProductsAsync(string? search, int? categoryId, ProductAvailability? availability, string? sort = null, int pageIndex = 1, int pageSize = 9)
+        public async Task<PaginatedList<Product>> GetProductsAsync(string? search, int? categoryId, ProductAvailability? availability, string? sort = null, int pageIndex = 1, int pageSize = 9, bool? onSale = null)
         {
             var query = _context.Products
                 .Include(p => p.Category)
@@ -34,14 +34,23 @@ namespace Marblin.Infrastructure.Data.Repositories
                 query = query.Where(p => p.Availability == availability.Value);
             }
 
+            if (onSale.HasValue && onSale.Value)
+            {
+                var now = DateTime.UtcNow;
+                query = query.Where(p => p.SalePrice != null && p.SalePrice < p.BasePrice 
+                                      && (!p.SaleStartDate.HasValue || p.SaleStartDate <= now) 
+                                      && (!p.SaleEndDate.HasValue || p.SaleEndDate > now));
+            }
+
             // Apply default active filter
             query = query.Where(p => p.IsActive);
 
             query = sort switch
             {
-                "price_asc" => query.OrderBy(p => p.BasePrice),
-                "price_desc" => query.OrderByDescending(p => p.BasePrice),
-                _ => query.OrderBy(p => p.Name)
+                "newest" => query.OrderByDescending(p => p.CreatedAt),
+                "price_asc" => query.OrderBy(p => (p.SalePrice != null && p.SalePrice < p.BasePrice && (!p.SaleStartDate.HasValue || p.SaleStartDate <= DateTime.UtcNow) && (!p.SaleEndDate.HasValue || p.SaleEndDate > DateTime.UtcNow)) ? p.SalePrice : p.BasePrice),
+                "price_desc" => query.OrderByDescending(p => (p.SalePrice != null && p.SalePrice < p.BasePrice && (!p.SaleStartDate.HasValue || p.SaleStartDate <= DateTime.UtcNow) && (!p.SaleEndDate.HasValue || p.SaleEndDate > DateTime.UtcNow)) ? p.SalePrice : p.BasePrice),
+                _ => query.OrderByDescending(p => p.IsFeaturedSale).ThenByDescending(p => p.IsSignaturePiece).ThenBy(p => p.Name)
             };
 
             var count = await query.CountAsync();

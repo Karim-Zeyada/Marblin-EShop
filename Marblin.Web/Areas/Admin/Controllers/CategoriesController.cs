@@ -2,7 +2,6 @@ using Marblin.Core.Specifications;
 using Marblin.Core.Interfaces;
 using Marblin.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Marblin.Web.Areas.Admin.Controllers
 {
@@ -56,7 +55,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
 
             if (file != null)
             {
-                model.ImageUrl = await _fileService.SaveFileAsync(file.OpenReadStream(), file.FileName, Marblin.Core.Enums.FileCategory.CategoryImage);
+                using var stream = file.OpenReadStream();
+                model.ImageUrl = await _fileService.SaveFileAsync(stream, file.FileName, Marblin.Core.Enums.FileCategory.CategoryImage);
             }
 
             model.SortOrder = await _unitOfWork.Repository<Category>().CountAsync(c => true);
@@ -89,10 +89,15 @@ namespace Marblin.Web.Areas.Admin.Controllers
 
             if (file != null)
             {
-                // Basic cleanup of old image if needed, though strictly optional if we want to keep history or avoid broken links
-                // if (!string.IsNullOrEmpty(category.ImageUrl)) _fileService.DeleteFile(category.ImageUrl);
+                // Clean up old image file to avoid disk leaks
+                if (!string.IsNullOrEmpty(category.ImageUrl))
+                {
+                    try { _fileService.DeleteFile(category.ImageUrl); }
+                    catch (Exception) { /* Old file may already be gone */ }
+                }
                 
-                category.ImageUrl = await _fileService.SaveFileAsync(file.OpenReadStream(), file.FileName, Marblin.Core.Enums.FileCategory.CategoryImage);
+                using var stream = file.OpenReadStream();
+                category.ImageUrl = await _fileService.SaveFileAsync(stream, file.FileName, Marblin.Core.Enums.FileCategory.CategoryImage);
             }
 
             category.Name = model.Name;

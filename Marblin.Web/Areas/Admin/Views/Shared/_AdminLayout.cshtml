@@ -50,15 +50,15 @@
         </div>
 
         <!-- 4. MAIN CONTENT AREA -->
-        <main class="admin-main-viewport">
-            <div class="admin-content-container">
+        <main class="admin-main-viewport d-flex flex-column">
+            <div class="admin-content-container flex-grow-1">
                 @RenderBody()
             </div>
 
-            <footer class="mt-auto py-4 border-top border-light bg-light">
+            <footer class="py-4 border-top border-light bg-light">
                 <div class="container-fluid text-center">
                     <p class="mb-0 small text-secondary">
-                        &copy; @DateTime.Now.Year MARBLIN LUXURY ADMIN
+                        &copy; @DateTime.UtcNow.Year MARBLIN LUXURY ADMIN
                     </p>
                 </div>
             </footer>

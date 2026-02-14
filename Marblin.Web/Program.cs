@@ -68,6 +68,7 @@ builder.Services.AddScoped<ICartService, Marblin.Application.Services.CartServic
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
 
+
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());

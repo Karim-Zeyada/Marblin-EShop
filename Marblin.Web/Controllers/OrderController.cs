@@ -38,6 +38,7 @@ namespace Marblin.Web.Controllers
                 return View();
             }
 
+            TempData["VerifiedOrder"] = order.OrderNumber;
             return RedirectToAction(nameof(Details), new { id = order.OrderNumber });
         }
 
@@ -45,6 +46,13 @@ namespace Marblin.Web.Controllers
         public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
+
+            // Require email-verified access via Track action
+            var verified = TempData["VerifiedOrder"] as string;
+            if (verified != id)
+            {
+                return RedirectToAction(nameof(Track));
+            }
 
             var order = await _orderService.GetOrderByNumberAsync(id);
 

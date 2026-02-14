@@ -3,7 +3,6 @@ using Marblin.Core.Interfaces;
 using Marblin.Application.Interfaces;
 using Marblin.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Marblin.Core.Enums;
 
 namespace Marblin.Web.Areas.Admin.Controllers
@@ -54,9 +53,16 @@ namespace Marblin.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyDeposit(int id)
         {
-            await _orderService.VerifyDepositAsync(id);
+            try
+            {
+                await _orderService.VerifyDepositAsync(id);
+                TempData["Success"] = "Deposit verified!";
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or KeyNotFoundException)
+            {
+                TempData["Error"] = ex.Message;
+            }
 
-            TempData["Success"] = "Deposit verified!";
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -65,9 +71,16 @@ namespace Marblin.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStatus(int id, OrderStatus newStatus)
         {
-            await _orderService.UpdateOrderStatusAsync(id, newStatus);
+            try
+            {
+                await _orderService.UpdateOrderStatusAsync(id, newStatus);
+                TempData["Success"] = $"Order status updated to {newStatus}!";
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or KeyNotFoundException)
+            {
+                TempData["Error"] = ex.Message;
+            }
 
-            TempData["Success"] = $"Order status updated to {newStatus}!";
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -76,9 +89,16 @@ namespace Marblin.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyBalance(int id)
         {
-            await _orderService.VerifyBalanceAsync(id);
+            try
+            {
+                await _orderService.VerifyBalanceAsync(id);
+                TempData["Success"] = "Balance verified!";
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or KeyNotFoundException)
+            {
+                TempData["Error"] = ex.Message;
+            }
 
-            TempData["Success"] = "Balance verified!";
             return RedirectToAction(nameof(Details), new { id });
         }
 

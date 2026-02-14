@@ -19,6 +19,7 @@
 
 <body class="d-flex flex-column min-vh-100">
 
+
     <header>
         @{
             var isHomePage =
@@ -77,6 +78,8 @@
             </div>
         </nav>
     </header>
+
+    <partial name="_AnnouncementBanner" />
 
     <!-- 4. MOBILE OFFCANVAS (Moved outside Header to avoid stacking context issues) -->
     <div class="offcanvas offcanvas-start mobile-offcanvas d-xl-none bg-black" tabindex="-1" id="mobileOffcanvas" aria-labelledby="mobileOffcanvasLabel">

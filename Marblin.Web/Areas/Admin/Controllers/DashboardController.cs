@@ -43,15 +43,18 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 InProductionCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.InProduction),
                 AwaitingBalanceCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.AwaitingBalance),
                 ShippedCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.Shipped),
+                CancelledCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.Cancelled),
 
-                RecentOrders = (await _orderRepo.GetOrdersAsync(null, null, true)).Take(5).ToList(),
+                RecentOrders = (await _orderRepo.GetOrdersPagedAsync(null, null, 1, 5)).Orders.ToList(),
 
                 UnreviewedRequestsCount = await customRequestRepo.CountAsync(cr => !cr.IsReviewed),
 
-                TotalProducts = await productRepo.CountAsync(p => true), 
+                TotalProducts = await productRepo.CountAsync(p => true),
+                TotalOrders = await _orderRepo.CountAsync(o => true),
                 LowStockCount = await variantRepo.CountAsync(v => v.Stock > 0 && v.Stock <= 3),
+                OutOfStockCount = await variantRepo.CountAsync(v => v.Stock == 0),
 
-                ChartLabels = Enumerable.Range(0, 7).Select(i => DateTime.Today.AddDays(-6 + i).ToString("MMM dd")).ToList(),
+                ChartLabels = Enumerable.Range(0, 7).Select(i => DateTime.UtcNow.Date.AddDays(-6 + i).ToString("MMM dd")).ToList(),
                 ChartData = trend
             };
 

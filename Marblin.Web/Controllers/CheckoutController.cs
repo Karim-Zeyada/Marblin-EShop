@@ -142,10 +142,7 @@ namespace Marblin.Web.Controllers
 
             if (order.Status != OrderStatus.AwaitingBalance && order.Status != OrderStatus.InProduction) 
             {
-               if(order.Status != OrderStatus.AwaitingBalance) 
-               {
-                   return RedirectToAction(nameof(Confirmation), new { id = order.OrderNumber });
-               }
+                return RedirectToAction(nameof(Confirmation), new { id = order.OrderNumber });
             }
 
             ViewBag.Settings = await _orderService.GetSiteSettingsAsync();

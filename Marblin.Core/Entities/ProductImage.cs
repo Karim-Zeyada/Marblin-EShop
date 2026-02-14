@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Marblin.Core.Entities
 {
     /// <summary>
@@ -19,6 +21,7 @@ namespace Marblin.Core.Entities
         /// <summary>
         /// Display order in gallery.
         /// </summary>
+        [Range(0, int.MaxValue, ErrorMessage = "Sort order cannot be negative")]
         public int SortOrder { get; set; }
         
         /// <summary>
