@@ -85,33 +85,8 @@
                 <form asp-controller="Cart" asp-action="AddToCart" method="post">
                     <input type="hidden" name="productId" value="@Model.Id" />
                     
-                    @if (Model.Variants.Any())
-                    {
-                        <div class="mb-4">
-                            <label class="form-label fw-bold small text-uppercase letter-spacing-1">Material / Size</label>
-                            @{ var isOnSale = Model.IsOnSale(); var activePrice = Model.GetActivePrice(); }
-                            <select name="variantId" id="variantSelect" class="form-select rounded-0" onchange="updatePrice()" required>
-                                <option value="" data-price="@activePrice">Select Option</option>
-                                @foreach (var v in Model.Variants.Where(v => v.Stock > 0 || Model.Availability == Marblin.Core.Enums.ProductAvailability.MadeToOrder))
-                                {
-                                    var variantPrice = v.GetFinalPrice(activePrice, isOnSale);
-                                    <option value="@v.Id" data-price="@variantPrice">
-                                        @v.Material - @v.Size (@variantPrice.ToString("C0"))
-                                    </option>
-                                }
-                            </select>
-                        </div>
-                    }
-                    else
-                    {
-                        <!-- Hidden input if no variants but product is available -->
-                        <div class="mb-4 text-muted small">
-                            <em>One size / material only</em>
-                        </div>
-                    }
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-dark btn-lg rounded-0 py-3 text-uppercase letter-spacing-1" id="addToCartBtn" @(Model.Variants.Any() ? "disabled" : "")>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-dark btn-lg rounded-0 py-3 text-uppercase letter-spacing-1">
                             Add to Cart
                         </button>
                     </div>
@@ -192,26 +167,6 @@
     <script>
         function changeImage(src) {
             document.getElementById('mainImage').src = src;
-        }
-
-        function updatePrice() {
-            var select = document.getElementById('variantSelect');
-            var btn = document.getElementById('addToCartBtn');
-            var priceDisplay = document.getElementById('priceDisplay');
-            
-            if (select.value) {
-                var price = parseFloat(select.options[select.selectedIndex].getAttribute('data-price'));
-                
-                // Note: Currently variant logic just takes the calculation from server. 
-                // If we want sale applied to variants, we'd need that calculated in the option data attributes.
-                // For now this updates the main displayed price.
-                
-                priceDisplay.innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(price);
-                btn.disabled = false;
-            } else {
-                // Reset/Disable
-                btn.disabled = true;
-            }
         }
     </script>
 }

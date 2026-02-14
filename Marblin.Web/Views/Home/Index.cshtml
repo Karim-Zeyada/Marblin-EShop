@@ -128,6 +128,146 @@
     </div>
 }
 
+<!-- Featured Sale Products -->
+@if (Model.FeaturedSaleProducts.Any())
+{
+    <section class="py-5" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
+        <div class="container my-5">
+            <div class="text-center mb-5 animate-fade-in-up">
+                <span class="text-uppercase letter-spacing-2 small d-block mb-2" style="color: #d4a574;">Limited Time Offer</span>
+                <h2 class="display-5 serif-font mb-4 text-white">On Sale</h2>
+                <div class="separator-line mx-auto" style="background: #d4a574;"></div>
+            </div>
+
+            <!-- Desktop Carousel (3 Items Per Slide) -->
+            <div id="saleDesktopCarousel" class="carousel slide d-none d-md-block carousel-dark-arrows-inverse px-md-5 position-relative" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @{
+                        var saleList = Model.FeaturedSaleProducts.ToList();
+                        var saleChunkSize = 3;
+                        var saleChunkCount = (int)Math.Ceiling((double)saleList.Count / saleChunkSize);
+                    }
+                    @for (int i = 0; i < saleChunkCount; i++)
+                    {
+                        var chunk = saleList.Skip(i * saleChunkSize).Take(saleChunkSize).ToList();
+                        <div class="carousel-item @(i == 0 ? "active" : "")" data-bs-interval="6000">
+                            <div class="row g-4">
+                                @foreach (var product in chunk)
+                                {
+                                    var primaryImage = product.Images.FirstOrDefault(img => img.IsPrimary) ?? product.Images.FirstOrDefault();
+                                    <div class="col-md-4">
+                                        <div class="card product-card h-100 border-0 shadow-sm bg-white">
+                                            <div class="position-relative overflow-hidden">
+                                                <a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="d-block overflow-hidden">
+                                                    @if (primaryImage != null)
+                                                    {
+                                                        <img src="@primaryImage.ImageUrl" class="card-img-top product-image zoom-effect" alt="@product.Name" style="animation-duration: 15s;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="placeholder-bg d-flex align-items-center justify-content-center product-image-fallback">
+                                                            <span class="text-muted">No Image</span>
+                                                        </div>
+                                                    }
+                                                </a>
+                                                <span class="badge badge-sale shadow-sm">SALE @product.GetDiscountPercentage()% OFF</span>
+                                                <div class="product-overlay d-flex align-items-center justify-content-center glass-effect border-0">
+                                                    <a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="btn btn-dark rounded-0 px-4 py-3 shadow-lg">VIEW DETAILS</a>
+                                                </div>
+                                            </div>
+                                            <div class="card-body text-center mt-3 pb-4">
+                                                <h5 class="card-title serif-font mb-2"><a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none text-dark hover-underline">@product.Name</a></h5>
+                                                <div class="price-container justify-content-center">
+                                                    <span class="original-price small">@product.BasePrice.ToString("C0")</span>
+                                                    <span class="sale-price small">@product.SalePrice?.ToString("C0")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                @if(saleChunkCount > 1)
+                {
+                    <button class="carousel-control-prev" type="button" data-bs-target="#saleDesktopCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true">
+                            <i class="bi bi-chevron-left fs-3"></i>
+                        </span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#saleDesktopCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true">
+                            <i class="bi bi-chevron-right fs-3"></i>
+                        </span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                }
+            </div>
+
+            <!-- Mobile Carousel (Single Item) -->
+            <div id="saleMobileCarousel" class="carousel slide d-md-none carousel-dark-arrows-inverse" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @{ var firstSale = true; }
+                    @foreach (var product in Model.FeaturedSaleProducts)
+                    {
+                        var primaryImage = product.Images.FirstOrDefault(img => img.IsPrimary) ?? product.Images.FirstOrDefault();
+                        <div class="carousel-item @(firstSale ? "active" : "")" data-bs-interval="4000">
+                            <div class="mobile-carousel-item px-2">
+                                <div class="card product-card border-0 bg-white shadow-sm">
+                                    <div class="position-relative overflow-hidden">
+                                        <a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="d-block overflow-hidden">
+                                            @if (primaryImage != null)
+                                            {
+                                                <img src="@primaryImage.ImageUrl" class="card-img-top product-image zoom-effect" alt="@product.Name" style="animation-duration: 15s;">
+                                            }
+                                            else
+                                            {
+                                                <div class="placeholder-bg d-flex align-items-center justify-content-center product-image-fallback">
+                                                    <span class="text-muted">No Image</span>
+                                                </div>
+                                            }
+                                        </a>
+                                        <span class="badge badge-sale shadow-sm">SALE @product.GetDiscountPercentage()% OFF</span>
+                                        <div class="product-overlay d-flex align-items-center justify-content-center glass-effect border-0">
+                                            <a asp-controller="Catalog" asp-action="Details" asp-route-id="@product.Id" class="btn btn-dark rounded-0 px-4 py-3 shadow-lg">VIEW DETAILS</a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body text-center mt-3">
+                                        <h5 class="serif-font mb-2">@product.Name</h5>
+                                        <div class="price-container justify-content-center">
+                                            <span class="original-price small">@product.BasePrice.ToString("C0")</span>
+                                            <span class="sale-price small">@product.SalePrice?.ToString("C0")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        { firstSale = false; }
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#saleMobileCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true">
+                        <i class="bi bi-chevron-left text-white"></i>
+                    </span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#saleMobileCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true">
+                        <i class="bi bi-chevron-right text-white"></i>
+                    </span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <div class="text-center mt-5">
+                <a asp-controller="Catalog" asp-action="Index" class="btn btn-outline-light rounded-0 px-5">Shop All Sale Items</a>
+            </div>
+        </div>
+    </section>
+}
+
 <!-- Signature Pieces -->
 @if (Model.SignaturePieces.Any())
 {

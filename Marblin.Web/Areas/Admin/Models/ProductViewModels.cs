@@ -25,6 +25,15 @@ namespace Marblin.Web.Areas.Admin.Models
         [Display(Name = "Signature Piece")]
         public bool IsSignaturePiece { get; set; }
 
+        [Required]
+        [Display(Name = "Stock")]
+        [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
+        public int Stock { get; set; }
+
+        [Display(Name = "SKU")]
+        [StringLength(50)]
+        public string? SKU { get; set; }
+
         public ProductAvailability Availability { get; set; } = ProductAvailability.InStock;
     }
 
@@ -49,7 +58,6 @@ namespace Marblin.Web.Areas.Admin.Models
         [Display(Name = "Featured Sale")]
         public bool IsFeaturedSale { get; set; }
 
-        public List<ProductVariant> Variants { get; set; } = new();
         public List<ProductImage> Images { get; set; } = new();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

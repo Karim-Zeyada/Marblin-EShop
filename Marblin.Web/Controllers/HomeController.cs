@@ -31,6 +31,10 @@ namespace Marblin.Web.Controllers
             var signatureSpec = new SignatureProductsSpecification(6);
             var signaturePieces = await _unitOfWork.Repository<Product>().ListAsync(signatureSpec);
 
+            // Featured Sale Products
+            var saleSpec = new FeaturedSaleProductsSpecification(6);
+            var saleProducts = await _unitOfWork.Repository<Product>().ListAsync(saleSpec);
+
             // Categories
             var categoriesSpec = new CategoryWithProductsSpecification();
             var categories = await _unitOfWork.Repository<Category>().ListAsync(categoriesSpec);
@@ -39,6 +43,7 @@ namespace Marblin.Web.Controllers
             {
                 Settings = settings ?? new SiteSettings(),
                 SignaturePieces = signaturePieces.ToList(),
+                FeaturedSaleProducts = saleProducts.Where(p => p.IsOnSale()).ToList(),
                 Categories = categories.Where(c => c.IsActive).ToList()
 
             };

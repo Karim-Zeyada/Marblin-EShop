@@ -26,7 +26,7 @@ namespace Marblin.Web.Areas.Admin.Controllers
             var today = DateTime.UtcNow.Date;
             
             var productRepo = _unitOfWork.Repository<Product>();
-            var variantRepo = _unitOfWork.Repository<ProductVariant>();
+
             var customRequestRepo = _unitOfWork.Repository<CustomRequest>();
 
             var financials = await _orderRepo.GetDailyFinancialsAsync(today);
@@ -51,8 +51,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
 
                 TotalProducts = await productRepo.CountAsync(p => true),
                 TotalOrders = await _orderRepo.CountAsync(o => true),
-                LowStockCount = await variantRepo.CountAsync(v => v.Stock > 0 && v.Stock <= 3),
-                OutOfStockCount = await variantRepo.CountAsync(v => v.Stock == 0),
+                LowStockCount = await productRepo.CountAsync(p => p.Stock > 0 && p.Stock <= 3),
+                OutOfStockCount = await productRepo.CountAsync(p => p.Stock == 0),
 
                 ChartLabels = Enumerable.Range(0, 7).Select(i => DateTime.UtcNow.Date.AddDays(-6 + i).ToString("MMM dd")).ToList(),
                 ChartData = trend

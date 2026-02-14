@@ -64,6 +64,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 CategoryId = model.CategoryId,
                 IsSignaturePiece = model.IsSignaturePiece,
                 Availability = model.Availability,
+                Stock = model.Stock,
+                SKU = model.SKU,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
@@ -102,7 +104,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 SaleStartDate = product.SaleStartDate,
                 SaleEndDate = product.SaleEndDate,
                 IsFeaturedSale = product.IsFeaturedSale,
-                Variants = product.Variants.ToList(),
+                Stock = product.Stock,
+                SKU = product.SKU,
                 Images = product.Images.ToList()
             };
 
@@ -120,10 +123,7 @@ namespace Marblin.Web.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 await LoadCategoriesAsync();
-                // Need to reload variants/images if validation fails. 
-                // Could call GetProductWithDetailsAsync again but we just need lists.
-                // For simplicity, re-fetching whole product details or just sub-lists:
-                model.Variants = (await _unitOfWork.Repository<ProductVariant>().FindAsync(v => v.ProductId == id)).ToList();
+                // Need to reload images if validation fails. 
                 model.Images = (await _unitOfWork.Repository<ProductImage>().FindAsync(i => i.ProductId == id)).ToList();
                 return View(model);
             }
@@ -144,6 +144,8 @@ namespace Marblin.Web.Areas.Admin.Controllers
             product.SaleStartDate = model.SaleStartDate;
             product.SaleEndDate = model.SaleEndDate;
             product.IsFeaturedSale = model.IsFeaturedSale;
+            product.Stock = model.Stock;
+            product.SKU = model.SKU;
             product.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.SaveChangesAsync();
@@ -168,7 +170,6 @@ namespace Marblin.Web.Areas.Admin.Controllers
             foreach (var item in orderItems)
             {
                 item.ProductId = null;
-                item.VariantId = null;
             }
 
             // 2. Delete associated images and their files (continue on individual failure)
@@ -187,60 +188,7 @@ namespace Marblin.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: Admin/Products/AddVariant
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddVariant(int productId, string material, string size, decimal priceAdjustment, int stock, string? sku, decimal? salePrice)
-        {
-            // Verify product exists
-            var product = await _productRepository.GetByIdAsync(productId);
-            if (product == null) return NotFound();
 
-            if (stock < 0)
-            {
-                TempData["Error"] = "Stock cannot be negative.";
-                return RedirectToAction(nameof(Edit), new { id = productId });
-            }
-
-            if (string.IsNullOrWhiteSpace(material) || string.IsNullOrWhiteSpace(size))
-            {
-                TempData["Error"] = "Material and size are required.";
-                return RedirectToAction(nameof(Edit), new { id = productId });
-            }
-
-            var variant = new ProductVariant
-            {
-                ProductId = productId,
-                Material = material,
-                Size = size,
-                PriceAdjustment = priceAdjustment,
-                SalePrice = salePrice,
-                Stock = stock,
-                SKU = sku,
-                IsActive = true
-            };
-
-            _unitOfWork.Repository<ProductVariant>().Add(variant);
-            await _unitOfWork.SaveChangesAsync();
-
-            TempData["Success"] = "Variant added!";
-            return RedirectToAction(nameof(Edit), new { id = productId });
-        }
-
-        // POST: Admin/Products/DeleteVariant
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteVariant(int id, int productId)
-        {
-            var variant = await _unitOfWork.Repository<ProductVariant>().GetByIdAsync(id);
-            if (variant == null || variant.ProductId != productId)
-                return NotFound();
-
-            _unitOfWork.Repository<ProductVariant>().Remove(variant);
-            await _unitOfWork.SaveChangesAsync();
-            TempData["Success"] = "Variant deleted!";
-            return RedirectToAction(nameof(Edit), new { id = productId });
-        }
 
         // POST: Admin/Products/UploadImage
         [HttpPost]

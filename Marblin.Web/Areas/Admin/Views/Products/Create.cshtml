@@ -46,6 +46,19 @@
                     </div>
                 </div>
 
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="Stock" class="form-label-luxury">Stock Quantity</label>
+                        <input asp-for="Stock" class="form-control form-luxury" type="number" min="0" />
+                        <span asp-validation-for="Stock" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label asp-for="SKU" class="form-label-luxury">SKU (Optional)</label>
+                        <input asp-for="SKU" class="form-control form-luxury" />
+                        <span asp-validation-for="SKU" class="text-danger small"></span>
+                    </div>
+                </div>
+
                 <div class="row g-4 mb-5">
                     <div class="col-12 col-sm-6">
                         <label asp-for="Availability" class="form-label-luxury">Availability Status</label>
@@ -70,10 +83,9 @@
     </div>
 
     <div class="col-12 col-xl-4">
-        <div class="admin-luxury-card bg-light border-light shadow-none">
             <h5 class="admin-font-serif mb-3 small text-uppercase ls-1 text-dark">Instruction</h5>
             <p class="text-secondary small lh-lg">
-                When creating a new piece, remember that images and variants are managed after the initial creation.
+                Images are managed after the initial creation.
                 Ensure the description highlights the unique luxury aspects of the piece.
             </p>
         </div>

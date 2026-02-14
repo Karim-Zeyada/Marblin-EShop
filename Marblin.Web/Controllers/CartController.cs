@@ -29,33 +29,23 @@ namespace Marblin.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCart(int productId, int? variantId)
+        public async Task<IActionResult> AddToCart(int productId)
         {
             var product = await _productRepository.GetProductWithDetailsAsync(productId);
 
             if (product == null) return NotFound();
 
-            var variant = variantId.HasValue 
-                ? product.Variants.FirstOrDefault(v => v.Id == variantId.Value) 
-                : null;
-
-            if (variantId.HasValue && variant == null) return NotFound();
-
-            var isOnSale = product.IsOnSale();
-            var activePrice = product.GetActivePrice();
-            var price = variant?.GetFinalPrice(activePrice, isOnSale) ?? activePrice;
+            var price = product.IsOnSale() ? product.SalePrice ?? product.BasePrice : product.BasePrice;
             var imageUrl = product.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl 
                          ?? product.Images.FirstOrDefault()?.ImageUrl;
             
             var item = new CartItem
             {
                 ProductId = product.Id,
-                VariantId = variantId,
                 ProductName = product.Name,
-                VariantDescription = variant != null ? $"{variant.Material} - {variant.Size}" : null,
                 ImageUrl = imageUrl,
                 UnitPrice = price,
-                Quantity = 1 // Default to 1 for now
+                Quantity = 1
             };
 
             _cartService.AddItem(item);
@@ -64,9 +54,9 @@ namespace Marblin.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult RemoveFromCart(int productId, int? variantId)
+        public IActionResult RemoveFromCart(int productId)
         {
-            _cartService.RemoveItem(productId, variantId);
+            _cartService.RemoveItem(productId);
             return RedirectToAction(nameof(Index));
         }
 

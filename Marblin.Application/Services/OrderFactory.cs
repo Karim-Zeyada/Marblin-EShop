@@ -31,9 +31,7 @@ namespace Marblin.Application.Services
                 OrderItems = cart.Items.Select(i => new OrderItem
                 {
                     ProductId = i.ProductId,
-                    VariantId = i.VariantId,
                     ProductName = i.ProductName,
-                    VariantDescription = i.VariantDescription,
                     ImageUrl = i.ImageUrl,
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice

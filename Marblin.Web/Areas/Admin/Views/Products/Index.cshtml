@@ -131,26 +131,25 @@
                             </td>
                             <td>
                                 @{
-                                    var totalStock = product.Variants.Sum(v => v.Stock);
-                                    var variantCount = product.Variants.Count;
+                                    var stock = product.Stock;
                                 }
-                                <span class="text-secondary small">@variantCount Variant@(variantCount != 1 ? "s" : "")</span>
-                                @if (variantCount > 0)
+                                <div>
+                                    @if (stock == 0)
+                                    {
+                                        <span class="badge bg-danger bg-opacity-10 text-danger rounded-0" style="font-size: 0.6rem;"><i class="bi bi-x-circle me-1"></i>Out of Stock</span>
+                                    }
+                                    else if (stock <= 5)
+                                    {
+                                        <span class="badge bg-warning bg-opacity-10 text-warning rounded-0" style="font-size: 0.6rem;"><i class="bi bi-exclamation-triangle me-1"></i>Low Stock (@stock)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted" style="font-size: 0.8rem;">@stock units</span>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrEmpty(product.SKU))
                                 {
-                                    <div>
-                                        @if (totalStock == 0)
-                                        {
-                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-0" style="font-size: 0.6rem;"><i class="bi bi-x-circle me-1"></i>0 units</span>
-                                        }
-                                        else if (totalStock <= 5)
-                                        {
-                                            <span class="badge bg-warning bg-opacity-10 text-warning rounded-0" style="font-size: 0.6rem;"><i class="bi bi-exclamation-triangle me-1"></i>@totalStock units</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted" style="font-size: 0.7rem;">@totalStock units</span>
-                                        }
-                                    </div>
+                                    <div class="text-muted small" style="font-size: 0.65rem;">SKU: @product.SKU</div>
                                 }
                             </td>
                             <td>

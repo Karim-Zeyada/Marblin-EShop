@@ -92,10 +92,6 @@
                             <li class="list-group-item bg-transparent d-flex justify-content-between lh-sm px-0 border-bottom">
                                 <div>
                                     <h6 class="my-0 serif-font h6">@item.ProductName</h6>
-                                    @if (!string.IsNullOrEmpty(item.VariantDescription))
-                                    {
-                                        <small class="text-muted">@item.VariantDescription</small>
-                                    }
                                 </div>
                                 <span class="text-muted">@item.Total.ToString("C0")</span>
                             </li>

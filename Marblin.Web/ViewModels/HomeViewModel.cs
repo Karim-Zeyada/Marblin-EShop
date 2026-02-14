@@ -6,6 +6,7 @@ namespace Marblin.Web.ViewModels
     {
         public SiteSettings Settings { get; set; } = new();
         public List<Product> SignaturePieces { get; set; } = new();
+        public List<Product> FeaturedSaleProducts { get; set; } = new();
         public List<Category> Categories { get; set; } = new();
     }
 }

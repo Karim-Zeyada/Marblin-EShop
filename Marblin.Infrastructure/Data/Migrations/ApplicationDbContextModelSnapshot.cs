@@ -427,16 +427,11 @@ namespace Marblin.Infrastructure.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int?>("VariantId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("VariantId");
 
                     b.ToTable("OrderItems");
                 });
@@ -480,6 +475,9 @@ namespace Marblin.Infrastructure.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("SKU")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("SaleEndDate")
                         .HasColumnType("datetime2");
 
@@ -489,6 +487,9 @@ namespace Marblin.Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("SaleStartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -537,55 +538,6 @@ namespace Marblin.Infrastructure.Data.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductImages");
-                });
-
-            modelBuilder.Entity("Marblin.Core.Entities.ProductVariant", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Material")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("PriceAdjustment")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SKU")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<decimal?>("SalePrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SKU")
-                        .IsUnique()
-                        .HasFilter("[SKU] IS NOT NULL");
-
-                    b.ToTable("ProductVariants");
                 });
 
             modelBuilder.Entity("Marblin.Core.Entities.SiteSettings", b =>
@@ -880,16 +832,9 @@ namespace Marblin.Infrastructure.Data.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Marblin.Core.Entities.ProductVariant", "Variant")
-                        .WithMany()
-                        .HasForeignKey("VariantId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.Navigation("Order");
 
                     b.Navigation("Product");
-
-                    b.Navigation("Variant");
                 });
 
             modelBuilder.Entity("Marblin.Core.Entities.Product", b =>
@@ -907,17 +852,6 @@ namespace Marblin.Infrastructure.Data.Migrations
                 {
                     b.HasOne("Marblin.Core.Entities.Product", "Product")
                         .WithMany("Images")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Marblin.Core.Entities.ProductVariant", b =>
-                {
-                    b.HasOne("Marblin.Core.Entities.Product", "Product")
-                        .WithMany("Variants")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -994,8 +928,6 @@ namespace Marblin.Infrastructure.Data.Migrations
             modelBuilder.Entity("Marblin.Core.Entities.Product", b =>
                 {
                     b.Navigation("Images");
-
-                    b.Navigation("Variants");
                 });
 #pragma warning restore 612, 618
         }

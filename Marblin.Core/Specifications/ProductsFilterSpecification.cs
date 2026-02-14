@@ -19,7 +19,8 @@ namespace Marblin.Core.Specifications
             // Better: AddInclude("Images") and let EF Core handle it? No, filtered includes are better in code.
             // But BaseSpecification only has List<Expression<Func<T, object>>>.
             // Let's include Variants too.
-            AddInclude(p => p.Variants);
+            // Variants removed
+            // AddInclude(p => p.Variants);
 
             // Sorting
             switch (sort)

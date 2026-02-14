@@ -14,7 +14,7 @@ namespace Marblin.Infrastructure.Data
         // Domain Entities
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Product> Products => Set<Product>();
-        public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+
         public DbSet<ProductImage> ProductImages => Set<ProductImage>();
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
@@ -57,22 +57,7 @@ namespace Marblin.Infrastructure.Data
                 entity.HasIndex(e => e.IsFeaturedSale);
             });
 
-            // ========== PRODUCT VARIANT ==========
-            builder.Entity<ProductVariant>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Material).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Size).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.PriceAdjustment).HasPrecision(18, 2);
-                entity.Property(e => e.SKU).HasMaxLength(50);
 
-                entity.HasOne(e => e.Product)
-                    .WithMany(p => p.Variants)
-                    .HasForeignKey(e => e.ProductId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasIndex(e => e.SKU).IsUnique().HasFilter("[SKU] IS NOT NULL");
-            });
 
             // ========== PRODUCT IMAGE ==========
             builder.Entity<ProductImage>(entity =>
@@ -133,11 +118,6 @@ namespace Marblin.Infrastructure.Data
                 entity.HasOne(e => e.Product)
                     .WithMany()
                     .HasForeignKey(e => e.ProductId)
-                    .OnDelete(DeleteBehavior.NoAction);
-
-                entity.HasOne(e => e.Variant)
-                    .WithMany()
-                    .HasForeignKey(e => e.VariantId)
                     .OnDelete(DeleteBehavior.NoAction);
 
                 // Ignore computed property

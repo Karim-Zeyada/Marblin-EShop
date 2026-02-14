@@ -15,10 +15,21 @@ namespace Marblin.Core.Entities
         public string? Description { get; set; }
         
         /// <summary>
-        /// Base price before variant adjustments.
+        /// Product price.
         /// </summary>
-        [Range(0.01, double.MaxValue, ErrorMessage = "Base price must be greater than 0")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal BasePrice { get; set; }
+        
+        /// <summary>
+        /// Current stock quantity.
+        /// </summary>
+        [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
+        public int Stock { get; set; }
+        
+        /// <summary>
+        /// Stock Keeping Unit identifier.
+        /// </summary>
+        public string? SKU { get; set; }
         
         public int CategoryId { get; set; }
         
@@ -59,7 +70,6 @@ namespace Marblin.Core.Entities
         
         // Navigation
         public virtual Category Category { get; set; } = null!;
-        public virtual ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
         public virtual ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
         
         /// <summary>
@@ -69,8 +79,8 @@ namespace Marblin.Core.Entities
         {
             return SalePrice.HasValue 
                 && SalePrice < BasePrice
-                && (!SaleStartDate.HasValue || SaleStartDate <= DateTime.UtcNow)
-                && (!SaleEndDate.HasValue || SaleEndDate > DateTime.UtcNow);
+                && (!SaleStartDate.HasValue || SaleStartDate <= DateTime.Now)
+                && (!SaleEndDate.HasValue || SaleEndDate > DateTime.Now);
         }
         
         /// <summary>

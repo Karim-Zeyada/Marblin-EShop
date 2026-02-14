@@ -10,7 +10,7 @@ namespace Marblin.Application.Interfaces
         ShoppingCart GetCart();
         void SaveCart(ShoppingCart cart);
         void AddItem(CartItem item);
-        void RemoveItem(int productId, int? variantId);
+        void RemoveItem(int productId);
         void ClearCart();
         
         Task<bool> ApplyCouponAsync(string code);

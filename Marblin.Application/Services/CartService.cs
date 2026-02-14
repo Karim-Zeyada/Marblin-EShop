@@ -34,7 +34,7 @@ namespace Marblin.Application.Services
         public void AddItem(CartItem item)
         {
             var cart = GetCart();
-            var existing = cart.Items.FirstOrDefault(i => i.ProductId == item.ProductId && i.VariantId == item.VariantId);
+            var existing = cart.Items.FirstOrDefault(i => i.ProductId == item.ProductId);
 
             if (existing != null)
             {
@@ -53,10 +53,10 @@ namespace Marblin.Application.Services
             SaveCart(cart);
         }
 
-        public void RemoveItem(int productId, int? variantId)
+        public void RemoveItem(int productId)
         {
             var cart = GetCart();
-            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId && i.VariantId == variantId);
+            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
             if (item != null)
             {
                 cart.Items.Remove(item);

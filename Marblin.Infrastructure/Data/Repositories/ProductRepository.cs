@@ -63,7 +63,7 @@ namespace Marblin.Infrastructure.Data.Repositories
         {
              return await _context.Set<Product>()
                 .Include(p => p.Category)
-                .Include(p => p.Variants)
+
                 .Include(p => p.Images.OrderBy(i => i.SortOrder))
                 .FirstOrDefaultAsync(p => p.Id == id);
         }

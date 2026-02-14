@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Marblin.Core.Entities
 {
     /// <summary>
-    /// Individual item in an order, capturing product/variant snapshot at purchase time.
+    /// Individual item in an order, capturing product snapshot at purchase time.
     /// </summary>
     public class OrderItem
     {
@@ -15,11 +15,6 @@ namespace Marblin.Core.Entities
         /// Reference to original product (nullable if product deleted).
         /// </summary>
         public int? ProductId { get; set; }
-        
-        /// <summary>
-        /// Reference to original variant (nullable if variant deleted).
-        /// </summary>
-        public int? VariantId { get; set; }
         
         // Snapshot of product info at time of purchase (for historical accuracy)
         public string ProductName { get; set; } = string.Empty;
@@ -43,6 +38,5 @@ namespace Marblin.Core.Entities
         // Navigation
         public virtual Order Order { get; set; } = null!;
         public virtual Product? Product { get; set; }
-        public virtual ProductVariant? Variant { get; set; }
     }
 }
