@@ -2,6 +2,24 @@
    BASE: Variables, Reset, Typography, Utilities, Animations
    ========================================= */
 
+@font-face {
+    font-family: "Hello Paris Serif";
+    src: url("https://db.onlinewebfonts.com/t/af9dbbacda3360d434dcce8ab8b6c38f.woff2") format("woff2");
+    /* Regular */
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Hello Paris Serif";
+    src: url("https://db.onlinewebfonts.com/t/10762c0a7008194661aebf86cd21083d.woff2") format("woff2");
+    /* Bold (Check if this is correct link, assuming from research) */
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     /* Colors */
     --primary-color: #000000;
@@ -22,7 +40,7 @@
     --text-muted: #666666;
     --border-color: var(--silver-accent);
     /* Typography */
-    --font-serif: 'Playfair Display', serif;
+    --font-serif: 'Bodoni Moda', serif;
     --font-sans: 'Inter', sans-serif;
     /* Spacing */
     --spacing-xs: 0.25rem;

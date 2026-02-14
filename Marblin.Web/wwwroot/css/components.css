@@ -142,6 +142,37 @@
     color: #fff !important;
 }
 
+/* Brand Logo Typography */
+/* Brand Logo Typography */
+.font-brand-initial {
+    font-family: "Hello Paris Serif", serif;
+    font-weight: 400;
+    font-size: 3rem;
+    /* Larger to match the grandeur of the image */
+    line-height: 1;
+    display: inline-block;
+    transform: translateY(6px);
+    /* Use positive if using flex-center sometimes behaves oddly, but let's try lifting it */
+    /* Wait, if it was 4px and looked low, 6px is LOWER. I need NEGATIVE to go up? */
+    /* Check context: Flex align-center centers the *box*. If font has large descent, box is tall. */
+    /* Let's try manual adjustment. If 4px was too low, try -4px? */
+    /* Actually, looking at the previous user image... the M is WAY lower. */
+    /* I will try to shift it UP. So negative value. */
+    transform: translateY(-8px);
+    margin-right: 0;
+    /* Resetting to match spacing of ARBLIN */
+}
+
+.font-brand-rest {
+    font-family: 'Bodoni Moda', serif;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    display: inline-block;
+    transform: translateY(0);
+}
+
 .nav-link {
     font-size: 0.75rem;
     font-weight: 500;
