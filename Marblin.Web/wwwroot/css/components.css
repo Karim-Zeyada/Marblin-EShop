@@ -37,13 +37,17 @@
     color: var(--primary-color);
     background: transparent;
 }
-
+    .btn-outline-dark .bi {
+        color: var(--primary-color)
+    }
 .btn-outline-dark:hover {
     background-color: var(--primary-color);
     color: #fff;
     transform: translateY(-2px);
 }
-
+    .btn-outline-dark:hover .bi {
+        color: #FFF;
+    }
 .btn-light {
     background: #fff;
     color: #000;

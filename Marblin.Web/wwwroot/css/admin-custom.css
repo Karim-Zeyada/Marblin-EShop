@@ -12,6 +12,7 @@
     --admin-accent: #000000;
     --admin-border: rgba(0, 0, 0, 0.08);
     --admin-sidebar-width: 280px;
+    
     --font-serif: 'Playfair Display', serif;
     --font-sans: 'Inter', sans-serif;
     --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -29,7 +30,9 @@ body.admin-body {
     display: flex;
     flex-direction: column;
 }
-
+span .bi{
+    color:#555;
+}
 /* Typography Global */
 .admin-font-serif {
     font-family: var(--font-serif);
@@ -223,12 +226,16 @@ h6 {
     text-decoration: none;
     font-weight: 600;
 }
-
-.btn-luxury-outline:hover {
-    background: #000000;
+    .btn-luxury-outline .bi {
+        color: var(--admin-text );
+    }
+    .btn-luxury-outline:hover {
+        background: #000000;
+        color: #FFFFFF !important;
+    }
+.btn-luxury-outline:hover i{
     color: #FFFFFF !important;
 }
-
 .btn-luxury-sm {
     padding: 0.5rem 1.2rem;
     font-size: 0.68rem;
