@@ -104,6 +104,21 @@ else
     app.UseHsts();
 }
 
+// Configure Global Metrics (Currency)
+var defaultCulture = new System.Globalization.CultureInfo("en-US");
+defaultCulture.NumberFormat.CurrencySymbol = "EGP ";
+defaultCulture.NumberFormat.CurrencyPositivePattern = 0; // $n
+defaultCulture.NumberFormat.CurrencyNegativePattern = 0; // ($n)
+
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(defaultCulture),
+    SupportedCultures = new List<System.Globalization.CultureInfo> { defaultCulture },
+    SupportedUICultures = new List<System.Globalization.CultureInfo> { defaultCulture }
+};
+
+app.UseRequestLocalization(localizationOptions);
+
 // Seed Database
 using (var scope = app.Services.CreateScope())
 {

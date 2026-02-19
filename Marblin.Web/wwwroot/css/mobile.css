@@ -155,15 +155,21 @@
 /* Dark Arrows Inverse (Light Backgrounds) */
 .carousel-dark-arrows-inverse .carousel-control-prev,
 .carousel-dark-arrows-inverse .carousel-control-next {
-    width: 42px;
-    height: 42px;
+    width: 50px;
+    height: 50px;
     opacity: 1;
     top: 50%;
     transform: translateY(-50%);
     margin: 0;
-    background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+    /* Liquid Glass Effect */
+    background: rgba(255, 255, 255, 0.15);
+    /* Glassy transparency */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
     border-radius: 50%;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 10;
@@ -173,26 +179,33 @@
 
     .carousel-dark-arrows-inverse .carousel-control-prev,
     .carousel-dark-arrows-inverse .carousel-control-next {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        /* Increased from 50px */
+        height: 60px;
+        /* Increased from 50px */
         background: #1a1a1a;
         border: none;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        /* Stronger shadow */
     }
 
     .carousel-dark-arrows-inverse .carousel-control-prev {
-        left: -60px;
+        left: -80px;
+        /* Adjusted position */
     }
 
     .carousel-dark-arrows-inverse .carousel-control-next {
-        right: -60px;
+        right: -80px;
+        /* Adjusted position */
     }
 }
 
 .carousel-dark-arrows-inverse .carousel-control-prev:hover,
 .carousel-dark-arrows-inverse .carousel-control-next:hover {
-    transform: translateY(-50%) scale(1.1);
-    background: #000;
+    transform: translateY(-50%) scale(1.15);
+    /* More opaque glass on hover/active */
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
 }
 
 @media (min-width: 992px) {
@@ -200,16 +213,19 @@
     .carousel-dark-arrows-inverse .carousel-control-prev:hover,
     .carousel-dark-arrows-inverse .carousel-control-next:hover {
         background: var(--gold-accent, #c5a059);
-        box-shadow: 0 15px 35px rgba(197, 160, 89, 0.3);
+        box-shadow: 0 20px 40px rgba(197, 160, 89, 0.4);
+        /* Enhanced glow */
     }
 }
 
 .carousel-dark-arrows-inverse .carousel-control-prev {
-    left: 10px;
+    left: 15px;
+    /* Adjusted mobile position */
 }
 
 .carousel-dark-arrows-inverse .carousel-control-next {
-    right: 10px;
+    right: 15px;
+    /* Adjusted mobile position */
 }
 
 .carousel-dark-arrows-inverse .carousel-control-prev-icon,
@@ -262,6 +278,27 @@
     padding: 1rem;
 }
 
+/* Product Grid Optimization */
+@media (max-width: 767.98px) {
+    .product-image {
+        height: auto !important;
+        /* Override fixed 350px */
+        aspect-ratio: 3 / 4;
+        /* Standard portrait ratio */
+        object-fit: cover;
+    }
+
+    .product-card {
+        margin-bottom: 0;
+        /* Remove excess bottom margin if any */
+    }
+
+    .card-body {
+        padding: 1rem 0.5rem;
+        /* Compact padding */
+    }
+}
+
 /* General Layout Fixes */
 .row {
     margin-right: 0;
@@ -286,9 +323,7 @@
 
 /* Mobile bottom padding for fixed bars */
 @media (max-width: 991.98px) {
-    body {
-        padding-bottom: 90px;
-    }
+    /* removed body padding-bottom */
 }
 
 /* Desktop Filter Drawer */
@@ -302,4 +337,130 @@
 /* Offcanvas backdrop z-index */
 .offcanvas-backdrop {
     z-index: 3040;
+}
+
+/* Mobile Cart Optimization */
+@media (max-width: 767.98px) {
+
+    .cart-container table,
+    .cart-container tbody,
+    .cart-container tr,
+    .cart-container td {
+        display: block;
+        width: 100%;
+    }
+
+    .cart-container thead {
+        display: none;
+        /* Hide header */
+    }
+
+    .cart-container tr {
+        margin-bottom: 1.5rem;
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+        padding: 1rem;
+    }
+
+    .cart-container td {
+        padding: 0.5rem 0;
+        text-align: right;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .cart-container td:last-child {
+        border-bottom: none;
+    }
+
+    /* Product Name & Image (First Cell) */
+    .cart-container td:first-child {
+        text-align: left;
+        justify-content: flex-start;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        margin-bottom: 0.5rem;
+    }
+
+    .cart-container .cart-item-img {
+        width: 60px;
+        height: 60px;
+    }
+
+    /* Labels via pseudo-elements */
+    .cart-container td:nth-of-type(2)::before {
+        content: "Price";
+        font-weight: 600;
+        color: #666;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .cart-container td:nth-of-type(3)::before {
+        content: "Quantity";
+        font-weight: 600;
+        color: #666;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .cart-container td:nth-of-type(4)::before {
+        content: "Total";
+        font-weight: 600;
+        color: #666;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .cart-container td:nth-of-type(5) {
+        justify-content: flex-end;
+    }
+
+    /* Remove button */
+}
+
+/* Mobile Order Status Stepper */
+@media (max-width: 767.98px) {
+    .order-stepper {
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center !important;
+    }
+
+    /* Hide the main horizontal progress line on mobile as items might wrap or be too tight */
+    .order-stepper>.position-absolute {
+        display: none;
+    }
+
+    .order-step-item {
+        min-width: 70px !important;
+        /* Reduce min-width */
+        padding: 0 5px !important;
+        flex: 1 1 auto;
+    }
+
+    .order-step-icon {
+        width: 35px !important;
+        /* Smaller icons */
+        height: 35px !important;
+        font-size: 0.9rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .order-step-item span {
+        font-size: 0.75rem !important;
+        /* Smaller text */
+    }
+
+    .order-step-item .badge {
+        font-size: 0.65rem !important;
+        padding: 0.35em 0.5em !important;
+    }
 }

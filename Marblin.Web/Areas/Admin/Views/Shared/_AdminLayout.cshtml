@@ -22,8 +22,13 @@
 
     <!-- 1. MOBILE TOPBAR (Visible only < 992px) -->
     <nav class="navbar admin-top-navbar">
-        <a class="navbar-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-            <span class="admin-font-serif fw-bold text-white fs-4">MARBLIN <span class="fs-6 text-white-50 fw-light">ADMIN</span></span>
+        <a class="navbar-brand d-flex align-items-center gap-2" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+            <!-- Brand Logo -->
+            <div class="d-flex align-items-center">
+                <span class="font-brand-initial text-white">M</span>
+                <span class="font-brand-rest text-white">ARBLIN</span>
+            </div>
+            <span class="fs-6 text-white-50 fw-light ms-2" style="letter-spacing: 0.1em;">ADMIN</span>
         </a>
         <button class="navbar-toggler border-0 p-0" type="button"
                 data-bs-toggle="offcanvas" data-bs-target="#adminMobileDrawer"
@@ -41,7 +46,10 @@
         <!-- 3. MOBILE OFFCANVAS (Slides from Right) -->
         <div class="offcanvas offcanvas-end admin-offcanvas d-lg-none" tabindex="-1" id="adminMobileDrawer" aria-labelledby="adminMobileDrawerLabel">
             <div class="offcanvas-header">
-                <span class="admin-font-serif fw-bold text-white fs-4">MARBLIN</span>
+                <div class="d-flex align-items-center">
+                    <span class="font-brand-initial text-white">M</span>
+                    <span class="font-brand-rest text-white">ARBLIN</span>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">

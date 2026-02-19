@@ -48,9 +48,9 @@
 
                 <div class="row g-4 mb-4">
                     <div class="col-12 col-sm-6">
-                        <label asp-for="BasePrice" class="form-label-luxury">Base Valuation (USD)</label>
+                        <label asp-for="BasePrice" class="form-label-luxury">Base Valuation (EGP)</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">$</span>
+                            <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">EGP</span>
                             <input asp-for="BasePrice" class="form-control form-luxury" type="number" step="0.01" min="0.01" />
                         </div>
                     </div>
@@ -97,9 +97,9 @@
                 
                 <div class="row g-4 mb-4">
                     <div class="col-12 col-sm-6">
-                        <label asp-for="SalePrice" class="form-label-luxury">Sale Price (USD)</label>
+                        <label asp-for="SalePrice" class="form-label-luxury">Sale Price (EGP)</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">$</span>
+                            <span class="input-group-text bg-transparent border-0 border-bottom border-light text-secondary">EGP</span>
                             <input asp-for="SalePrice" class="form-control form-luxury" type="number" step="0.01" min="0.01" placeholder="Leave empty for no sale" />
                         </div>
                         <span asp-validation-for="SalePrice" class="text-danger small"></span>

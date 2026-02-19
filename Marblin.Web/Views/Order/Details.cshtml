@@ -4,25 +4,53 @@
 }
 
 <div class="container my-5" style="max-width: 900px;">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
         <h1 class="serif-font h3 mb-0">Order #@Model.OrderNumber</h1>
         <a asp-action="Track" class="btn btn-outline-secondary btn-sm rounded-0">Check Another Order</a>
     </div>
 
     <!-- Status Timeline & Info -->
     <div class="card border-0 shadow-sm mb-5">
-        <div class="card-body p-5">
+        <div class="card-body p-3 p-md-5">
             <h5 class="serif-font mb-5 text-center">Order Status</h5>
             
             @{
-                var statuses = new[] {
-                    (Marblin.Core.Enums.OrderStatus.PendingPayment, "Deposit", "bi-wallet2"),
-                    (Marblin.Core.Enums.OrderStatus.InProduction, "Production", "bi-hammer"),
-                    (Marblin.Core.Enums.OrderStatus.AwaitingBalance, "Balance", "bi-credit-card"),
-                    (Marblin.Core.Enums.OrderStatus.Shipped, "Shipped", "bi-truck")
-                };
-                var currentIndex = Array.FindIndex(statuses, s => s.Item1 == Model.Status);
-                if (Model.Status == Marblin.Core.Enums.OrderStatus.Cancelled) currentIndex = -1;
+                var isFullPayment = Model.PaymentMethod == Marblin.Core.Enums.PaymentMethod.FullPaymentUpfront;
+                (Marblin.Core.Enums.OrderStatus Status, string Label, string Icon)[] statuses;
+
+                if (isFullPayment)
+                {
+                    statuses = new[] {
+                        (Marblin.Core.Enums.OrderStatus.PendingPayment, "Payment", "bi-credit-card"),
+                        (Marblin.Core.Enums.OrderStatus.InProduction, "Production", "bi-hammer"),
+                        (Marblin.Core.Enums.OrderStatus.Shipped, "Shipped", "bi-truck")
+                    };
+                }
+                else
+                {
+                    statuses = new[] {
+                        (Marblin.Core.Enums.OrderStatus.PendingPayment, "Deposit", "bi-wallet2"),
+                        (Marblin.Core.Enums.OrderStatus.InProduction, "Production", "bi-hammer"),
+                        (Marblin.Core.Enums.OrderStatus.AwaitingBalance, "Balance", "bi-cash-coin"),
+                        (Marblin.Core.Enums.OrderStatus.Shipped, "Shipped", "bi-truck")
+                    };
+                }
+
+                var currentIndex = -1;
+                if (Model.Status != Marblin.Core.Enums.OrderStatus.Cancelled)
+                {
+                    if (isFullPayment)
+                    {
+                        if (Model.Status == Marblin.Core.Enums.OrderStatus.PendingPayment) currentIndex = 0;
+                        else if (Model.Status == Marblin.Core.Enums.OrderStatus.InProduction) currentIndex = 1;
+                        else if (Model.Status == Marblin.Core.Enums.OrderStatus.AwaitingBalance) currentIndex = 1; 
+                        else if (Model.Status == Marblin.Core.Enums.OrderStatus.Shipped) currentIndex = 2;
+                    }
+                    else
+                    {
+                        currentIndex = Array.FindIndex(statuses, s => s.Item1 == Model.Status);
+                    }
+                }
             }
 
             @if (Model.Status == Marblin.Core.Enums.OrderStatus.Cancelled)
@@ -31,7 +59,7 @@
             }
             else
             {
-                <div class="position-relative d-flex justify-content-between my-5 px-md-5">
+                <div class="position-relative d-flex justify-content-between my-4 my-md-5 px-md-5 order-stepper">
                     <!-- Progress Bar Background -->
                     <div class="position-absolute top-50 start-0 w-100" style="height: 2px; background: #eee; z-index: 0; transform: translateY(-50%);"></div>
                     <!-- Active Progress -->
@@ -44,8 +72,8 @@
                         var isCurrent = i == currentIndex;
                         var isActive = i <= currentIndex;
                         
-                        <div class="position-relative z-1 text-center bg-white px-2 d-flex flex-column align-items-center" style="min-width: 100px;">
-                            <div class="d-flex align-items-center justify-content-center mb-3 transition-all shadow-sm" 
+                        <div class="position-relative z-1 text-center bg-white px-2 d-flex flex-column align-items-center order-step-item">
+                            <div class="d-flex align-items-center justify-content-center mb-3 transition-all shadow-sm order-step-icon"  
                                  style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid @(isActive ? "#1a1a1a" : "#eee"); background: @(isActive ? "#1a1a1a" : "#fff"); color: @(isActive ? "#fff" : "#ccc"); font-size: 1.25rem;">
                                 @if (isCompleted)
                                 {
@@ -80,36 +108,66 @@
                             @switch (Model.Status)
                             {
                                 case Marblin.Core.Enums.OrderStatus.PendingPayment:
-                                    <h5 class="serif-font">Deposit Required</h5>
-                                    <p class="mb-0 text-muted">To begin production, please pay the deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>.</p>
-                                    @if (!Model.IsDepositVerified)
+                                    if (isFullPayment)
                                     {
-                                        <a asp-controller="Checkout" asp-action="Confirmation" asp-route-id="@Model.OrderNumber" class="btn btn-dark btn-sm mt-3 px-4">Pay Deposit</a>
+                                        <h5 class="serif-font">Payment Required</h5>
+                                        <p class="mb-0 text-muted">To begin production, please pay the total amount of <strong>@Model.TotalAmount.ToString("C0")</strong>.</p>
+                                        @if (!Model.IsDepositVerified) // Reusing same flag/logic for initial payment check
+                                        {
+                                            <a asp-controller="Checkout" asp-action="Confirmation" asp-route-id="@Model.OrderNumber" class="btn btn-dark btn-sm mt-3 px-4">Pay Now</a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <h5 class="serif-font">Deposit Required</h5>
+                                        <p class="mb-0 text-muted">To begin production, please pay the deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>.</p>
+                                        @if (!Model.IsDepositVerified)
+                                        {
+                                            <a asp-controller="Checkout" asp-action="Confirmation" asp-route-id="@Model.OrderNumber" class="btn btn-dark btn-sm mt-3 px-4">Pay Deposit</a>
+                                        }
                                     }
                                     break;
 
                                 case Marblin.Core.Enums.OrderStatus.InProduction:
                                     <h5 class="serif-font">Currently In Production</h5>
-                                    <p class="mb-0 text-muted">Your order is being handcrafted with care. You have paid a deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>. We will notify you when it's ready for the final balance.</p>
+                                    @if (isFullPayment)
+                                    {
+                                        <p class="mb-0 text-muted">Your order is being handcrafted with care. You have paid the <strong>full amount</strong>. We will notify you when it's shipped.</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-0 text-muted">Your order is being handcrafted with care. You have paid a deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>. We will notify you when it's ready for the final balance.</p>
+                                    }
                                     break;
 
                                 case Marblin.Core.Enums.OrderStatus.AwaitingBalance:
-                                    <h5 class="serif-font">Awaiting Final Balance</h5>
-                                    @if(Model.IsBalanceVerified)
+                                    if (isFullPayment)
                                     {
-                                         <p class="mb-0 text-success">Balance Payment Verified! Preparing for shipment.</p>
-                                    }
-                                    else if(Model.BalancePaymentProofSubmittedAt.HasValue)
-                                    {
-                                        <p class="mb-0 text-muted">Production is complete! You have submitted proof for the remaining balance of <strong>@Model.RemainingBalance.ToString("C0")</strong>. We are verifying it.</p>
-                                        <div class="alert alert-success d-inline-block py-2 px-3 mt-3 mb-0 small">
-                                            <i class="bi bi-clock-history me-1"></i> Proof Submitted
+                                        <h5 class="serif-font">Preparing for Shipment</h5>
+                                        <p class="mb-0 text-success">Production is complete! Your order is being packed and prepared for shipment.</p>
+                                        <div class="alert alert-info d-inline-block py-2 px-3 mt-3 mb-0 small">
+                                            <i class="bi bi-box-seam me-1"></i> Coming Soon
                                         </div>
                                     }
                                     else
                                     {
-                                        <p class="mb-0 text-muted">Production is complete! You have paid the deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>. Please pay the remaining balance of <strong>@Model.RemainingBalance.ToString("C0")</strong> to initiate shipping.</p>
-                                        <a asp-controller="Checkout" asp-action="PayBalance" asp-route-id="@Model.OrderNumber" class="btn btn-dark btn-sm mt-3 px-4 shadow-sm">Pay Balance</a>
+                                        <h5 class="serif-font">Awaiting Final Balance</h5>
+                                        @if(Model.IsBalanceVerified)
+                                        {
+                                             <p class="mb-0 text-success">Balance Payment Verified! Preparing for shipment.</p>
+                                        }
+                                        else if(Model.BalancePaymentProofSubmittedAt.HasValue)
+                                        {
+                                            <p class="mb-0 text-muted">Production is complete! You have submitted proof for the remaining balance of <strong>@Model.RemainingBalance.ToString("C0")</strong>. We are verifying it.</p>
+                                            <div class="alert alert-success d-inline-block py-2 px-3 mt-3 mb-0 small">
+                                                <i class="bi bi-clock-history me-1"></i> Proof Submitted
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <p class="mb-0 text-muted">Production is complete! You have paid the deposit of <strong>@Model.DepositAmount.ToString("C0")</strong>. Please pay the remaining balance of <strong>@Model.RemainingBalance.ToString("C0")</strong> to initiate shipping.</p>
+                                            <a asp-controller="Checkout" asp-action="PayBalance" asp-route-id="@Model.OrderNumber" class="btn btn-dark btn-sm mt-3 px-4 shadow-sm">Pay Balance</a>
+                                        }
                                     }
                                     break;
 

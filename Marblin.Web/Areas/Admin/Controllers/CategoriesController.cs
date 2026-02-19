@@ -53,6 +53,16 @@ namespace Marblin.Web.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            // Check for duplicate name
+            var existingCategory = await _unitOfWork.Repository<Category>()
+                .CountAsync(c => c.Name == model.Name);
+            
+            if (existingCategory > 0)
+            {
+                ModelState.AddModelError("Name", "A category with this name already exists.");
+                return View(model);
+            }
+
             if (file != null)
             {
                 using var stream = file.OpenReadStream();
@@ -83,6 +93,16 @@ namespace Marblin.Web.Areas.Admin.Controllers
         {
             if (id != model.Id) return NotFound();
             if (!ModelState.IsValid) return View(model);
+
+            // Check for duplicate name (excluding current category)
+            var duplicate = await _unitOfWork.Repository<Category>()
+                .CountAsync(c => c.Name == model.Name && c.Id != id);
+
+            if (duplicate > 0)
+            {
+                ModelState.AddModelError("Name", "A category with this name already exists.");
+                return View(model);
+            }
 
             var category = await _unitOfWork.Repository<Category>().GetByIdAsync(id);
             if (category == null) return NotFound();
