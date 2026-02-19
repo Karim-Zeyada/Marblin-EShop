@@ -91,12 +91,55 @@ namespace Marblin.Infrastructure.Data.Repositories
 
         public async Task<Marblin.Core.Models.OrderFinancials> GetDailyFinancialsAsync(DateTime date)
         {
-            var dayOrders = _context.Set<Order>().Where(o => o.CreatedAt.Date == date.Date);
+            var targetDate = date.Date;
+
+            // Revenue: 
+            // - PLUS: Orders verified TODAY
+            // - MINUS: Orders cancelled TODAY
+            var revenueAdded = await _context.Set<Order>()
+                .Where(o => o.IsDepositVerified && o.DepositVerifiedAt.HasValue && o.DepositVerifiedAt.Value.Date == targetDate)
+                .SumAsync(o => o.TotalAmount);
+                
+            var revenueRemoved = await _context.Set<Order>()
+                .Where(o => o.Status == OrderStatus.Cancelled && o.CancelledAt.HasValue && o.CancelledAt.Value.Date == targetDate)
+                .SumAsync(o => o.TotalAmount);
+
+            // Cash Flow (Deposits for COD + Balance Payments):
+            // - PLUS: Deposits verified TODAY (COD Only)
+            // - PLUS: Balances verified TODAY (Already implies COD logic or Full Payment finalization)
+            // - MINUS: Catch refunds verified TODAY
+            
+            var depositsInflow = await _context.Set<Order>()
+                .Where(o => o.IsDepositVerified && o.DepositVerifiedAt.HasValue && o.DepositVerifiedAt.Value.Date == targetDate && o.PaymentMethod == PaymentMethod.CashOnDelivery)
+                .SumAsync(o => o.DepositAmount);
+
+            var balancesInflow = await _context.Set<Order>()
+                .Where(o => o.IsBalanceVerified && o.BalanceVerifiedAt.HasValue && o.BalanceVerifiedAt.Value.Date == targetDate)
+                .SumAsync(o => o.TotalAmount - o.DepositAmount);
+
+            var refundsOutflow = await _context.Set<Order>()
+                .Where(o => o.IsRefunded && o.RefundedAt.HasValue && o.RefundedAt.Value.Date == targetDate && o.PaymentMethod == PaymentMethod.CashOnDelivery)
+                .SumAsync(o => o.RefundedAmount);
+
+            // Total Cash Received (All verified payments - All refunds)
+            // This includes Full Payments, COD Deposits, and Balance Payments.
+            var cashReceivedInflow = await _context.Set<Order>()
+                .Where(o => o.IsDepositVerified && o.DepositVerifiedAt.HasValue && o.DepositVerifiedAt.Value.Date == targetDate)
+                .SumAsync(o => o.DepositAmount);
+
+            var cashReceivedBalances = await _context.Set<Order>()
+                .Where(o => o.IsBalanceVerified && o.BalanceVerifiedAt.HasValue && o.BalanceVerifiedAt.Value.Date == targetDate)
+                .SumAsync(o => o.TotalAmount - o.DepositAmount);
+            
+            var cashRefundsOutflow = await _context.Set<Order>()
+                .Where(o => o.IsRefunded && o.RefundedAt.HasValue && o.RefundedAt.Value.Date == targetDate)
+                .SumAsync(o => o.RefundedAmount);
 
             return new Marblin.Core.Models.OrderFinancials
             {
-                Revenue = await dayOrders.SumAsync(o => o.TotalAmount),
-                Deposits = await dayOrders.Where(o => o.IsDepositVerified).SumAsync(o => o.DepositAmount)
+                Revenue = revenueAdded - revenueRemoved,
+                Deposits = (depositsInflow + balancesInflow) - refundsOutflow,
+                CashReceived = (cashReceivedInflow + cashReceivedBalances) - cashRefundsOutflow
             };
         }
 

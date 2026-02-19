@@ -11,6 +11,7 @@ namespace Marblin.Web.Areas.Admin.Models
         public int TodayOrdersCount { get; set; }
         public decimal TodayRevenue { get; set; }
         public decimal TodayDeposits { get; set; }
+        public decimal TodayCashReceived { get; set; }
 
         // Orders by Status
         public int PendingDepositCount { get; set; }
@@ -23,6 +24,12 @@ namespace Marblin.Web.Areas.Admin.Models
 
         // Recent Orders
         public List<Order> RecentOrders { get; set; } = new();
+
+        // Pending Refunds
+        public List<Order> PendingRefunds { get; set; } = new();
+
+        // Pending Verifications (Proof submitted, waiting for admin)
+        public List<Order> PendingVerifications { get; set; } = new();
 
         // Custom Requests
         public int UnreviewedRequestsCount { get; set; }

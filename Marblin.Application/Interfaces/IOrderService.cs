@@ -65,7 +65,17 @@ namespace Marblin.Application.Interfaces
         /// <summary>
         /// Cancels an order.
         /// </summary>
+        Task<Order?> CancelOrderAsync(int orderId, string reason, bool isRefunded, decimal refundAmount);
+        
+        /// <summary>
+        /// Cancels an order (legacy overload).
+        /// </summary>
         Task<Order?> CancelOrderAsync(int orderId, string reason);
+
+        /// <summary>
+        /// Refunds a cancelled order.
+        /// </summary>
+        Task<Order?> RefundOrderAsync(int orderId, decimal amount);
 
         /// <summary>
         /// Retrieves an order by its ID.

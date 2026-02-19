@@ -335,6 +335,9 @@ namespace Marblin.Infrastructure.Data.Migrations
                     b.Property<bool>("IsDepositVerified")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsRefunded")
+                        .HasColumnType("bit");
+
                     b.Property<string>("OrderNumber")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -361,6 +364,12 @@ namespace Marblin.Infrastructure.Data.Migrations
                     b.Property<string>("ReceiptImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal>("RefundedAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("RefundedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Region")
                         .IsRequired()

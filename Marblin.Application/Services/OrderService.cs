@@ -62,10 +62,29 @@ namespace Marblin.Application.Services
                     if (coupon != null)
                     {
                         coupon.TimesUsed++;
-                        await _unitOfWork.SaveChangesAsync();
-                        _logger.LogInformation("Coupon {CouponCode} usage incremented to {TimesUsed}.", coupon.Code, coupon.TimesUsed);
+                        // Coupon usage incremented
                     }
                 }
+
+                // DECREMENT STOCK (Allow Negative / Backorder)
+                foreach (var item in order.OrderItems)
+                {
+                    if (item.ProductId.HasValue)
+                    {
+                        var product = await _unitOfWork.Repository<Product>().GetByIdAsync(item.ProductId.Value);
+                        if (product != null)
+                        {
+                            product.Stock -= item.Quantity;
+                            if (product.Stock < 0)
+                            {
+                                _logger.LogWarning("Product {ProductName} (ID: {Id}) stock went negative: {Stock}. Order: {OrderNumber}", 
+                                    product.Name, product.Id, product.Stock, order.OrderNumber);
+                            }
+                        }
+                    }
+                }
+                
+                await _unitOfWork.SaveChangesAsync();
                 
                 // Email will be sent after payment method is selected in SetPaymentMethodAsync
 
@@ -259,10 +278,22 @@ namespace Marblin.Application.Services
             if (order == null) return null;
 
             order.PaymentMethod = paymentMethod;
+
+            // Update Deposit Amount based on Payment Method
+            if (paymentMethod == PaymentMethod.FullPaymentUpfront)
+            {
+                order.DepositAmount = order.TotalAmount;
+            }
+            else // CashOnDelivery
+            {
+                // Revert to percentage based deposit if user switches back
+                order.DepositAmount = (order.TotalAmount * order.DepositPercentage) / 100m;
+            }
+
             await _unitOfWork.SaveChangesAsync();
             
-            _logger.LogInformation("Payment method set to {PaymentMethod} for Order {OrderNumber}", 
-                paymentMethod, order.OrderNumber);
+            _logger.LogInformation("Payment method set to {PaymentMethod} for Order {OrderNumber}. Deposit Updated: {DepositAmount}", 
+                paymentMethod, order.OrderNumber, order.DepositAmount);
             
             // [FLOW 1] Send Confirmation Email AFTER payment method is selected
             try
@@ -307,9 +338,10 @@ namespace Marblin.Application.Services
             return await _unitOfWork.Repository<Order>().GetByIdAsync(id);
         }
 
-        public async Task<Order?> CancelOrderAsync(int orderId, string reason)
+        public async Task<Order?> CancelOrderAsync(int orderId, string reason, bool isRefunded, decimal refundAmount)
         {
-            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
+            var spec = new OrderWithItemsSpecification(orderId);
+            var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec); // Need items for stock reversal
             if (order == null) return null;
             
             // Note: 2-day cancellation window is enforced on the customer side only.
@@ -332,6 +364,44 @@ namespace Marblin.Application.Services
             order.UpdateStatus(OrderStatus.Cancelled);
             order.CancelledAt = DateTime.UtcNow;
             order.CancellationReason = reason;
+
+            // Handle Refund
+            if (isRefunded)
+            {
+                try 
+                {
+                    order.MarkAsRefunded(refundAmount);
+                    _logger.LogInformation("Order {OrderNumber} marked as refunded. Amount: {Amount}", order.OrderNumber, refundAmount);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.LogWarning(ex, "Failed to mark order {OrderNumber} as refunded.", order.OrderNumber);
+                }
+            }
+            
+            // Reverse Stock
+            foreach (var item in order.OrderItems)
+            {
+                if (item.ProductId.HasValue) 
+                {
+                    var product = await _unitOfWork.Repository<Product>().GetByIdAsync(item.ProductId.Value);
+                    if (product != null)
+                    {
+                        product.Stock += item.Quantity;
+                    }
+                }
+            }
+
+            // Reverse Coupon Usage
+            if (!string.IsNullOrEmpty(order.DiscountCode))
+            {
+                var couponSpec = new CouponByCodeSpecification(order.DiscountCode);
+                var coupon = await _unitOfWork.Repository<Coupon>().GetEntityWithSpec(couponSpec);
+                if (coupon != null && coupon.TimesUsed > 0)
+                {
+                    coupon.TimesUsed--;
+                }
+            }
             
             await _unitOfWork.SaveChangesAsync();
             
@@ -352,6 +422,35 @@ namespace Marblin.Application.Services
             }
             
             return order;
+        }
+
+        public Task<Order?> CancelOrderAsync(int orderId, string reason)
+        {
+            return CancelOrderAsync(orderId, reason, false, 0);
+        }
+
+        public async Task<Order?> RefundOrderAsync(int orderId, decimal amount)
+        {
+            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
+            if (order == null) return null;
+
+            if (order.Status != OrderStatus.Cancelled)
+            {
+                throw new InvalidOperationException("Only cancelled orders can be refunded.");
+            }
+
+            try
+            {
+                order.MarkAsRefunded(amount);
+                await _unitOfWork.SaveChangesAsync();
+                _logger.LogInformation("Order {OrderNumber} manually marked as refunded. Amount: {Amount}", order.OrderNumber, amount);
+                return order;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to refund order {OrderNumber}", order.OrderNumber);
+                throw;
+            }
         }
     }
 }

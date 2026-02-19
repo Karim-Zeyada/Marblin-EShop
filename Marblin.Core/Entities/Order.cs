@@ -90,6 +90,22 @@ namespace Marblin.Core.Entities
             { OrderStatus.Cancelled, Array.Empty<OrderStatus>() }
         };
 
+        public bool IsRefunded { get; private set; }
+        public decimal RefundedAmount { get; private set; }
+        public DateTime? RefundedAt { get; private set; }
+
+        public void MarkAsRefunded(decimal amount)
+        {
+            if (IsRefunded)
+            {
+                throw new InvalidOperationException("Order is already refunded.");
+            }
+            
+            IsRefunded = true;
+            RefundedAmount = amount;
+            RefundedAt = DateTime.UtcNow;
+        }
+
         public void VerifyDeposit()
         {
             if (Status != OrderStatus.PendingPayment)
@@ -100,6 +116,14 @@ namespace Marblin.Core.Entities
 
             IsDepositVerified = true;
             DepositVerifiedAt = DateTime.UtcNow;
+            
+            // Auto-verify balance for Full Payment to unify payment state
+            if (PaymentMethod == PaymentMethod.FullPaymentUpfront)
+            {
+                IsBalanceVerified = true;
+                BalanceVerifiedAt = DateTime.UtcNow;
+            }
+
             Status = OrderStatus.InProduction;
             InProductionAt = DateTime.UtcNow;
         }

@@ -55,8 +55,15 @@ namespace Marblin.Web.Areas.Admin.Controllers
         {
             try
             {
-                await _orderService.VerifyDepositAsync(id);
-                TempData["Success"] = "Deposit verified!";
+                var order = await _orderRepository.GetByIdAsync(id);
+                if (order != null)
+                {
+                    await _orderService.VerifyDepositAsync(id);
+                    var msg = order.PaymentMethod == PaymentMethod.FullPaymentUpfront 
+                        ? "Full payment verified!" 
+                        : "Deposit verified!";
+                    TempData["Success"] = msg;
+                }
             }
             catch (Exception ex) when (ex is InvalidOperationException or KeyNotFoundException)
             {
@@ -105,11 +112,11 @@ namespace Marblin.Web.Areas.Admin.Controllers
         // POST: Admin/Orders/Cancel/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CancelOrder(int id, string? reason)
+        public async Task<IActionResult> CancelOrder(int id, string? reason, bool isRefunded, decimal refundAmount)
         {
             try
             {
-                await _orderService.CancelOrderAsync(id, reason ?? "Customer request");
+                await _orderService.CancelOrderAsync(id, reason ?? "Customer request", isRefunded, refundAmount);
                 TempData["Success"] = "Order cancelled successfully!";
             }
             catch (InvalidOperationException ex)
@@ -117,6 +124,24 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 TempData["Error"] = ex.Message;
             }
             
+            
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        // POST: Admin/Orders/Refund/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RefundOrder(int id, decimal amount)
+        {
+            try
+            {
+                await _orderService.RefundOrderAsync(id, amount);
+                TempData["Success"] = "Order marked as refunded successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
             return RedirectToAction(nameof(Details), new { id });
         }
     }

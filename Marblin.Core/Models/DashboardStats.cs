@@ -7,6 +7,7 @@ namespace Marblin.Core.Models
     {
         public decimal Revenue { get; set; }
         public decimal Deposits { get; set; }
+        public decimal CashReceived { get; set; }
     }
 
     public class TopProductStat

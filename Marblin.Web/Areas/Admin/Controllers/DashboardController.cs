@@ -38,12 +38,32 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 TodayOrdersCount = await _orderRepo.CountAsync(o => o.CreatedAt.Date == today),
                 TodayRevenue = financials.Revenue,
                 TodayDeposits = financials.Deposits,
+                TodayCashReceived = financials.CashReceived,
 
                 PendingDepositCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.PendingPayment),
                 InProductionCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.InProduction),
                 AwaitingBalanceCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.AwaitingBalance),
                 ShippedCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.Shipped),
                 CancelledCount = await _orderRepo.CountAsync(o => o.Status == OrderStatus.Cancelled),
+
+                // Fetch pending refunds: Cancelled AND Not Refunded AND (Deposit OR Balance Verification present)
+                PendingRefunds = (await _orderRepo.FindAsync(o => 
+                    o.Status == OrderStatus.Cancelled && 
+                    !o.IsRefunded && 
+                    (o.IsDepositVerified || o.IsBalanceVerified))).ToList(),
+
+                // Fetch pending verifications: Proof submitted but not verified
+                PendingVerifications = (await _orderRepo.FindAsync(o =>
+                    // Case 1: Initial Payment (Deposit or Full)
+                    (o.Status == OrderStatus.PendingPayment &&
+                     o.PaymentProofType != PaymentProofType.None &&
+                     !o.IsDepositVerified)
+                    ||
+                    // Case 2: Balance Payment
+                    (o.Status == OrderStatus.AwaitingBalance &&
+                     o.BalancePaymentProofType != PaymentProofType.None &&
+                     !o.IsBalanceVerified)
+                )).ToList(),
 
                 RecentOrders = (await _orderRepo.GetOrdersPagedAsync(null, null, 1, 5)).Orders.ToList(),
 
