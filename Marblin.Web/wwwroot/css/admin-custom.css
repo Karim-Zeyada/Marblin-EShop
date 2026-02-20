@@ -30,8 +30,14 @@ body.admin-body {
     display: flex;
     flex-direction: column;
 }
-span .bi{
-    color:#555;
+span .bi,
+.bi-pause-circle,
+.bi-pencil,
+.bi-gear-fill{
+    color: #555;
+}
+button .bi-trash{
+    color:red;
 }
 /* Typography Global */
 .admin-font-serif {
