@@ -91,6 +91,7 @@ namespace Marblin.Infrastructure.Data
                 entity.Property(e => e.DiscountAmount).HasPrecision(18, 2);
                 entity.Property(e => e.TransactionId).HasMaxLength(100);
                 entity.Property(e => e.ReceiptImageUrl).HasMaxLength(500);
+                entity.Property(e => e.RefundedAmount).HasPrecision(18, 2);
 
                 entity.HasIndex(e => e.OrderNumber).IsUnique();
                 entity.HasIndex(e => e.Email);

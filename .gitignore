@@ -32,6 +32,7 @@ artifacts/
 # Development settings (may contain secrets)
 appsettings.Development.json
 appsettings.*.json
+!appsettings.Example.json
 appsettings.json
 
 # Private uploads (user receipts - sensitive data)
