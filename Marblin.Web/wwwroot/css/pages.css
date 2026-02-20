@@ -181,7 +181,12 @@
     height: 200px;
     object-fit: cover;
 }
-
+.bi-arrow-left me-2,
+.bi-x-lg,
+.bi-truck me-2,
+.bi-info-circle me-2 {
+    color: #555;
+}
 /* Checkout */
 .checkout-container {
     max-width: 1000px;
