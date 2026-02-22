@@ -41,16 +41,28 @@
     <div class="d-flex">
         <!-- 2. DESKTOP SIDEBAR (Fixed positions on left) -->
         <aside class="admin-sidebar-wrapper">
+                <!-- Brand (Desktop) -->
+            <a class="navbar-brand d-flex align-items-center justify-content-center py-4 border-bottom border-white-10 me-0" asp-area="Admin" asp-controller="Dashboard" asp-action="Index" style="text-decoration: none;">
+                    <div class="d-flex align-items-center">
+                        <span class="font-brand-initial text-white">M</span>
+                        <span class="font-brand-rest text-white">ARBLIN</span>
+                    </div>
+                    <span class="fs-6 text-white-50 fw-light ms-2" style="letter-spacing: 0.1em; align-self: center; transform: translateY(2px);">ADMIN</span>
+                </a>
             @await Html.PartialAsync("_AdminSidebarPartial")
         </aside>
 
         <!-- 3. MOBILE OFFCANVAS (Slides from Right) -->
         <div class="offcanvas offcanvas-end admin-offcanvas d-lg-none" tabindex="-1" id="adminMobileDrawer" aria-labelledby="adminMobileDrawerLabel">
-            <div class="offcanvas-header">
-                <div class="d-flex align-items-center">
-                    <span class="font-brand-initial text-white">M</span>
-                    <span class="font-brand-rest text-white">ARBLIN</span>
-                </div>
+            <div class="offcanvas-header border-bottom border-white-10">
+                <!-- Brand (Desktop) -->
+                <a class="navbar-brand d-flex align-items-center justify-content-center py-4 " asp-area="Admin" asp-controller="Dashboard" asp-action="Index" style="text-decoration: none;">
+                    <div class="d-flex align-items-center">
+                        <span class="font-brand-initial text-white">M</span>
+                        <span class="font-brand-rest text-white">ARBLIN</span>
+                    </div>
+                    <span class="fs-6 text-white-50 fw-light ms-2" style="letter-spacing: 0.1em; align-self: center; transform: translateY(2px);">ADMIN</span>
+                </a>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
