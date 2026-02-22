@@ -184,8 +184,14 @@
 .bi-arrow-left me-2,
 .bi-x-lg,
 .bi-truck me-2,
-.bi-info-circle me-2 {
+.bi-info-circle me-2
+{
     color: #555;
+}
+.bi-facebook,
+.bi-pinterest,
+.bi-instagram{
+    color : #000;
 }
 /* Checkout */
 .checkout-container {
