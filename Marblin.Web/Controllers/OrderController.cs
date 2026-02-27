@@ -38,7 +38,7 @@ namespace Marblin.Web.Controllers
                 return View();
             }
 
-            TempData["VerifiedOrder"] = order.OrderNumber;
+            HttpContext.Session.SetString($"VerifiedOrder_{order.OrderNumber}", "true");
             return RedirectToAction(nameof(Details), new { id = order.OrderNumber });
         }
 
@@ -47,9 +47,9 @@ namespace Marblin.Web.Controllers
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
 
-            // Require email-verified access via Track action
-            var verified = TempData["VerifiedOrder"] as string;
-            if (verified != id)
+            // Require email-verified access via Track action (session-backed)
+            var verified = HttpContext.Session.GetString($"VerifiedOrder_{id}");
+            if (verified != "true")
             {
                 return RedirectToAction(nameof(Track));
             }

@@ -60,20 +60,20 @@
             <form asp-action="Contact" asp-controller="Home" method="post">
                 <div class="mb-3">
                     <label asp-for="Name" class="form-label">Name</label>
-                    <input asp-for="Name" class="form-control" placeholder="Your Name">
+                    <input asp-for="Name" class="form-control rounded-0" placeholder="Your Name">
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                  <div class="mb-3">
                     <label asp-for="Email" class="form-label">Email</label>
-                    <input asp-for="Email" class="form-control" placeholder="name@example.com">
+                    <input asp-for="Email" class="form-control rounded-0" placeholder="name@example.com">
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                  <div class="mb-3">
                     <label asp-for="Message" class="form-label">Message</label>
-                    <textarea asp-for="Message" class="form-control" rows="5" placeholder="How can we help?"></textarea>
+                    <textarea asp-for="Message" class="form-control rounded-0" rows="5" placeholder="How can we help?"></textarea>
                     <span asp-validation-for="Message" class="text-danger"></span>
                 </div>
-                <button type="submit" class="btn btn-dark w-100">SEND MESSAGE</button>
+                <button type="submit" class="btn btn-dark w-100 rounded-0 py-3 text-uppercase letter-spacing-1">SEND MESSAGE</button>
             </form>
         </div>
     </div>

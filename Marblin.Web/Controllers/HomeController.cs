@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Marblin.Core.Entities;
 using Marblin.Core.Interfaces;
 using Marblin.Core.Specifications;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Marblin.Web.Controllers
 {
@@ -13,20 +14,26 @@ namespace Marblin.Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
+        private readonly IMemoryCache _cache;
 
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IEmailService emailService)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IEmailService emailService, IMemoryCache cache)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
+            _cache = cache;
         }
 
         public async Task<IActionResult> Index()
         {
-            // Site Settings
-            var settingsSpec = new SiteSettingsSpecification();
-            var settings = await _unitOfWork.Repository<SiteSettings>().GetEntityWithSpec(settingsSpec);
-            
+            // Site Settings (cached 5 minutes)
+            var settings = await _cache.GetOrCreateAsync("SiteSettings", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+                var spec = new SiteSettingsSpecification();
+                return await _unitOfWork.Repository<SiteSettings>().GetEntityWithSpec(spec);
+            });
+
             // Signature Pieces
             var signatureSpec = new SignatureProductsSpecification(6);
             var signaturePieces = await _unitOfWork.Repository<Product>().ListAsync(signatureSpec);
@@ -35,16 +42,21 @@ namespace Marblin.Web.Controllers
             var saleSpec = new FeaturedSaleProductsSpecification(6);
             var saleProducts = await _unitOfWork.Repository<Product>().ListAsync(saleSpec);
 
-            // Categories
-            var categoriesSpec = new CategoryWithProductsSpecification();
-            var categories = await _unitOfWork.Repository<Category>().ListAsync(categoriesSpec);
+            // Categories (cached 5 minutes)
+            var categories = await _cache.GetOrCreateAsync("ActiveCategories", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+                var categoriesSpec = new CategoryWithProductsSpecification();
+                var allCategories = await _unitOfWork.Repository<Category>().ListAsync(categoriesSpec);
+                return allCategories.Where(c => c.IsActive).ToList();
+            });
 
             var viewModel = new HomeViewModel
             {
                 Settings = settings ?? new SiteSettings(),
                 SignaturePieces = signaturePieces.ToList(),
                 FeaturedSaleProducts = saleProducts.Where(p => p.IsOnSale()).ToList(),
-                Categories = categories.Where(c => c.IsActive).ToList()
+                Categories = categories ?? new List<Category>()
 
             };
 

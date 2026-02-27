@@ -1,5 +1,6 @@
 using Marblin.Core.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marblin.Core.Entities
 {
@@ -67,6 +68,10 @@ namespace Marblin.Core.Entities
         /// Featured in special "On Sale" promotions.
         /// </summary>
         public bool IsFeaturedSale { get; set; }
+        
+        // Concurrency
+        [Timestamp]
+        public byte[] RowVersion { get; set; } = null!;
         
         // Navigation
         public virtual Category Category { get; set; } = null!;

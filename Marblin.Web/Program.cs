@@ -9,18 +9,31 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Structured Logging with Serilog
+builder.Host.UseSerilog((ctx, cfg) => cfg
+    .ReadFrom.Configuration(ctx.Configuration)
+    .WriteTo.Console()
+    .WriteTo.File("logs/marblin-.log", rollingInterval: RollingInterval.Day));
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+}
+
+builder.Services.AddHealthChecks();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => 
     {
-        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedAccount = true;
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -35,11 +48,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Session and Cart Services
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(60);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
 });
 builder.Services.AddHttpContextAccessor();
 
@@ -51,7 +67,11 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IFileService, LocalFileService>();
-builder.Services.AddScoped<IEmailService, SendGridEmailService>();
+var emailProvider = builder.Configuration["EmailSettings:Provider"];
+if (string.Equals(emailProvider, "SendGrid", StringComparison.OrdinalIgnoreCase))
+    builder.Services.AddScoped<IEmailService, SendGridEmailService>();
+else
+    builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 // =============================================================================
 // APPLICATION LAYER - Use Cases, Application Services
@@ -67,6 +87,12 @@ builder.Services.AddScoped<ICartService, Marblin.Application.Services.CartServic
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
+
+// File upload size limit (10 MB)
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024;
+});
 
 
 builder.Services.AddControllersWithViews(options =>
@@ -125,7 +151,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        await Marblin.Infrastructure.Data.DbInitializer.InitializeAsync(services);
+        await Marblin.Infrastructure.Data.DbInitializer.InitializeAsync(services, builder.Configuration);
     }
     catch (Exception ex)
     {
@@ -134,7 +160,19 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+
 app.UseHttpsRedirection();
+
+// Security Headers
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Append("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+    await next();
+});
+
 app.UseStaticFiles();
 
 app.UseSession();
@@ -148,6 +186,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+
+app.MapHealthChecks("/health");
 
 app.MapControllerRoute(
     name: "default",

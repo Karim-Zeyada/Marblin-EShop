@@ -1,60 +1,66 @@
 using Marblin.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using SendGrid;
-using SendGrid.Helpers.Mail;
+using MimeKit;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 
 namespace Marblin.Infrastructure.Services
 {
     /// <summary>
-    /// SendGrid implementation of IEmailService for professional email delivery.
+    /// SMTP implementation of IEmailService using MailKit for standard SMTP delivery.
     /// </summary>
-    public class SendGridEmailService : IEmailService
+    public class SmtpEmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger<SendGridEmailService> _logger;
-        private readonly string _apiKey;
+        private readonly ILogger<SmtpEmailService> _logger;
         private readonly string _senderEmail;
         private readonly string _senderName;
         private readonly string _adminEmail;
+        private readonly string _smtpHost;
+        private readonly int _smtpPort;
+        private readonly string _smtpUsername;
+        private readonly string _smtpPassword;
 
-        public SendGridEmailService(IConfiguration configuration, ILogger<SendGridEmailService> logger)
+        public SmtpEmailService(IConfiguration configuration, ILogger<SmtpEmailService> logger)
         {
             _configuration = configuration;
             _logger = logger;
-            
-            _apiKey = _configuration["EmailSettings:SendGridApiKey"] ?? "";
+
             _senderEmail = _configuration["EmailSettings:SenderEmail"] ?? "noreply@marblin.com";
             _senderName = _configuration["EmailSettings:SenderName"] ?? "Marblin";
             _adminEmail = _configuration["EmailSettings:AdminEmail"] ?? "";
+            _smtpHost = _configuration["EmailSettings:SmtpHost"] ?? "";
+            _smtpPort = int.TryParse(_configuration["EmailSettings:SmtpPort"], out var port) ? port : 587;
+            _smtpUsername = _configuration["EmailSettings:SmtpUsername"] ?? "";
+            _smtpPassword = _configuration["EmailSettings:SmtpPassword"] ?? "";
         }
 
         public async Task SendEmailAsync(string to, string subject, string htmlBody)
         {
-            if (string.IsNullOrEmpty(_apiKey))
+            if (string.IsNullOrEmpty(_smtpHost))
             {
-                _logger.LogWarning("SendGrid API Key is not configured. Email not sent.");
+                _logger.LogWarning("SMTP Host is not configured. Email not sent.");
                 return;
             }
 
-            var client = new SendGridClient(_apiKey);
-            var from = new EmailAddress(_senderEmail, _senderName);
-            var toAddress = new EmailAddress(to);
-            var msg = MailHelper.CreateSingleEmail(from, toAddress, subject, null, htmlBody);
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(_senderName, _senderEmail));
+            message.To.Add(MailboxAddress.Parse(to));
+            message.Subject = subject;
+
+            var bodyBuilder = new BodyBuilder { HtmlBody = htmlBody };
+            message.Body = bodyBuilder.ToMessageBody();
 
             try
             {
-                var response = await client.SendEmailAsync(msg);
-                
-                if (response.IsSuccessStatusCode)
-                {
-                    _logger.LogInformation("Email sent successfully to {Recipient}. Subject: {Subject}", to, subject);
-                }
-                else
-                {
-                    var body = await response.Body.ReadAsStringAsync();
-                    _logger.LogWarning("Email sending failed. Status: {StatusCode}, Body: {Body}", response.StatusCode, body);
-                }
+                using var client = new SmtpClient();
+                await client.ConnectAsync(_smtpHost, _smtpPort, SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(_smtpUsername, _smtpPassword);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+
+                _logger.LogInformation("Email sent successfully to {Recipient}. Subject: {Subject}", to, subject);
             }
             catch (Exception ex)
             {

@@ -69,7 +69,7 @@
 
                 <div class="col-12">
                     <label class="form-label">Inspiration Images</label>
-                    <input type="file" name="inspirationImages" class="form-control" multiple accept="image/*" />
+                    <input type="file" name="inspirationImages" class="form-control rounded-0" multiple accept="image/*" />
                     <div class="form-text">Upload sketches or photos of similar items.</div>
                 </div>
             </div>
@@ -80,3 +80,23 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+    <style>
+        input[type="file"]::file-selector-button {
+            border: none;
+            background: #212529; /* btn-dark */
+            color: white;
+            padding: 0.5rem 1rem;
+            margin-right: 1rem;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background: #424649;
+        }
+    </style>
+}

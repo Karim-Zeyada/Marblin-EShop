@@ -9,9 +9,9 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-5">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted small text-uppercase">Collection</a></li>
-            <li class="breadcrumb-item"><a asp-action="Index" asp-route-categoryId="@Model.CategoryId" class="text-decoration-none text-muted small text-uppercase">@Model.Category?.Name</a></li>
-            <li class="breadcrumb-item active small text-uppercase" aria-current="page">@Model.Name</li>
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted small">Collection</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-route-categoryId="@Model.CategoryId" class="text-decoration-none text-muted small">@Model.Category?.Name</a></li>
+            <li class="breadcrumb-item active small" aria-current="page">@Model.Name</li>
         </ol>
     </nav>
 

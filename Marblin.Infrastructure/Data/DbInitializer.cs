@@ -1,13 +1,24 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Marblin.Infrastructure.Data
 {
     public static class DbInitializer
     {
-        public static async Task InitializeAsync(IServiceProvider serviceProvider)
+        public static async Task InitializeAsync(IServiceProvider serviceProvider, IConfiguration configuration)
         {
+            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            
+            // Only auto-migrate in development. Run migrations manually in production.
+            var env = serviceProvider.GetRequiredService<Microsoft.AspNetCore.Hosting.IWebHostEnvironment>();
+            if (env.EnvironmentName == "Development")
+            {
+                await context.Database.MigrateAsync();
+            }
+
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
@@ -36,11 +47,17 @@ namespace Marblin.Infrastructure.Data
                 EmailConfirmed = true
             };
 
-            var result = await userManager.CreateAsync(adminUser, "Marblin@2026"); // Default secure password
+            var adminPassword = configuration["SeedSettings:DefaultAdminPassword"]
+                ?? throw new InvalidOperationException(
+                    "SeedSettings:DefaultAdminPassword must be configured to seed the admin user.");
+
+            var result = await userManager.CreateAsync(adminUser, adminPassword);
 
             if (result.Succeeded)
             {
                  await userManager.AddToRoleAsync(adminUser, "Admin");
+                 var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DbInitializer");
+                 logger.LogWarning("Default Admin user created. Change the password immediately in production.");
             }
             else
             {
@@ -48,7 +65,6 @@ namespace Marblin.Infrastructure.Data
                 throw new Exception($"Failed to create default admin user: {errors}");
             }
             
-            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
             await SeedSiteSettingsAsync(context);
         }
 

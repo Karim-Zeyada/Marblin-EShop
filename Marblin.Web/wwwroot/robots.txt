@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /Admin/
+Disallow: /Identity/
+Disallow: /Checkout/
+Disallow: /Order/
+
+Sitemap: https://marblin.runasp.net/sitemap.xml
