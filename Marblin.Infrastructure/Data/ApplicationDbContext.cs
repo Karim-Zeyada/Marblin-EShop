@@ -97,6 +97,9 @@ namespace Marblin.Infrastructure.Data
                 entity.HasIndex(e => e.Email);
                 entity.HasIndex(e => e.Status);
 
+                // Concurrency token for optimistic concurrency
+                entity.Property(e => e.RowVersion).IsRowVersion();
+
                 // Ignore computed properties
                 entity.Ignore(e => e.RemainingBalance);
                 entity.Ignore(e => e.AmountDue);

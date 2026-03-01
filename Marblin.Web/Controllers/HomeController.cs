@@ -6,6 +6,7 @@ using Marblin.Core.Entities;
 using Marblin.Core.Interfaces;
 using Marblin.Core.Specifications;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Marblin.Web.Controllers
 {
@@ -80,6 +81,7 @@ namespace Marblin.Web.Controllers
         }
 
         [HttpPost]
+        [EnableRateLimiting("ContactFormPolicy")]
         public async Task<IActionResult> Contact(ContactViewModel model)
         {
             if (!ModelState.IsValid)

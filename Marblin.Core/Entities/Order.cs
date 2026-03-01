@@ -170,6 +170,10 @@ namespace Marblin.Core.Entities
         }
 
         
+        // Concurrency Token
+        [System.ComponentModel.DataAnnotations.Timestamp]
+        public byte[]? RowVersion { get; set; }
+
         // Navigation
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 

@@ -22,10 +22,20 @@ namespace Marblin.Web.Areas.Admin.Controllers
         {
             if (string.IsNullOrEmpty(fileName)) return BadRequest();
 
+            // Only allow serving private file categories through this endpoint
+            var allowedCategories = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                nameof(FileCategory.ReceiptImage),
+                nameof(FileCategory.PrivateDocument)
+            };
+
+            if (!allowedCategories.Contains(type))
+                return BadRequest("Invalid file type.");
+
             try
             {
                 FileCategory category;
-                if (Enum.TryParse<FileCategory>(type, true, out var parsed))
+                if (Enum.TryParse<FileCategory>(type, true, out var parsed) && allowedCategories.Contains(parsed.ToString()))
                 {
                     category = parsed;
                 }

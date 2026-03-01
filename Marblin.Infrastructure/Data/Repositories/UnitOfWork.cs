@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Marblin.Infrastructure.Data.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IAsyncDisposable
     {
         private readonly ApplicationDbContext _context;
         private readonly Hashtable _repositories;
@@ -44,6 +44,12 @@ namespace Marblin.Infrastructure.Data.Repositories
         public void Dispose()
         {
             _context.Dispose();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await _context.DisposeAsync();
+            GC.SuppressFinalize(this);
         }
     }
 }

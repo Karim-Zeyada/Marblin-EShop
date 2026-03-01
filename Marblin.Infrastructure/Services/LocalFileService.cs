@@ -18,7 +18,12 @@ namespace Marblin.Infrastructure.Services
         {
             var ext = Path.GetExtension(fileName).ToLowerInvariant();
             
-            // 1. Signature Validation
+            // 1. File size validation (10 MB max, defense-in-depth)
+            const long maxFileSize = 10 * 1024 * 1024;
+            if (fileStream.Length > maxFileSize)
+                throw new InvalidOperationException("File size exceeds the maximum allowed size of 10 MB.");
+
+            // 2. Signature Validation
             ValidateFileSignature(fileStream, ext);
 
             // 2. Get safe base path based on category (no user input in paths)
@@ -51,7 +56,14 @@ namespace Marblin.Infrastructure.Services
             if (string.IsNullOrEmpty(relativePath)) return;
 
             // Delete from WebRoot (public files)
-            var filePath = Path.Combine(_environment.WebRootPath, relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+            var sanitizedPath = relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var filePath = Path.Combine(_environment.WebRootPath, sanitizedPath);
+
+            // Ensure resolved path is still under WebRootPath (prevent path traversal)
+            var resolvedPath = Path.GetFullPath(filePath);
+            if (!resolvedPath.StartsWith(Path.GetFullPath(_environment.WebRootPath), StringComparison.OrdinalIgnoreCase))
+                throw new UnauthorizedAccessException("Invalid file path.");
+
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
