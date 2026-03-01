@@ -18,7 +18,7 @@ A premium e-commerce platform for selling handcrafted marble and stone artifacts
 - 📦 **Inventory Management** – Full CRUD for products, variants, categories
 - ✅ **Order Workflow** – Verify payments and update order statuses
 - 🎟️ **Coupon System** – Create and manage discount codes
-- ⚙️ **Site Settings** – Configure deposit %, payment info, homepage content
+- ⚙️ **Site Settings** – Configure deposit %, payment methods (Instapay/Vodafone Cash), shipping costs, and homepage content
 
 ## 🏗️ Architecture
 
