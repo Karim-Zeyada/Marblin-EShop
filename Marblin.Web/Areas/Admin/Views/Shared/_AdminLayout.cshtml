@@ -13,9 +13,13 @@
     <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
 
     <!-- Unified Styling -->
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mobile.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-custom.css" asp-append-version="true" />
 </head>
@@ -26,10 +30,10 @@
         <a class="navbar-brand d-flex align-items-center gap-2" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
             <!-- Brand Logo -->
             <div class="d-flex align-items-center">
-                <span class="font-brand-initial text-white">M</span>
-                <span class="font-brand-rest text-white">ARBLIN</span>
+                <span class="font-brand-initial text-white admin-brand-initial">M</span>
+                <span class="font-brand-rest text-white admin-brand-rest">ARBLIN</span>
             </div>
-            <span class="fs-6 text-white-50 fw-light ms-2" style="letter-spacing: 0.1em;">ADMIN</span>
+            <span class="fs-6 text-white-50 fw-light ms-2" style="letter-spacing: 0.1em; transform: translateY(2px);">ADMIN</span>
         </a>
         <button class="navbar-toggler border-0 p-0" type="button"
                 data-bs-toggle="offcanvas" data-bs-target="#adminMobileDrawer"
@@ -44,8 +48,8 @@
                 <!-- Brand (Desktop) -->
             <a class="navbar-brand d-flex align-items-center justify-content-center py-4 border-bottom border-white-10 me-0" asp-area="Admin" asp-controller="Dashboard" asp-action="Index" style="text-decoration: none;">
                     <div class="d-flex align-items-center">
-                        <span class="font-brand-initial text-white">M</span>
-                        <span class="font-brand-rest text-white">ARBLIN</span>
+                        <span class="font-brand-initial text-white admin-brand-initial">M</span>
+                        <span class="font-brand-rest text-white admin-brand-rest">ARBLIN</span>
                     </div>
                     <span class="fs-6 text-white-50 fw-light ms-2" style="letter-spacing: 0.1em; align-self: center; transform: translateY(2px);">ADMIN</span>
                 </a>
@@ -58,8 +62,8 @@
                 <!-- Brand (Desktop) -->
                 <a class="navbar-brand d-flex align-items-center justify-content-center py-4 " asp-area="Admin" asp-controller="Dashboard" asp-action="Index" style="text-decoration: none;">
                     <div class="d-flex align-items-center">
-                        <span class="font-brand-initial text-white">M</span>
-                        <span class="font-brand-rest text-white">ARBLIN</span>
+                        <span class="font-brand-initial text-white admin-brand-initial">M</span>
+                        <span class="font-brand-rest text-white admin-brand-rest">ARBLIN</span>
                     </div>
                     <span class="fs-6 text-white-50 fw-light ms-2" style="letter-spacing: 0.1em; align-self: center; transform: translateY(2px);">ADMIN</span>
                 </a>

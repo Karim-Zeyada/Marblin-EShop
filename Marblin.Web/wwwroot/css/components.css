@@ -37,17 +37,21 @@
     color: var(--primary-color);
     background: transparent;
 }
-    .btn-outline-dark .bi {
-        color: var(--primary-color)
-    }
+
+.btn-outline-dark .bi {
+    color: var(--primary-color)
+}
+
 .btn-outline-dark:hover {
     background-color: var(--primary-color);
     color: #fff;
     transform: translateY(-2px);
 }
-    .btn-outline-dark:hover .bi {
-        color: #FFF;
-    }
+
+.btn-outline-dark:hover .bi {
+    color: #FFF;
+}
+
 .btn-light {
     background: #fff;
     color: #000;
@@ -200,14 +204,13 @@ footer {
     letter-spacing: 0.02em;
 }
 
-.footer-brand {
-    font-family: var(--font-serif);
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: #FFFFFF;
-    margin-bottom: 1rem;
-    display: inline-block;
-    letter-spacing: 0.05em;
+.footer-brand-initial {
+    font-size: 2.5rem;
+    transform: translateY(-6px);
+}
+
+.footer-brand-rest {
+    font-size: 1.5rem;
 }
 
 .footer-bio {

@@ -12,7 +12,7 @@
     --admin-accent: #000000;
     --admin-border: rgba(0, 0, 0, 0.08);
     --admin-sidebar-width: 280px;
-    
+
     --font-serif: 'Playfair Display', serif;
     --font-sans: 'Inter', sans-serif;
     --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -30,15 +30,18 @@ body.admin-body {
     display: flex;
     flex-direction: column;
 }
+
 span .bi,
 .bi-pause-circle,
 .bi-pencil,
-.bi-gear-fill{
+.bi-gear-fill {
     color: #555;
 }
-button .bi-trash{
-    color:red;
+
+button .bi-trash {
+    color: red;
 }
+
 /* Typography Global */
 .admin-font-serif {
     font-family: var(--font-serif);
@@ -76,7 +79,7 @@ h6 {
         border-right: 1px solid rgba(255, 255, 255, 0.1);
         z-index: 2000;
         overflow: auto;
-        
+
     }
 
     .admin-main-viewport {
@@ -232,16 +235,20 @@ h6 {
     text-decoration: none;
     font-weight: 600;
 }
-    .btn-luxury-outline .bi {
-        color: var(--admin-text );
-    }
-    .btn-luxury-outline:hover {
-        background: #000000;
-        color: #FFFFFF !important;
-    }
-.btn-luxury-outline:hover i{
+
+.btn-luxury-outline .bi {
+    color: var(--admin-text);
+}
+
+.btn-luxury-outline:hover {
+    background: #000000;
     color: #FFFFFF !important;
 }
+
+.btn-luxury-outline:hover i {
+    color: #FFFFFF !important;
+}
+
 .btn-luxury-sm {
     padding: 0.5rem 1.2rem;
     font-size: 0.68rem;

@@ -1,4 +1,4 @@
-/* =========================================
+﻿/* =========================================
    MOBILE: Responsive Overrides, Mobile Menu, Carousel
    ========================================= */
 
@@ -462,5 +462,37 @@
     .order-step-item .badge {
         font-size: 0.65rem !important;
         padding: 0.35em 0.5em !important;
+    }
+}
+
+/* Mobile Brand Logo Resize */
+@media (max-width: 991.98px) {
+
+    .navbar-brand,
+    .offcanvas-header .d-flex {
+        align-items: center !important;
+    }
+
+    .font-brand-initial {
+        font-size: 2rem !important;
+        transform: translateY(-3px) !important;
+    }
+
+    .font-brand-rest {
+        font-size: 1.2rem !important;
+        transform: translateY(0) !important;
+    }
+
+    .offcanvas-header .font-brand-initial {
+        transform: translateY(-3px) !important;
+    }
+
+    .footer-brand-initial {
+        font-size: 2.1rem !important;
+        transform: translateY(-4px) !important;
+    }
+
+    .footer-brand-rest {
+        font-size: 1.25rem !important;
     }
 }
