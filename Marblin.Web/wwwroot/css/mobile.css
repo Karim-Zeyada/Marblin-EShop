@@ -330,13 +330,17 @@
 @media (min-width: 992px) {
     #desktopFilterOffcanvas {
         width: 400px;
-        z-index: 3050;
     }
+}
+
+/* Elevate all offcanvas menus to be above the custom backdrop z-index */
+.offcanvas {
+    z-index: 3050 !important;
 }
 
 /* Offcanvas backdrop z-index */
 .offcanvas-backdrop {
-    z-index: 3040;
+    z-index: 3040 !important;
 }
 
 /* Mobile Cart Optimization */

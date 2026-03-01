@@ -91,8 +91,6 @@ namespace Marblin.Web.Areas.Admin.Controllers
                 settings.FeatureButtonText = model.FeatureButtonText;
                 settings.FeatureButtonUrl = model.FeatureButtonUrl;
 
-                settings.ValueStatements = model.ValueStatements;
-                settings.ProcessSteps = model.ProcessSteps;
                 settings.InstapayAccount = model.InstapayAccount;
                 settings.VodafoneCashNumber = model.VodafoneCashNumber;
                 settings.CairoGizaShippingCost = model.CairoGizaShippingCost;

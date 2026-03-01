@@ -29,16 +29,7 @@ namespace Marblin.Core.Entities
         public string? FeatureButtonText { get; set; }
         public string? FeatureButtonUrl { get; set; }
         
-        /// <summary>
-        /// Value statements/descriptions (JSON array or pipe-separated).
-        /// </summary>
-        public string? ValueStatements { get; set; }
-        
-        /// <summary>
-        /// Process steps text (JSON array or pipe-separated).
-        /// </summary>
-        public string? ProcessSteps { get; set; }
-        
+
         // Business Contact Info
         public string? InstapayAccount { get; set; }
         public string? VodafoneCashNumber { get; set; }

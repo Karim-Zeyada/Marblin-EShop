@@ -162,8 +162,6 @@ namespace Marblin.Infrastructure.Data
                 entity.Property(e => e.DepositPercentage).HasPrecision(5, 2);
                 entity.Property(e => e.HeroHeadline).HasMaxLength(200);
                 entity.Property(e => e.HeroSubheadline).HasMaxLength(500);
-                entity.Property(e => e.ValueStatements).HasMaxLength(2000);
-                entity.Property(e => e.ProcessSteps).HasMaxLength(2000);
                 entity.Property(e => e.InstapayAccount).HasMaxLength(100);
                 entity.Property(e => e.VodafoneCashNumber).HasMaxLength(50);
                 entity.Property(e => e.CairoGizaShippingCost).HasPrecision(18, 2);
